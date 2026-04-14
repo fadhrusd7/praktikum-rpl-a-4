@@ -51,27 +51,27 @@ Sistem ini merupakan aplikasi hybrid yang terdiri dari platform web dan mobile n
 
 ## BAB 3
 ## KEBUTUHAN FUNGSIONAL 
-| ID     | Deskripsi                                                                                                                                                                                        | Prioritas     | Referensi US      |
-| ----   | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------  |
-| FR-01  | Sistem menyediakan fitur registrasi akun dengan data diri dan login untuk user maupun admin                                                                                                      | High          | US-09, US-10      |
-| FR-02  | Sistem memungkinkan user yang sudah login membuat laporan isu lingkungan dengan mengisi judul, deskripsi, lokasi, dan foto (opsional). Laporan tersimpan dengan status awal ‘menunggu validasi’  | High          | US-01, US-04      |
-| FR-03  | Sistem menampilkan seluruh laporan dalam bentuk penanda (marker) pada peta interaktif sehingga lokasi setiap isu dapat diketahui secara virtual                                                  | High          | US-02             |
-| FR-04  | Sistem memungkinkan user melihat laporan miliknya beserta status terkini (menunggu validasi, diproses, terverifikasi)                                                                            | Medium        | US-03             |
-| FR-05  | Sistem memungkinkan admin melihat seluruh laporan yang masuk melalui dashboard beserta status dan detailnya.                                                                                     | High          | US-05, US-06      |
-| FR-06  | Sistem memungkinkan admin memvalidasi laporan dengan menyetujui atau menolak. Status laporan diperbarui otomatis sesuai dengan keputusan admin.                                                  | High          | US-05             |
-| FR-07  | Sistem memungkinkan admin memperbarui status laporan yang sudah divalidasi menjadi “diproses dan “terverifikasi”.                                                                                | Medium        | US-07             |
-| FR-08  | Sistem memungkinkan admin menghapus laporan yang dinyatakan tidak valid agar data tetap akurat.                                                                                                  | Medium        | US-08             |
+| ID         | Deskripsi                                                                                                                                                                                        | Prioritas     | Referensi US           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------  |
+| FR-01      | Sistem menyediakan fitur registrasi akun dengan data diri dan login untuk user maupun admin                                                                                                      | High          | US-09, US-10           |
+| FR-02      | Sistem memungkinkan user yang sudah login membuat laporan isu lingkungan dengan mengisi judul, deskripsi, lokasi, dan foto (opsional). Laporan tersimpan dengan status awal ‘menunggu validasi’  | High          | US-01, US-04           |
+| FR-03      | Sistem menampilkan seluruh laporan dalam bentuk penanda (marker) pada peta interaktif sehingga lokasi setiap isu dapat diketahui secara virtual                                                  | High          | US-02                  |
+| FR-04      | Sistem memungkinkan user melihat laporan miliknya beserta status terkini (menunggu validasi, diproses, terverifikasi)                                                                            | Medium        | US-03                  |
+| FR-05      | Sistem memungkinkan admin melihat seluruh laporan yang masuk melalui dashboard beserta status dan detailnya.                                                                                     | High          | US-05, US-06           |
+| FR-06      | Sistem memungkinkan admin memvalidasi laporan dengan menyetujui atau menolak. Status laporan diperbarui otomatis sesuai dengan keputusan admin.                                                  | High          | US-05                  |
+| FR-07      | Sistem memungkinkan admin memperbarui status laporan yang sudah divalidasi menjadi “diproses dan “terverifikasi”.                                                                                | Medium        | US-07                  |
+| FR-08      | Sistem memungkinkan admin menghapus laporan yang dinyatakan tidak valid agar data tetap akurat.                                                                                                  | Medium        | US-08                  |
 
 
 ## BAB 4
 ## KEBUTUHAN NON FUNGSIONAL
-| ID     | Kategori        | Kebutuhan                                                                                                                                                                                                                     | Metode Verifikasi                                                                                                             `|
-| ------ | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | 
-| NFR-01 | Performance     | Halaman utama, peta, dan dashboard harus termuat dalam waktu < 3 detik pada koneksi broadband standar (≥ 10 Mbps)                                                                                                             | Google Lighthouse                                                                                                              |
-| NFR-02 | Security        | Password disimpan dalam format terenkripsi menggunakan bcrypt dengan salt minimal 10 rounds. Seluruh komunikasi client-server menggunakan HTTPS                                                                               | Inspeksi database dan konfigurasi server                                                                                       |
-| NFR-03 | Usability       | Antarmuka responsif dan dapat digunakan pada perangkat mobile (layar ≥ 360px) melalui aplikasi React Native maupun desktop melalui browser web tanpa zoom horizontal                                                          | Pengujian pada perangkat Android dan iOS (aplikasi React Native) dan browser desktop atau mobile standar (web)                 |
-| NFR-04 | Reliability     | Sistem memiliki uptime minimal 99% dalam satu bulan kalender (downtime ≤ 7,2 jam/bulan)                                                                                                                                       | Monitoring via Grafana                                                                                                         |
-| NFR-05 | Maintainability | Sistem dibangun secara modular dengan standar kode yang konsisten, dependensi terdokumentasi pada package.json, update dapat dilakukan tanpa downtime lebih dari 30 menit, dan error tercatat otomatis melalui logging system | Verifikasi dilakukan melalui code review, static code analysis (ESLint/SonarQube), simulasi deployment, dan inspeksi log error |
+| ID         | Kategori        | Kebutuhan                                                                                                                                                                                                                     | Metode Verifikasi                                                                                                             `|
+| ---------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | 
+| NFR-01     | Performance     | Halaman utama, peta, dan dashboard harus termuat dalam waktu < 3 detik pada koneksi broadband standar (≥ 10 Mbps)                                                                                                             | Google Lighthouse                                                                                                              |
+| NFR-02     | Security        | Password disimpan dalam format terenkripsi menggunakan bcrypt dengan salt minimal 10 rounds. Seluruh komunikasi client-server menggunakan HTTPS                                                                               | Inspeksi database dan konfigurasi server                                                                                       |
+| NFR-03     | Usability       | Antarmuka responsif dan dapat digunakan pada perangkat mobile (layar ≥ 360px) melalui aplikasi React Native maupun desktop melalui browser web tanpa zoom horizontal                                                          | Pengujian pada perangkat Android dan iOS (aplikasi React Native) dan browser desktop atau mobile standar (web)                 |
+| NFR-04     | Reliability     | Sistem memiliki uptime minimal 99% dalam satu bulan kalender (downtime ≤ 7,2 jam/bulan)                                                                                                                                       | Monitoring via Grafana                                                                                                         |
+| NFR-05     | Maintainability | Sistem dibangun secara modular dengan standar kode yang konsisten, dependensi terdokumentasi pada package.json, update dapat dilakukan tanpa downtime lebih dari 30 menit, dan error tercatat otomatis melalui logging system | Verifikasi dilakukan melalui code review, static code analysis (ESLint/SonarQube), simulasi deployment, dan inspeksi log error |
 
 
 ## BAB 5
@@ -91,27 +91,27 @@ Sistem ini merupakan aplikasi hybrid yang terdiri dari platform web dan mobile n
     Sistem ini bergantung pada layanan tile server OpenStreetMap (OSM) untuk menampilkan peta dan marker lokasi laporan. Jika layanan OSM mengalami gangguan atau pembatasan akses, maka fitur peta tidak dapat digunakan secara optimal.
     
 - Library Pemetaan
-+ Platform web bergantung pada Leatfet.js
-+ Platform mobile bergantung pada React Native Maps, Perubahan versi atau ketidakcocokan library dapat mempengaruhi tampilan dan fungsi peta
+    - Platform web bergantung pada Leatfet.js
+    - Platform mobile bergantung pada React Native Maps, Perubahan versi atau ketidakcocokan library dapat mempengaruhi tampilan dan fungsi peta
 
 - Koneksi Internet
     Sistem memerlukan koneksi internet aktif untuk : 
-+ Proses login dan registrasi (FR-01)
-+ Pengiriman laporan (FR-02)
-+ Pengambilan data laporan dan peta (FR-03, FR-04, FR-05)
+    - Proses login dan registrasi (FR-01)
+    - Pengiriman laporan (FR-02)
+    - Pengambilan data laporan dan peta (FR-03, FR-04, FR-05)
 
 - Backend Server dan Database
     Sistem bergantung pada server backend untuk :
-+ Penyimpanan data pengguna
-+ Penyimpanan laporan dan status
-+ Proses validasi oleh admin
+    - Penyimpanan data pengguna
+    - Penyimpanan laporan dan status
+    - Proses validasi oleh admin
 
 - Layanan Penyimpanan File
     Fitur unggah foto (FR-02) bergantung pada layanan penyimpanan file (misalnya cloud storage atau server lokal). Jika layanan ini gagal, maka user tidak dapat mengunggah atau melihat foto laporan.
 
 - Perangkat dan Sistem Operasi Pengguna
-+ Aplikasi mobile bergantung pada kompatibilitas dengan Android
-+ Aplikasi web bergantung pada browser modern (Chrome, Edge, Firefox, dan lain-lain)
+    - Aplikasi mobile bergantung pada kompatibilitas dengan Android
+    - Aplikasi web bergantung pada browser modern (Chrome, Edge, Firefox, dan lain-lain)
 
 
 
