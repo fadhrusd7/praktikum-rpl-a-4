@@ -47,3 +47,29 @@ AC-1:
 Given terdapat laporan yang tidak valid,
 When admin menghapus laporan tersebut,
 Then sistem menghapus laporan dari daftar
+
+9. As a user, I want to melakukan registrasi akun, so that saya dapat menggunakan sistem untuk membuat laporan.
+
+Acceptance Criteria:
+AC-1:
+Given user berada di halaman registrasi,
+When user mengisi data (nama, email, password) dengan benar,
+Then sistem berhasil membuat akun dan menyimpan data user.
+
+AC-2:
+Given user mengisi email yang sudah terdaftar,
+When user mencoba registrasi,
+Then sistem menolak dan menampilkan pesan "email sudah digunakan".
+
+10. As an admin, I want to login ke dalam sistem, so that saya dapat mengelola dan memantau laporan.
+
+Acceptance Criteria:
+AC-1:
+Given admin memiliki akun,
+When admin memasukkan email dan password yang benar,
+Then sistem mengarahkan admin ke dashboard admin.
+
+AC-2:
+Given admin memasukkan data login yang salah,
+When admin mencoba login,
+Then sistem menolak dan menampilkan pesan error.
