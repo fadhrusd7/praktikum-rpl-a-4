@@ -51,9 +51,9 @@
         Then sistem memperbarui status laporan sesuai keputusan admin
     
     - AC-2:
-        Given laporan sudah divalidasi sebelumnya, 
-        When admin mencoba memvalidasi ulang,
-        Then sistem menolak aksi tersebut.
+        Given admin menolak laporan, 
+        When admin memasukkan alasan penolakan,
+        Then sistem menyimpan alasan tersebut dan menampilkannya kepada user.
 
 6. As an admin, I want to melihat seluruh laporan, so that I bisa melakukan monitor terhadap seluruh laporan/isu
     - AC-1:
