@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <p>Selamat datang di dashboard admin!</p>
+
+    <!-- dashboard-admin.html -->
+    <script type="module">
+    import { requireAuth } from '/js/session.js'
+    import { supabase } from '/js/supabase.js'
+
+    const session = await requireAuth('/pages/login.html')
+
+    // Cek role, kalau bukan admin tendang keluar
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
+
+    if (profile?.role !== 'admin') {
+        window.location.replace('/pages/login.html')
+    }
+    </script>
+</body>
+</html>

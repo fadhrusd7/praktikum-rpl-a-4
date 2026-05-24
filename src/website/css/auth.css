@@ -1,0 +1,646 @@
+/* ================================================
+   AUTH.CSS — Lestari Authentication Pages
+   ================================================ */
+
+/* === AUTH PAGE LAYOUT === */
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--bg-main);
+}
+
+/* ------------------------------------------------
+   LOGIN & REGISTER:
+   auth-content ditempatkan langsung di auth-page
+   (tanpa auth-panel wrapper)
+   ------------------------------------------------ */
+.auth-page > .auth-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 64px;
+  position: relative;
+  overflow-y: auto;
+}
+
+.auth-page > .auth-content::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ------------------------------------------------
+   FORGOT PASSWORD, VERIFY OTP, NEW PASSWORD:
+   menggunakan auth-panel sebagai wrapper
+   ------------------------------------------------ */
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 48px 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-panel::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* auth-content di dalam auth-panel */
+.auth-panel .auth-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 420px;
+}
+
+/* === BACK LINK === */
+.auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: var(--transition);
+  margin-bottom: 40px;
+  width: fit-content;
+  text-decoration: none;
+}
+
+.auth-back:hover {
+  color: var(--green-main);
+  gap: 12px;
+}
+
+.auth-back svg {
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+/* === LOGO === */
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--green-deep);
+  margin-bottom: 48px;
+  width: fit-content;
+  text-decoration: none;
+  min-height: 36px; /* placeholder saat kosong */
+}
+
+.auth-logo .logo-leaf {
+  width: 30px;
+  height: 30px;
+}
+
+/* === HEADINGS === */
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--green-deep);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 36px;
+}
+
+/* ================================================
+   FORM ELEMENTS
+   ================================================ */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Label — HTML pakai class "from-label" (typo) DAN "form-label"
+   Kedua-duanya di-style agar kompatibel */
+.form-label,
+.from-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+/* === INPUT WRAPPER === */
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* === INPUT === */
+.form-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid rgba(22, 163, 74, 0.2);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  transition: var(--transition);
+  outline: none;
+  line-height: 1.5;
+}
+
+.form-input::placeholder {
+  color: #b0c4b8;
+}
+
+.form-input:focus {
+  border-color: var(--green-main);
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.08);
+}
+
+.form-input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
+}
+
+/* Input dengan icon kiri */
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.form-input.has-icon {
+  padding-left: 42px;
+}
+
+/* === PASSWORD TOGGLE === */
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  z-index: 1;
+}
+
+.password-toggle:hover {
+  color: var(--green-main);
+}
+
+/* Input yang punya toggle — beri padding kanan */
+.input-wrap:has(.password-toggle) .form-input {
+  padding-right: 44px;
+}
+
+/* === ERROR MESSAGE === */
+.form-error {
+  font-size: 0.78rem;
+  color: #ef4444;
+  margin-top: 6px;
+  display: none;
+  line-height: 1.4;
+}
+
+.form-error.show {
+  display: block;
+}
+
+/* === FORGOT LINK === */
+.forgot-link {
+  display: block;
+  text-align: right;
+  font-size: 0.82rem;
+  color: var(--green-main);
+  font-weight: 500;
+  margin-top: 8px;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+/* ================================================
+   BUTTONS
+   ================================================ */
+
+/* === PRIMARY AUTH BUTTON === */
+.btn-auth {
+  width: 100%;
+  padding: 15px;
+  background: var(--green-main);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-body);
+  letter-spacing: 0.01em;
+}
+
+.btn-auth::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+  pointer-events: none;
+}
+
+.btn-auth:hover {
+  background: var(--green-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+}
+
+.btn-auth:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn-auth:disabled,
+.btn-auth.loading {
+  pointer-events: none;
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+/* === DIVIDER === */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(22, 163, 74, 0.15);
+}
+
+.auth-divider span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* === GOOGLE BUTTON === */
+.btn-google {
+  width: 100%;
+  padding: 13px;
+  background: #fff;
+  border: 1.5px solid rgba(22, 163, 74, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--font-body);
+}
+
+.btn-google:hover {
+  border-color: var(--green-main);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ================================================
+   AUTH SWITCH LINK (bawah form)
+   HTML pakai class "auth-swith" (typo) DAN "auth-switch"
+   Kedua-duanya di-style agar kompatibel
+   ================================================ */
+.auth-switch,
+.auth-swith {
+  text-align: center;
+  margin-top: 28px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.auth-switch a,
+.auth-swith a {
+  color: var(--green-main);
+  font-weight: 600;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.auth-switch a:hover,
+.auth-swith a:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+/* ================================================
+   AUTH VISUAL (kolom kanan hijau)
+   ================================================ */
+.auth-visual {
+  background: linear-gradient(155deg, var(--green-main) 0%, var(--green-deep) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dekorasi lingkaran */
+.auth-visual::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -120px;
+  width: 420px;
+  height: 420px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+
+.auth-visual::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 320px;
+  height: 320px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 50%;
+}
+
+/* Pola diagonal */
+.auth-visual-bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.03) 0px,
+    rgba(255,255,255,0.03) 1px,
+    transparent 1px,
+    transparent 28px
+  );
+}
+
+/* Kontainer icon SVG */
+.auth-visual-icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.auth-visual-icon svg {
+  width: 160px;
+  height: 160px;
+  opacity: 0.95;
+  animation: floatIcon 4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.2));
+}
+
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+/* Teks kutipan di bawah icon */
+.auth-visual-text {
+  text-align: center;
+  color: rgba(255,255,255,0.85);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: var(--font-display);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ================================================
+   OTP INPUT
+   ================================================ */
+.otp-container {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0 16px;
+  justify-content: flex-start;
+}
+
+.otp-input {
+  width: 52px;
+  height: 60px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: 1.5px solid rgba(22, 163, 74, 0.2);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition);
+  font-family: var(--font-body);
+  caret-color: var(--green-main);
+}
+
+.otp-input:focus {
+  border-color: var(--green-main);
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.08);
+}
+
+.otp-input.filled {
+  border-color: var(--green-main);
+  background: var(--green-pale);
+  color: var(--green-deep);
+}
+
+/* === RESEND OTP === */
+.resend-otp {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* HTML pakai class "resendBtn" — di-style juga */
+.resend-btn,
+.resendBtn {
+  background: none;
+  border: none;
+  color: var(--green-main);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  font-family: var(--font-body);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.resend-btn:hover,
+.resendBtn:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+/* HTML pakai class "disable" (bukan "disabled") */
+.resend-btn:disabled,
+.resend-btn.disable,
+.resendBtn:disabled,
+.resendBtn.disable {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  text-decoration: none;
+  pointer-events: none;
+}
+
+.countdown {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ================================================
+   SUCCESS STATE (new-password.html)
+   ================================================ */
+#successState {
+  display: none; /* JS akan mengubahnya menjadi flex */
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--green-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: var(--green-main);
+  font-size: 2rem;
+  animation: successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  flex-shrink: 0;
+}
+
+@keyframes successPop {
+  0%   { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ================================================
+   PASSWORD STRENGTH INDICATOR
+   ================================================ */
+.password-strength {
+  margin-top: 8px;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(22, 163, 74, 0.1);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.strength-bar.active.weak   { background: #ef4444; }
+.strength-bar.active.medium { background: #f59e0b; }
+.strength-bar.active.strong { background: var(--green-main); }
+
+.strength-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ================================================
+   LOADING OVERLAY (dipakai admin-login.js)
+   ================================================ */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  backdrop-filter: blur(2px);
+}
+
+.loading-overlay.hidden {
+  display: none;
+}
+
+/* ================================================
+   SPINNER (diinjek oleh ui.js)
+   ================================================ */
+.spinner {
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
