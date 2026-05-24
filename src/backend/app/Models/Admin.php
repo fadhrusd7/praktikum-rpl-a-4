@@ -7,11 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class Admin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'users';
+    protected $table = 'admins';
 
     protected $fillable = [
         'username',
@@ -25,13 +25,12 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'created_at'        => 'datetime',
+        'created_at' => 'datetime',
     ];
 
-    // Relasi: 1 user bisa punya banyak laporan
+    // Relasi: 1 admin bisa menangani banyak laporan
     public function reports()
     {
-        return $this->hasMany(Report::class, 'user_id');
+        return $this->hasMany(Report::class, 'admin_id');
     }
 }
