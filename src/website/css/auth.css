@@ -199,31 +199,41 @@
   padding-left: 42px;
 }
 
+/* === INPUT WRAP === */
+.input-wrap{
+  position: relative;
+}
+
+/* === INPUT === */
+.form-input{
+  width: 100%;
+  padding: 13px 48px 13px 16px;
+}
+
 /* === PASSWORD TOGGLE === */
-.password-toggle {
+.password-toggle{
   position: absolute;
-  right: 14px;
   top: 50%;
+  right: 14px;
   transform: translateY(-50%);
-  background: none;
+  background: transparent;
   border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
-  z-index: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 10;
 }
 
-.password-toggle:hover {
+/* hover */
+.password-toggle:hover{
   color: var(--green-main);
 }
 
-/* Input yang punya toggle — beri padding kanan */
-.input-wrap:has(.password-toggle) .form-input {
-  padding-right: 44px;
+/* svg tidak menangkap klik */
+.password-toggle svg{
+  pointer-events: none;
 }
 
 /* === ERROR MESSAGE === */

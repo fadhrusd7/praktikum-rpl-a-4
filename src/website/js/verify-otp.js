@@ -1,5 +1,4 @@
 import { setLoading } from './ui.js'
-
 import { showToast } from './toast.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -86,15 +85,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let seconds = 60
 
-  const resendBtn =
-    document.querySelector('#resendBtn')
+  const resendbtn =
+    document.querySelector('#resendbtn')
 
   const countdown =
     document.querySelector('.countdown')
 
   const startTimer = () => {
 
-    resendBtn.disabled = true
+    resendbtn.disabled = true
 
     const timer = setInterval(() => {
 
@@ -107,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         clearInterval(timer)
 
-        resendBtn.disabled = false
+        resendbtn.disabled = false
 
         countdown.textContent = ''
       }
@@ -119,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== RESEND OTP =====
 
-  resendBtn.addEventListener('click', () => {
+  resendbtn.addEventListener('click', () => {
 
     showToast(
       'Kode OTP baru telah dikirim',
@@ -175,10 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
     )
 
     setTimeout(() => {
-
       window.location.href =
         'new-password.html'
-
     }, 1000)
 
   })

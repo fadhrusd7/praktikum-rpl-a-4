@@ -28,7 +28,6 @@
 
             <form id="loginForm" novalidate>
                 <div class="form-group">
-                    <!-- Dikoreksi: "from-label" → "form-label" -->
                     <label class="form-label" for="email">Email</label>
                     <div class="input-wrap">
                         <input type="email" id="email" class="form-input" placeholder="Email@gmail.com" autocomplete="email"/>
@@ -74,8 +73,9 @@
     </div>
 
     <div class="toast-container"></div>
-    <script src="../../js/toast.js"></script>
-    <script src="../../js/ui.js"></script>
+
+    <script type="module" src="../../js/toast.js"></script>
+    <script type="module" src="../../js/ui.js"></script>
     <script type="module" src="../../js/login.js"></script>
 </body>
 </html>

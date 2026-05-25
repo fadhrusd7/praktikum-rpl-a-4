@@ -180,4 +180,28 @@ document.addEventListener('DOMContentLoaded', () => {
       setLoading(submitBtn, false)
     }
   })
+  // ===== LOGIN WITH GOOGLE =====
+  const googleBtn = document.querySelector('.btn-google')
+  if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+      try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            // Mengarahkan user kembali ke halaman utama setelah sukses register
+            redirectTo: window.location.origin + '/src/website/index.html' 
+          }
+        })
+
+        if (error) throw error
+
+      } catch (err) {
+        console.error(err)
+        showToast(
+          err.message || 'Gagal terhubung ke Google',
+          'error'
+        )
+      }
+    })
+  }
 })

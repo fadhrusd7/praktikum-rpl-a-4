@@ -11,7 +11,7 @@
 <body>
     <div class="auth-page">
         <div class="auth-panel">
-            <a href="../../users/auth/forgot-password.html" class="auth-back">
+            <a href="forgot-password.html" class="auth-back">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
             Kembali
             </a>
@@ -20,7 +20,7 @@
 
             <div class="auth-content">
                 <h1 class="auth-title">Cek Email Anda</h1>
-                <p class="auth-subtitle">Kami telah mengirimkan Kode OTP ke<br/><strong>email@gmail.com</strong></p>
+                <p class="auth-subtitle">Kami telah mengirimkan Kode OTP ke<br/><strong>Email Anda</strong></p>
                 <form id="otpForm" novalidate>
                     <div class="form-group">
                     <div class="otp-container" id="otpContainer">
@@ -37,7 +37,7 @@
 
                 <div class="resend-otp">
                     Tidak menerima kode? 
-                    <button type="button" class="resend-btn" disabled>
+                    <button type="button" class="resend-btn" id="resendbtn"disabled>
                         Kirim ulang <span class="countdown">(60s)</span>
                     </button>
                 </div>
@@ -49,15 +49,16 @@
             <div class="auth-visual-icon">
                 <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="15" y="35" width="120" height="85" rx="12" fill="white" opacity="0.95"/>
-                    <polyline points="15,35 80,90 145,35" stroke="#16a34a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <polyline points="22,40 75,80 128,40" stroke="#16a34a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                     <circle cx="120" cy="115" r="24" fill="#16a34a"/>
                     <polyline points="110,115 117,122 132,107" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                 </svg>
-                <p class="auth-visual-text">"Periksa kotak masuk<br/>email Anda"</p>
             </div>
         </div>
     </div>
     <div class="toast-container"></div>
+    <script type="module" src="../../js/ui.js"></script>
+    <script type="module" src="../../js/login.js"></script>
     <script type="module" src="../../js/verify-otp.js"></script>
 
 </body>
