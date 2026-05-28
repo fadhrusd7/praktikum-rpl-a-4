@@ -1,0 +1,24 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Postman
+.postman/
+.postman_*.json
+
+# Environment
+.env
+.env.local
+
+# Dependencies
+node_modules/
+vendor/
+
+# Cache
+storage/
+bootstrap/cache/
+
+.idea/
+
+.postman/
