@@ -3,8 +3,9 @@
 .vscode/
 *.swp
 
-# Postman
+# Postman Extension & Config
 .postman/
+postman/
 .postman_*.json
 
 # Environment
@@ -16,9 +17,4 @@ node_modules/
 vendor/
 
 # Cache
-storage/
 bootstrap/cache/
-
-.idea/
-
-.postman/
