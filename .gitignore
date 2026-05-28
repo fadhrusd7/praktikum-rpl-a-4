@@ -1,0 +1,19 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Postman Extension & Config
+.postman/
+.postman_*.json
+
+# Environment
+.env
+.env.local
+
+# Dependencies
+node_modules/
+vendor/
+
+# Cache (Hanya level root, storage Laravel diatur di backend/.gitignore)
+bootstrap/cache/
