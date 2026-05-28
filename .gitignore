@@ -17,3 +17,8 @@ vendor/
 
 # Cache (Hanya level root, storage Laravel diatur di backend/.gitignore)
 bootstrap/cache/
+
+
+# Postman Extension & Config
+.postman/
+postman/
