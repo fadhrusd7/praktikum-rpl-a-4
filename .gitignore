@@ -5,6 +5,7 @@
 
 # Postman Extension & Config
 .postman/
+postman/
 .postman_*.json
 
 # Environment
@@ -15,10 +16,5 @@
 node_modules/
 vendor/
 
-# Cache (Hanya level root, storage Laravel diatur di backend/.gitignore)
+# Cache
 bootstrap/cache/
-
-
-# Postman Extension & Config
-.postman/
-postman/
