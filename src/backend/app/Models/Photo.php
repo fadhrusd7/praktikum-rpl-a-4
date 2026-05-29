@@ -15,6 +15,9 @@ class Photo extends Model{
         'file_size',
     ];
 
+    const CREATED_AT = 'uploaded_at';
+    const UPDATED_AT = null;
+
     protected $casts = [
         'uploaded_at' => 'datetime',
     ];
