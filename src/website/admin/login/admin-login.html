@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lestari Web</title>
+    <title>Lestari Web - Admin Login</title>
     <link rel="stylesheet" href="../../css/global.css" />
     <link rel="stylesheet" href="../../css/auth.css" />
     <link rel="stylesheet" href="../../css/responsive.css" />
@@ -14,9 +14,9 @@
             <h1 class="auth-title">Selamat Datang</h1>
             <p class="auth-subtitle">Masukkan email dan sandi anda untuk masuk ke akun anda</p>
 
-            <form id="loginForm"  novalidate>
+            <form id="loginForm" novalidate>
                 <div class="form-group">
-                    <label class="from-label" for="email">Email</label>
+                    <label class="form-label" for="email">Email</label>
                     <div class="input-wrap">
                         <input type="email" id="email" class="form-input" placeholder="Email@gmail.com" autocomplete="email"/>
                     </div>
@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="from-label" for="password">Password</label>
+                    <label class="form-label" for="password">Password</label>
                     <div class="input-wrap">
                         <input type="password" id="password" class="form-input" placeholder="Password" autocomplete="current-password"/>
                         <button type="button" class="password-toggle" tabindex="-1" aria-label="Toggle password">
@@ -38,7 +38,7 @@
                 <button type="submit" class="btn-auth">Masuk</button>
             </form>
 
-            <div class="auth-divider" type="button"><span>atau</span></div>
+            <div class="auth-divider"><span>atau</span></div>
             <button class="btn-google" type="button">
                 <svg class="google-icon" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -48,13 +48,13 @@
                 </svg> Masuk dengan Google
             </button>
 
-            <div class="auth-swith">
+            <div class="auth-switch">
                 Belum punya akun? <a href="register.html">Daftar</a>
             </div>
         </div>
 
         <div class="auth-visual">
-        <div class="auth-visual-bg-pattern"></div>
+            <div class="auth-visual-bg-pattern"></div>
             <div class="auth-visual-icon">
                 <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M80 15 L140 40 L140 85 C140 118 112 142 80 150 C48 142 20 118 20 85 L20 40 Z" stroke="white" stroke-width="8" fill="rgba(255,255,255,0.08)" stroke-linejoin="round"/>
@@ -65,8 +65,8 @@
     </div>
 
     <div class="toast-container"></div>
-    <script src="js/toast.js"></script>
-    <script src="js/ui.js"></script>
+    <script type="module" src="../../js/toast.js"></script>
+    <script type="module" src="../../js/ui.js"></script>
     <script type="module" src="js/admin-login.js"></script>
     
 </body>

@@ -1,25 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --green-deep: #0d6b1e;
-  --green-main: #16a34a;
-  --green-vivid: #22c55e;
-  --green-light: #dcfce7;
-  --green-pale: #f0fdf4;
-  --green-accent: #4ade80;
+  /* === WARNA SESUAI DASHBOARD BARU === */
+  --green-main: #00AA13;       /* Hijau Utama Lestari */
+  --green-deep: #008a0f;       /* Hijau Gelap untuk hover */
+  --green-vivid: #00D217;      /* Hijau Terang */
+  --green-light: #E0FBD2;      /* Hijau Muda Lestari */
+  --green-pale: #F4FDF4;       /* Background hint hijau */
+  --green-accent: #F1FB85;     /* Kuning Aksen Lestari */
 
-  --text-primary: #0f2419;
-  --text-secondary: #1e4d2b;
-  --text-muted: #5a7a64;
+  --text-primary: #111827;     /* Hitam Teks */
+  --text-secondary: #374151;   /* Abu-abu Gelap */
+  --text-muted: #6B7280;       /* Abu Teks */
   --text-white: #ffffff;
 
-  --bg-main: #f0fdf4;
+  --bg-main: #F9FAFB;          /* Background abu sangat terang */
   --bg-card: #ffffff;
-  --bg-dark: #0a1f10;
+  --bg-dark: #111827;
 
-  --shadow-sm: 0 2px 8px rgba(22, 163, 74, 0.1);
-  --shadow-md: 0 8px 32px rgba(22, 163, 74, 0.15);
-  --shadow-lg: 0 24px 64px rgba(22, 163, 74, 0.2);
+  /* Shadow diubah pakai RGB dari #00AA13 (0, 170, 19) */
+  --shadow-sm: 0 2px 8px rgba(0, 170, 19, 0.1);
+  --shadow-md: 0 8px 32px rgba(0, 170, 19, 0.15);
+  --shadow-lg: 0 24px 64px rgba(0, 170, 19, 0.2);
 
   --radius-sm: 8px;
   --radius-md: 16px;
@@ -88,7 +90,8 @@ input, textarea {
 .btn-primary:hover {
   background: var(--green-deep);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+  /* Hover shadow diubah ke RGB hijau Lestari */
+  box-shadow: 0 8px 24px rgba(0, 170, 19, 0.35);
 }
 
 .btn-outline {
@@ -106,7 +109,8 @@ input, textarea {
   background: var(--green-main);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.3);
+  /* Hover shadow diubah ke RGB hijau Lestari */
+  box-shadow: 0 8px 24px rgba(0, 170, 19, 0.3);
 }
 
 /* === SCROLL REVEAL === */
@@ -169,7 +173,7 @@ input, textarea {
   transform: translateX(100%);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600; /* Ditebalkan sedikit biar lebih modern */
 }
 
 .toast.show {

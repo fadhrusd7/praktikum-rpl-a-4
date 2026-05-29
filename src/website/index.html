@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-<link rel="stylesheet" href="../../css/global.css" />
-<link rel="stylesheet" href="../../css/auth.css" />
-<link rel="stylesheet" href="../../css/responsive.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lestari Web</title>
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../../css/auth.css" />
+    <link rel="stylesheet" href="../../css/responsive.css" />
 </head>
 <body>
-<script>
-    window.location.replace('users/auth/register.html');
-  </script>
+
+    <script type="module">
+        import { redirectIfLoggedIn } from '../../js/session.js';
+        
+        async function checkAuth() {
+            // Cek status login, kalau ada session langsung lempar ke dashboard role-nya
+            await redirectIfLoggedIn();
+
+            // Kalau gak ada session aktif, baru oper ke halaman login user
+            // Silakan sesuaikan kembali path folder 'users/auth/login.html' ini dengan punyamu ya Bro
+            window.location.replace('users/auth/login.html'); 
+        }
+
+        checkAuth();
+    </script>
+    
 </body>
 </html>

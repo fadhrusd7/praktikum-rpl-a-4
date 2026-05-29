@@ -23,6 +23,6 @@ export async function redirectIfLoggedIn() {
   if (profile?.role === 'admin') {
     window.location.replace('/admin/dashboard/dashboard-admin.html')
   } else {
-    window.location.replace('/pages/dashboard/dashboard.html')
+    window.location.replace('/users/dashboard/dashboard.html')
   }
 }
