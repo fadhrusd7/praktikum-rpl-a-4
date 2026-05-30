@@ -14,6 +14,7 @@ class Report extends Model
         'admin_id',
         'nomor_laporan',
         'judul',
+        'kategori',
         'deskripsi',
         'lokasi',
         'latitude',
