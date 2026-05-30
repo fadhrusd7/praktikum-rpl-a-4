@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ReportLog;
 
 class Report extends Model
 {
@@ -35,56 +36,76 @@ class Report extends Model
     protected static function booted(): void
     {
         static::created(function (Report $report) {
-            $tanggal   = now()->format('dmY');
-
-            // Hitung laporan di tahun yang sama → reset per tahun
-            $count     = Report::whereYear('created_at', now()->year)->count();
-            $nomorUrut = str_pad($count, 6, '0', STR_PAD_LEFT);
-
+            // Auto-generate nomor_laporan
+            $tanggal      = now()->format('dmY');
+            $count        = Report::whereYear('created_at', now()->year)->count();
+            $nomorUrut    = str_pad($count, 6, '0', STR_PAD_LEFT);
             $nomorLaporan = "LAP-{$tanggal}-{$nomorUrut}";
+
             $report->update(['nomor_laporan' => $nomorLaporan]);
+
+            // Auto-log: laporan diterima sistem
+            ReportLog::create([
+                'report_id'  => $report->id,
+                'admin_id'   => null,
+                'status'     => 'menunggu_validasi',
+                'aksi'       => 'Laporan diterima sistem',
+                'catatan'    => null,
+                'created_at' => now(),
+            ]);
         });
     }
 
-    // Report milik User
-    public function user(){
+    // RELASI
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Report ditangani Admin
-    public function admin(){
+    public function admin()
+    {
         return $this->belongsTo(Admin::class, 'admin_id');
     }
 
-    // Report punya banyak Photo
-    public function photos(){
+    public function photos()
+    {
         return $this->hasMany(Photo::class, 'report_id');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(ReportLog::class, 'report_id')->orderBy('created_at', 'asc');
+    }
 
-    // Hanya laporan terverifikasi (untuk peta publik)
-    public function scopeVerified($query){
+    // SCOPES
+    public function scopeVerified($query)
+    {
         return $query->where('status', 'terverifikasi');
     }
 
-    // Hanya laporan menunggu validasi
-    public function scopePending($query){
+    public function scopePending($query)
+    {
         return $query->where('status', 'menunggu_validasi');
     }
 
-    public function isPending(): bool{
+    // HELPERS
+    public function isPending(): bool
+    {
         return $this->status === 'menunggu_validasi';
     }
 
-    public function isVerified(): bool{
+    public function isVerified(): bool
+    {
         return $this->status === 'terverifikasi';
     }
 
-    public function isRejected(): bool{
+    public function isRejected(): bool
+    {
         return $this->status === 'ditolak';
     }
 
-    public function isDone(): bool{
+    public function isDone(): bool
+    {
         return $this->status === 'selesai';
     }
 }
