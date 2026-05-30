@@ -4,24 +4,24 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreReportRequest extends FormRequest
-{
-    public function authorize(): bool
-    {
+class StoreReportRequest extends FormRequest{
+    public function authorize(): bool{
         return auth('sanctum')->check();
     }
 
-    public function rules(): array
-    {
-        return [
-            'judul'       => 'required|string|max:255',
-            'deskripsi'   => 'required|string|min:10|max:2000',
-            'lokasi'      => 'required|string|max:255',
-            'latitude'    => 'required|numeric|between:-90,90',
-            'longitude'   => 'required|numeric|between:-180,180',
-            'foto'        => 'nullable|image|mimes:jpeg,png,webp|max:512', // 512 KB
-        ];
-    }
+    public function rules(): array{
+    return [
+        'judul'      => 'required|string|max:255',
+        'kategori'   => 'required|string|in:Sampah,Polusi,Banjir,Isu Air,Penebangan,Lainnya',
+        'deskripsi'  => 'required|string',
+        'lokasi'     => 'required|string',
+        'latitude'   => 'required|numeric',
+        'longitude'  => 'required|numeric',
+        'photos'     => 'nullable|array|max:5',
+        'photos.*'   => 'file|mimes:jpg,jpeg,png|max:512',
+    ];
+}
+
 
     public function messages(): array
     {

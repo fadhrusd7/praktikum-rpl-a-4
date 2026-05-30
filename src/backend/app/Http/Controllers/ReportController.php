@@ -23,6 +23,7 @@ class ReportController extends Controller
             $report = Report::create([
                 'user_id'    => auth('sanctum')->id(),
                 'judul'      => $validated['judul'],
+                'kategori'   => $validated['kategori'],  
                 'deskripsi'  => $validated['deskripsi'],
                 'lokasi'     => $validated['lokasi'],
                 'latitude'   => $validated['latitude'],
@@ -53,26 +54,7 @@ class ReportController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Laporan berhasil dibuat.',
-                'data'    => [
-                    'id'            => $report->id,
-                    'nomor_laporan' => $report->nomor_laporan,
-                    'judul'         => $report->judul,
-                    'deskripsi'     => $report->deskripsi,
-                    'lokasi'        => $report->lokasi,
-                    'latitude'      => $report->latitude,
-                    'longitude'     => $report->longitude,
-                    'status'        => $report->status,
-                    'created_at'    => $report->created_at,
-                    'photos'        => $report->photos->map(function ($photo) {
-                        return [
-                            'id'            => $photo->id,
-                            'file_path'     => $photo->file_path,
-                            'file_type'     => $photo->file_type,
-                            'file_size'     => $photo->file_size,
-                            'uploaded_at'   => $photo->uploaded_at,
-                        ];
-                    }),
-                ],
+                'data'    => $this->formatReport($report),  // ← pakai helper
             ], 201);
 
         } catch (\Exception $e) {
@@ -98,7 +80,7 @@ class ReportController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data'    => $reports->items(),
+                'data'    => collect($reports->items())->map(fn($r) => $this->formatReport($r)),
                 'meta'    => [
                     'total'        => $reports->total(),
                     'per_page'     => $reports->perPage(),
@@ -125,7 +107,7 @@ class ReportController extends Controller
         try {
             $reports = Report::verified()
                 ->with('photos')
-                ->select(['id', 'judul', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'created_at'])
+                ->select(['id', 'nomor_laporan', 'judul', 'kategori', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'created_at'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -141,5 +123,31 @@ class ReportController extends Controller
                 'error'   => app()->isLocal() ? $e->getMessage() : null,
             ], 500);
         }
+    }
+
+    /**
+     * Helper: format report untuk response
+     */
+    private function formatReport(Report $report): array
+    {
+        return [
+            'id'             => $report->id,
+            'nomor_laporan'  => $report->nomor_laporan,   
+            'judul'          => $report->judul,
+            'kategori'       => $report->kategori,       
+            'deskripsi'      => $report->deskripsi,
+            'lokasi'         => $report->lokasi,
+            'latitude'       => $report->latitude,
+            'longitude'      => $report->longitude,
+            'status'         => $report->status,
+            'created_at'     => $report->created_at,
+            'photos'         => $report->photos->map(fn($photo) => [
+                'id'          => $photo->id,
+                'file_path'   => $photo->file_path,
+                'file_type'   => $photo->file_type,
+                'file_size'   => $photo->file_size,
+                'uploaded_at' => $photo->uploaded_at,
+            ]),
+        ];
     }
 }
