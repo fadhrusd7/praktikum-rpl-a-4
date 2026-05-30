@@ -55,6 +55,7 @@ class ReportController extends Controller
                 'message' => 'Laporan berhasil dibuat.',
                 'data'    => [
                     'id'            => $report->id,
+                    'nomor_laporan' => $report->nomor_laporan,
                     'judul'         => $report->judul,
                     'deskripsi'     => $report->deskripsi,
                     'lokasi'        => $report->lokasi,
