@@ -12,6 +12,7 @@ class Report extends Model
     protected $fillable = [
         'user_id',
         'admin_id',
+        'nomor_laporan',
         'judul',
         'deskripsi',
         'lokasi',
@@ -23,50 +24,66 @@ class Report extends Model
     ];
 
     protected $casts = [
-        'latitude' => 'float',
-        'longitude' => 'float',
+        'latitude'     => 'float',
+        'longitude'    => 'float',
         'validated_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'created_at'   => 'datetime',
+        'updated_at'   => 'datetime',
     ];
 
-    // Relasi: Report milik User
+    protected static function booted(): void
+    {
+        static::created(function (Report $report) {
+            $tanggal   = now()->format('dmY');
+
+            // Hitung laporan di tahun yang sama → reset per tahun
+            $count     = Report::whereYear('created_at', now()->year)->count();
+            $nomorUrut = str_pad($count, 6, '0', STR_PAD_LEFT);
+
+            $nomorLaporan = "LAP-{$tanggal}-{$nomorUrut}";
+            $report->update(['nomor_laporan' => $nomorLaporan]);
+        });
+    }
+
+    // Report milik User
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relasi: Report ditangani Admin
+    // Report ditangani Admin
     public function admin(){
         return $this->belongsTo(Admin::class, 'admin_id');
     }
 
-    // Relasi: Report punya banyak Photo
+    // Report punya banyak Photo
     public function photos(){
         return $this->hasMany(Photo::class, 'report_id');
     }
 
-    // Scope: Report yang sudah terverifikasi
+
+    // Hanya laporan terverifikasi (untuk peta publik)
     public function scopeVerified($query){
-        return $query->where('status', 'divalidasi')
-                     ->orWhere('status', 'diproses')
-                     ->orWhere('status', 'selesai');
+        return $query->where('status', 'terverifikasi');
     }
 
-    // Scope: Report yang menunggu validasi
+    // Hanya laporan menunggu validasi
     public function scopePending($query){
         return $query->where('status', 'menunggu_validasi');
     }
 
-    // Check status
-    public function isVerified(){
-        return in_array($this->status, ['divalidasi', 'diproses', 'selesai']);
-    }
-
-    public function isPending(){
+    public function isPending(): bool{
         return $this->status === 'menunggu_validasi';
     }
 
-    public function isRejected(){
+    public function isVerified(): bool{
+        return $this->status === 'terverifikasi';
+    }
+
+    public function isRejected(): bool{
         return $this->status === 'ditolak';
+    }
+
+    public function isDone(): bool{
+        return $this->status === 'selesai';
     }
 }
