@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminStatsController;
@@ -11,8 +12,10 @@ use App\Http\Controllers\AdminStatsController;
 
 // Auth User
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login',    [AuthController::class, 'login']);
+    Route::post('/register',        [AuthController::class, 'register']);
+    Route::post('/login',           [AuthController::class, 'login']);
+    Route::get('/google',           [GoogleAuthController::class, 'redirect']);    // ← TAMBAH
+    Route::get('/google/callback',  [GoogleAuthController::class, 'callback']);    // ← TAMBAH
 });
 
 // Auth Admin
@@ -30,8 +33,8 @@ Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/reports',   [ReportController::class, 'store']);
-    Route::get('/reports/my', [ReportController::class, 'myReports']);
+    Route::post('/reports',      [ReportController::class, 'store']);
+    Route::get('/reports/my',    [ReportController::class, 'myReports']);
     Route::get('/reports/{id}',  [ReportController::class, 'show']);
 });
 
@@ -40,11 +43,9 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'is.admin'])->group(function
     Route::post('/logout', [AdminAuthController::class, 'logout']);
     Route::get('/me',      [AdminAuthController::class, 'me']);
 
-    // Stats
     Route::get('/stats',         [AdminStatsController::class, 'index']);
     Route::get('/profile-stats', [AdminStatsController::class, 'profileStats']);
 
-    // Reports
     Route::get('/reports',                 [AdminReportController::class, 'index']);
     Route::get('/reports/{id}',            [AdminReportController::class, 'show']);
     Route::patch('/reports/{id}/validate', [AdminReportController::class, 'validate']);
