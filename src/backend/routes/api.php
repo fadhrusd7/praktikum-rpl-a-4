@@ -32,6 +32,7 @@ Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/reports',   [ReportController::class, 'store']);
     Route::get('/reports/my', [ReportController::class, 'myReports']);
+    Route::get('/reports/{id}',  [ReportController::class, 'show']);
 });
 
 // ADMIN

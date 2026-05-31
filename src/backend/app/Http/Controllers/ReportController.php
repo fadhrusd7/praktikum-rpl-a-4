@@ -18,28 +18,21 @@ class ReportController extends Controller
     {
         try {
             $validated = $request->validated();
-            
-            // Simpan laporan
+
             $report = Report::create([
-                'user_id'    => auth('sanctum')->id(),
-                'judul'      => $validated['judul'],
-                'kategori'   => $validated['kategori'],  
-                'deskripsi'  => $validated['deskripsi'],
-                'lokasi'     => $validated['lokasi'],
-                'latitude'   => $validated['latitude'],
-                'longitude'  => $validated['longitude'],
-                'status'     => 'menunggu_validasi',
+                'user_id'   => auth('sanctum')->id(),
+                'judul'     => $validated['judul'],
+                'kategori'  => $validated['kategori'],
+                'deskripsi' => $validated['deskripsi'],
+                'lokasi'    => $validated['lokasi'],
+                'latitude'  => $validated['latitude'],
+                'longitude' => $validated['longitude'],
+                'status'    => 'menunggu_validasi',
             ]);
 
-            // Handle upload foto (optional)
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
-                
-                // Upload ke Supabase
-                $path = Storage::disk('supabase')
-                    ->putFile('reports', $file, 'public');
-                
-                // Simpan record foto
+                $path = Storage::disk('supabase')->putFile('reports', $file, 'public');
                 Photo::create([
                     'report_id' => $report->id,
                     'file_path' => $path,
@@ -48,13 +41,12 @@ class ReportController extends Controller
                 ]);
             }
 
-            // Load relasi photos
             $report->load('photos');
 
             return response()->json([
                 'success' => true,
                 'message' => 'Laporan berhasil dibuat.',
-                'data'    => $this->formatReport($report),  // ← pakai helper
+                'data'    => $this->formatReport($report),
             ], 201);
 
         } catch (\Exception $e) {
@@ -67,8 +59,41 @@ class ReportController extends Controller
     }
 
     /**
+     * GET /api/reports/{id}
+     * User lihat detail laporan miliknya (US-03)
+     */
+    public function show($id)
+    {
+        try {
+            $report = Report::where('id', $id)
+                ->where('user_id', auth('sanctum')->id())
+                ->with('photos', 'logs')
+                ->first();
+
+            if (!$report) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Laporan tidak ditemukan.',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data'    => $this->formatReport($report, withLogs: true),
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil detail laporan.',
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    /**
      * GET /api/reports/my
-     * User lihat laporan miliknya (US-03)
+     * User lihat semua laporan miliknya (US-03)
      */
     public function myReports(Request $request)
     {
@@ -128,20 +153,20 @@ class ReportController extends Controller
     /**
      * Helper: format report untuk response
      */
-    private function formatReport(Report $report): array
+    private function formatReport(Report $report, bool $withLogs = false): array
     {
-        return [
-            'id'             => $report->id,
-            'nomor_laporan'  => $report->nomor_laporan,   
-            'judul'          => $report->judul,
-            'kategori'       => $report->kategori,       
-            'deskripsi'      => $report->deskripsi,
-            'lokasi'         => $report->lokasi,
-            'latitude'       => $report->latitude,
-            'longitude'      => $report->longitude,
-            'status'         => $report->status,
-            'created_at'     => $report->created_at,
-            'photos'         => $report->photos->map(fn($photo) => [
+        $data = [
+            'id'            => $report->id,
+            'nomor_laporan' => $report->nomor_laporan,
+            'judul'         => $report->judul,
+            'kategori'      => $report->kategori,
+            'deskripsi'     => $report->deskripsi,
+            'lokasi'        => $report->lokasi,
+            'latitude'      => $report->latitude,
+            'longitude'     => $report->longitude,
+            'status'        => $report->status,
+            'created_at'    => $report->created_at,
+            'photos'        => $report->photos->map(fn($photo) => [
                 'id'          => $photo->id,
                 'file_path'   => $photo->file_path,
                 'file_type'   => $photo->file_type,
@@ -149,5 +174,16 @@ class ReportController extends Controller
                 'uploaded_at' => $photo->uploaded_at,
             ]),
         ];
+
+        if ($withLogs) {
+            $data['logs'] = $report->logs->map(fn($log) => [
+                'aksi'       => $log->aksi,
+                'status'     => $log->status,
+                'catatan'    => $log->catatan,
+                'created_at' => $log->created_at,
+            ]);
+        }
+
+        return $data;
     }
 }
