@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminStatsController;
+use App\Http\Controllers\UserController;
 
 // PUBLIC
 
@@ -36,6 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/reports',      [ReportController::class, 'store']);
     Route::get('/reports/my',    [ReportController::class, 'myReports']);
     Route::get('/reports/{id}',  [ReportController::class, 'show']);
+    Route::get('/user/stats',   [UserController::class, 'stats']);
+    Route::get('/user/profile',     [UserController::class, 'profile']);      
+    Route::put('/user/profile',     [UserController::class, 'updateProfile']); 
 });
 
 // ADMIN
