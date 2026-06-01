@@ -17,6 +17,10 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'nama_depan',    
+        'nama_belakang',
+        'no_telepon',    
+        'kota',         
     ];
 
     protected $hidden = [
@@ -29,7 +33,6 @@ class User extends Authenticatable
         'created_at'        => 'datetime',
     ];
 
-    // Relasi: 1 user bisa punya banyak laporan
     public function reports()
     {
         return $this->hasMany(Report::class, 'user_id');
