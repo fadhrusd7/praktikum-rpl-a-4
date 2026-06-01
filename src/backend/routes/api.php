@@ -39,7 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reports/{id}',  [ReportController::class, 'show']);
     Route::get('/user/stats',   [UserController::class, 'stats']);
     Route::get('/user/profile',     [UserController::class, 'profile']);      
-    Route::put('/user/profile',     [UserController::class, 'updateProfile']); 
+    Route::put('/user/profile',     [UserController::class, 'updateProfile']);
+    Route::put('/user/change-password',  [UserController::class, 'changePassword']);
+    Route::delete('/user/account',       [UserController::class, 'deleteAccount']); 
 });
 
 // ADMIN
