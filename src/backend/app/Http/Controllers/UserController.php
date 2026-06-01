@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -108,6 +109,88 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengupdate profil.',
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    /**
+     * PUT /api/user/change-password
+     */
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'password_lama'    => 'required|string',
+            'password_baru'    => 'required|string|min:6|confirmed',
+            'password_baru_confirmation' => 'required|string',
+        ]);
+
+        try {
+            $user = $request->user();
+
+            // Cek password lama
+            if (!Hash::check($request->password_lama, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password lama tidak sesuai.',
+                ], 422);
+            }
+
+            $user->update([
+                'password' => Hash::make($request->password_baru),
+            ]);
+
+            $user->tokens()->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password berhasil diubah. Silakan login kembali.',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengubah password.',
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    /**
+     * DELETE /api/user/account
+     */
+    public function deleteAccount(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        try {
+            $user = $request->user();
+
+            // Konfirmasi password sebelum hapus
+            if (!Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password tidak sesuai.',
+                ], 422);
+            }
+
+            // Hapus semua token
+            $user->tokens()->delete();
+
+            // Hapus akun
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Akun berhasil dihapus.',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus akun.',
                 'error'   => app()->isLocal() ? $e->getMessage() : null,
             ], 500);
         }
