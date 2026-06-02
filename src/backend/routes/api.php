@@ -8,6 +8,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 // PUBLIC
 
@@ -15,8 +16,11 @@ use App\Http\Controllers\UserController;
 Route::prefix('auth')->group(function () {
     Route::post('/register',        [AuthController::class, 'register']);
     Route::post('/login',           [AuthController::class, 'login']);
-    Route::get('/google',           [GoogleAuthController::class, 'redirect']);    // ← TAMBAH
-    Route::get('/google/callback',  [GoogleAuthController::class, 'callback']);    // ← TAMBAH
+    Route::get('/google',           [GoogleAuthController::class, 'redirect']);    
+    Route::get('/google/callback',  [GoogleAuthController::class, 'callback']);    
+    Route::post('/forgot-password',  [ForgotPasswordController::class, 'sendOtp']);     
+    Route::post('/verify-otp',       [ForgotPasswordController::class, 'verifyOtp']);   
+    Route::post('/reset-password',   [ForgotPasswordController::class, 'resetPassword']); 
 });
 
 // Auth Admin
