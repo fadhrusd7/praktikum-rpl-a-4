@@ -9,21 +9,14 @@
     <link rel="stylesheet" href="../../css/responsive.css" />
 </head>
 <body>
-
     <script type="module">
         import { redirectIfLoggedIn } from '../../js/session.js';
         
         async function checkAuth() {
-            // Cek status login, kalau ada session langsung lempar ke dashboard role-nya
             await redirectIfLoggedIn();
-
-            // Kalau gak ada session aktif, baru oper ke halaman login user
-            // Silakan sesuaikan kembali path folder 'users/auth/login.html' ini dengan punyamu ya Bro
-            window.location.replace('users/auth/login.html'); 
+            window.location.replace('/auth/login.html'); 
         }
-
         checkAuth();
     </script>
-    
 </body>
 </html>
