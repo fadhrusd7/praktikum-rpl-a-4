@@ -11,6 +11,14 @@ postman/
 # Environment
 .env
 .env.local
+**/.env
+
+# Android / Mobile
+src/mobile/local.properties
+src/mobile/.gradle/
+src/mobile/build/
+src/mobile/.idea/
+**/.DS_Store
 
 # Dependencies
 node_modules/
@@ -18,3 +26,7 @@ vendor/
 
 # Cache
 bootstrap/cache/
+
+# Logs
+.github/
+.git/
