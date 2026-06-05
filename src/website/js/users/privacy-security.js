@@ -278,3 +278,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         btnDelete.addEventListener("click", handleDeleteAccount);
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // 1. Logic Tampilkan/Sembunyikan Password
+    const toggleButtons = document.querySelectorAll('.form__password-toggle');
+
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            // Cari input terdekat (sandi lama, baru, atau konfirmasi)
+            const inputField = this.previousElementSibling;
+            
+            if (inputField.type === 'password') {
+                // Tampilkan sandi
+                inputField.type = 'text';
+                this.classList.add('form__password-toggle--hide');
+            } else {
+                // Sembunyikan sandi
+                inputField.type = 'password';
+                this.classList.remove('form__password-toggle--hide');
+            }
+        });
+    });
+
+    // 2. Logic Tombol Hapus Akun
+    const btnDelete = document.getElementById('btn-delete-account');
+    if (btnDelete) {
+        btnDelete.addEventListener('click', () => {
+            const isConfirmed = confirm("Apakah Anda yakin ingin menghapus akun permanen?");
+            if (isConfirmed) {
+                // Panggil fungsi API Hapus Akun lo di sini
+                console.log("Mulai proses hapus akun...");
+            }
+        });
+    }
+});

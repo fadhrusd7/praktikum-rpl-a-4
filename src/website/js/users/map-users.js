@@ -196,9 +196,10 @@ function _showDetail(report) {
   const lapNum = _lapNum(report.created_at, report.id)
   const { tgl, jam } = _formatDate(report.created_at)
 
-  const foto = report.foto
-    ? _esc(report.foto)
+  const foto = (report.photos && report.photos.length > 0 && report.photos[0].url)
+    ? _esc(report.photos[0].url)
     : 'https://placehold.co/340x160/e8f5e9/16a34a?text=Foto+Tidak+Tersedia'
+  if (report.user) report.user.nama = _getReporterName(report.user)
 
   body.innerHTML = `
     <div class="detail-header">
@@ -237,7 +238,13 @@ function _showDetail(report) {
         </svg>
         <div>
           <span class="detail-meta-label">Pelapor</span>
-          <span class="detail-meta-value">${_esc(report.user?.nama || '—')}</span>
+          <span class="detail-meta-value">
+              ${_esc(
+                  report.user?.nama || 
+                  (report.user?.nama_depan ? (report.user.nama_depan + ' ' + (report.user.nama_belakang || '')) : '') || 
+                  '—'
+              )}
+          </span>       
         </div>
       </div>
       <div class="detail-meta-row">
@@ -258,7 +265,7 @@ function _showDetail(report) {
   // Tombol Detail
   if (footerBtn) {
     footerBtn.onclick = () => {
-      window.location.href = `../peta/detail.html?id=${report.id}`
+      window.location.href = `../riwayat/detail.html?id=${report.id}`
     }
   }
 
@@ -323,6 +330,17 @@ function _esc(s) {
   return String(s ?? '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+function _getReporterName(user) {
+  if (!user) return '—'
+
+  const fullName = [user.nama_depan, user.nama_belakang]
+    .filter(Boolean)
+    .join(' ')
+    .trim()
+
+  return String(user.nama || fullName || user.username || user.email || '—').trim() || '—'
 }
 
 function _showSkeleton(show) {

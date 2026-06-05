@@ -18,3 +18,10 @@ vendor/
 
 # Cache
 bootstrap/cache/
+
+# VS Code
+.vscode/
+
+# Postman
+.postman/
+postman/

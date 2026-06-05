@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Buat laporan isu lingkungan - Lestari" />
+    <title>Buat Laporan — Lestari</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script type="module" crossorigin src="/assets/userLaporan-COV8SKBx.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="/assets/userLaporan-DnCxgIKV.css">
+  <link rel="stylesheet" crossorigin href="/assets/map-users-7c1pV3i7.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="/assets/Logo-BNOZHk_k.png" alt="Logo Lestari" class="logo-img">
+            </div>
+            <div>
+                <div class="logo-text">Lestari</div>
+                <div class="logo-tagline">Lapor Isu Lingkungan</div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li>
+                    <a href="../dashboard/map-users.html" class="nav-item" data-page="peta">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                <circle cx="12" cy="9" r="2.5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Peta</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../laporan/report-users.html" class="nav-item active" data-page="laporan">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Laporan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../riwayat/history-users.html" class="nav-item" data-page="riwayat">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="12 8 12 12 14 14"/>
+                                <path d="M3.05 11a9 9 0 1 1 .5 4M3 21v-6h6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Riwayat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../profil/profile-users.html" class="nav-item" data-page="profil">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Profil</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+        <div class="sidebar-divider"></div>
+        <div class="user-profile">
+            <div class="user-avatar">
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="20" fill="#E0FBD2"/>
+                    <circle cx="20" cy="16" r="7" fill="#00AA13"/>
+                    <ellipse cx="20" cy="34" rx="11" ry="8" fill="#00AA13"/>
+                </svg>
+                <span class="user-status"></span>
+            </div>
+            <div class="user-info">
+                <p class="user-name" id="sidebarUserName">Nama Pengguna</p>
+                <p class="user-email" id="sidebarUserEmail">email@gmail.com</p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content" id="mainContent">
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="page-header-left">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+            <div class="page-title-wrap">
+                <h1 class="page-title" id="pageTitle">Buat Laporan</h1>
+            </div>
+        </div>
+        <div class="page-header-right">
+            <span class="date-badge" id="dateBadge">Juni 2026</span>
+        </div>
+    </header>
+
+    <!-- PAGE BODY -->
+    <div class="page-body" id="pageBody">
+
+        <!-- STEP 1 — FORM LAPORAN -->
+        <div class="step-view active" id="step1" style="display:contents;">
+
+            <!-- Left column: form fields -->
+            <div class="form-col">
+
+                <!-- Judul Laporan -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Judul Laporan
+                    </div>
+                    <input type="text" class="input-field" id="judulInput"
+                        placeholder="Tuliskan Judul Pelaporan" maxlength="100" autocomplete="off" />
+                    <div class="field-error" id="judulError"></div>
+                </div>
+
+                <!-- Pilih Kategori -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        Pilih Kategori Isu
+                    </div>
+                    <div class="kategori-grid">
+                        <div class="kategori-card" data-value="sampah">
+                            <div class="kategori-icon">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                                    <path d="M3 6h18v2H3V6zm2 3h14l-1.5 12h-11L5 9zm5 2v8h1v-8h-1zm3 0v8h1v-8h-1zM8 4h8v2H8V4z"/>
+                                </svg>
+                            </div>
+                            <span class="kategori-label">Sampah</span>
+                        </div>
+                        <div class="kategori-card" data-value="banjir">
+                            <div class="kategori-icon">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                                    <path d="M12 3L4 9v4.5c1.1-.3 2.3-.3 3.5.1.9.3 1.8.8 2.8.8s1.9-.5 2.8-.8c1.2-.4 2.4-.4 3.5-.1.9.3 1.8.8 2.8.8.4 0 .7-.1 1.1-.2V9l-8-6z"/>
+                                    <path d="M2 16.5c1.2-.4 2.4-.4 3.5-.1.9.3 1.8.8 2.8.8s1.9-.5 2.8-.8c1.2-.4 2.4-.4 3.5-.1.9.3 1.8.8 2.8.8s1.9-.5 2.8-.8c.6-.2 1.2-.3 1.8-.3v2.5c-.6 0-1.2.1-1.8.3-.9.3-1.8.8-2.8.8s-1.9-.5-2.8-.8c-1.2-.4-2.4-.4-3.5-.1-.9.3-1.8.8-2.8.8s-1.9-.5-2.8-.8c-1.2-.4-2.4-.4-3.5-.1-.9.3-1.8.8-2.8.8s-1.9-.5-2.8-.8c-.6-.2-1.2-.3-1.8-.3v-2.5c.6 0 1.2.1 1.8.3z"/>
+                                    <path d="M2 20.5c1.2-.4 2.4-.4 3.5-.1.9.3 1.8.8 2.8.8s1.9-.5 2.8-.8c1.2-.4 2.4-.4 3.5-.1.9.3 1.8.8 2.8.8s1.9-.5 2.8-.8c.6-.2 1.2-.3 1.8-.3V23c-.6 0-1.2.1-1.8.3-.9.3-1.8.8-2.8.8s-1.9-.5-2.8-.8c-1.2-.4-2.4-.4-3.5-.1-.9.3-1.8.8-2.8.8s-1.9-.5-2.8-.8c-1.2-.4-2.4-.4-3.5-.1-.9.3-1.8.8-2.8.8s-1.9-.5-2.8-.8c-.6-.2-1.2-.3-1.8-.3v-2.5c.6 0 1.2.1 1.8.3z" opacity=".6"/>
+                                </svg>
+                            </div>
+                            <span class="kategori-label">Banjir</span>
+                        </div>
+                        <div class="kategori-card" data-value="polusi">
+                            <div class="kategori-icon">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                                    <path d="M2 21h20v-2H2v2zm2-2v-7l5 2.5V12l5 2.5V12l5 2.5V19H4z"/>
+                                    <path d="M17 9.5a2.5 2.5 0 0 0-1.6-2.3 3.5 3.5 0 0 0-6.8-1A2.5 2.5 0 0 0 8 11h9a2.5 2.5 0 0 0 0-1.5z" opacity=".7"/>
+                                </svg>
+                            </div>
+                            <span class="kategori-label">Polusi</span>
+                        </div>
+                        <div class="kategori-card" data-value="penebangan">
+                            <div class="kategori-icon">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                                    <rect x="10" y="3" width="4" height="19" rx="1"/>
+                                    <path d="M14 6l5-2c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2l-5-2V6z"/>
+                                    <path d="M10 6.5h-2c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h2v-3z" opacity=".6"/>
+                                </svg>
+                            </div>
+                            <span class="kategori-label">Penebangan</span>
+                        </div>
+                        <div class="kategori-card" data-value="isu_air">
+                            <div class="kategori-icon">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                                    <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2C20 10.48 17.33 6.55 12 2z"/>
+                                </svg>
+                            </div>
+                            <span class="kategori-label">Isu Air</span>
+                        </div>
+                        <div class="kategori-card" data-value="lainnya">
+                            <div class="kategori-icon">
+                                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                                    <circle cx="5" cy="12" r="2.2"/>
+                                    <circle cx="12" cy="12" r="2.2"/>
+                                    <circle cx="19" cy="12" r="2.2"/>
+                                </svg>
+                            </div>
+                            <span class="kategori-label">Lainnya</span>
+                        </div>
+                    </div>
+                    <div class="field-error" id="kategoriError"></div>
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        Deskripsi Masalah
+                    </div>
+                    <textarea id="deskripsiInput" class="textarea-field"
+                        placeholder="Tuliskan detail masalah yang terjadi, sejak kapan dan dampak yg dirasahkan ...."
+                        maxlength="1000"></textarea>
+                    <div class="char-count" id="deskripsiCount">0/1000</div>
+                    <div class="field-error" id="deskripsiError"></div>
+                </div>
+
+            </div><!-- /form-col -->
+
+            <!-- Right column: foto + CTA -->
+            <div class="foto-col">
+
+                <!-- Bukti Foto -->
+                <div class="card foto-card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        Bukti Foto
+                    </div>
+                    <div class="drop-zone" id="dropZone">
+                        <input type="file" id="fotoInput" accept=".jpg,.jpeg,.png" />
+                        <img src="" alt="Preview foto" class="foto-preview" id="fotoPreview" />
+                        <button type="button" class="foto-remove" id="fotoRemove" title="Hapus foto">×</button>
+                        <div class="drop-content">
+                            <svg class="drop-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 16 12 12 8 16"/>
+                                <line x1="12" y1="12" x2="12" y2="21"/>
+                                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+                            </svg>
+                            <p class="drop-text">Klik atau seret foto ke sini</p>
+                            <span class="drop-sub">PNG, JPG up to 10 MB</span>
+                        </div>
+                    </div>
+                    <div class="field-error" id="fotoError"></div>
+                </div>
+
+                <!-- CTA Step 1 -->
+                <button type="button" class="btn-action" id="btnToStep2">
+                    Lanjut Pilih Lokasi
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </button>
+
+            </div><!-- /foto-col -->
+        </div><!-- /step1 -->
+
+        <!-- STEP 2 — PILIH LOKASI -->
+        <div class="step-view" id="step2" style="display:none;">
+
+            <!-- Map -->
+            <div class="map-col">
+                <div class="map-container-report">
+                    <div id="reportMap"></div>
+                </div>
+            </div>
+
+            <!-- Location search panel -->
+            <div class="location-col">
+
+                <!-- Search input -->
+                <div class="search-box-wrap">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="searchInput" class="search-input"
+                        placeholder="Cari alamat atau lokasi..." autocomplete="off" />
+                </div>
+
+                <!-- Results -->
+                <div class="search-results-card" id="searchResultsCard">
+                    <div class="search-placeholder" id="searchPlaceholder">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-300)">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <span>Ketik alamat untuk mencari,<br/>atau klik langsung pada peta</span>
+                    </div>
+                    <div id="searchResultsList"></div>
+                </div>
+
+                <!-- CTA Step 2 -->
+                <button type="button" class="btn-action" id="btnToStep3">
+                    Konfirmasi Lokasi
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Step 3: Review & Kirim -->
+        <div class="step-view" id="step3" style="display:none;">
+
+            <div class="review-col">
+
+                <div class="review-header">
+                    <h2 class="review-title">Detail Ringkasan Laporan</h2>
+                    <div class="review-actions">
+                        <button type="button" class="btn-secondary" id="btnEditDetail">
+                            Edit Detail
+                        </button>
+                        <button type="button" class="btn-action" id="btnKirimLaporan"
+                            style="width:auto;padding:0 24px;height:44px;font-size:14px;">
+                            Kirim Laporan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card bukti-card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        Bukti Visual
+                    </div>
+                    <img id="reviewFoto" src="" alt="Bukti foto" class="bukti-img" style="display:none;" />
+                    <div class="bukti-placeholder" id="reviewFotoPlaceholder">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-300)">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <span>Tidak ada foto</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        Deskripsi Laporan
+                    </div>
+                    <p class="desc-text" id="reviewDeskripsi">—</p>
+                </div>
+
+            </div>
+
+            <div class="review-side">
+
+                <div class="card kw-card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        Kategori &amp; Waktu
+                    </div>
+
+                    <div class="kw-icon-wrap">
+                        <div class="kw-badge" id="reviewKategoriEmoji">📋</div>
+                        <span class="kw-name" id="reviewKategoriName">—</span>
+                    </div>
+
+                    <div class="kw-divider"></div>
+
+                    <div class="kw-row">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <span id="reviewDate">—</span>
+                    </div>
+                    <div class="kw-row">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span id="reviewTime">—</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="10" r="3"/>
+                            <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"/>
+                        </svg>
+                        Lokasi
+                    </div>
+                    <div class="mini-map-wrap">
+                        <div id="miniMap"></div>
+                        <div class="mini-map-coords" id="miniMapCoords"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- STEP 4 — SUCCESS-->
+        <div class="step-view" id="step4" style="display:none;">
+            <div class="success-wrapper">
+
+                <div class="success-circles">
+                    <div class="success-circle-outer"></div>
+                    <div class="success-circle-mid"></div>
+                    <div class="success-circle-inner">
+                        <svg class="success-check" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="success-title">LAPORAN BERHASIL TERKIRIM</h2>
+                    <p class="success-desc">
+                        Terimakasih telah berkontribusi menjaga lingkungan<br/>
+                        Laporan anda sedang diproses untuk penanganan lebih lanjut
+                    </p>
+                </div>
+
+                <p class="success-countdown" id="successCountdown">Mengalihkan dalam 5 detik...</p>
+
+                <div class="success-actions">
+                    <button type="button" class="btn-secondary" id="btnSeeHistory">Lihat Riwayat</button>
+                    <button type="button" class="btn-action" id="btnSeeProfile">Lihat Profil</button>
+                </div>
+
+            </div>
+        </div><!-- /step4 -->
+
+    </div><!-- /page-body -->
+</div><!-- /main-content -->
+
+
+</body>
+</html>

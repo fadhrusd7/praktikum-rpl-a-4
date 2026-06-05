@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
   setDateBadge();
-  loadUser();
+ _loadUserInfo(); // Ganti ini
   bindLogout();
 
   const id = getIdFromUrl();
@@ -50,24 +50,6 @@ function setDateBadge() {
 }
 
 // ── User Info ──────────────────────────────────────────────
-async function loadUser() {
-  const cachedName  = localStorage.getItem('user_name')  || 'Nama Pengguna';
-  const cachedEmail = localStorage.getItem('user_email') || 'email@gmail.com';
-
-  _setUserDOM(cachedName, cachedEmail);
-
-  const user = await getMe();
-  if (!user) return;
-
-  const displayName = [user.nama_depan, user.nama_belakang]
-    .filter(Boolean).join(' ').trim() || user.nama || user.username || cachedName;
-  const email = user.email || cachedEmail;
-
-  _setUserDOM(displayName, email);
-  localStorage.setItem('user_name', displayName);
-  localStorage.setItem('user_email', email);
-}
-
 function _loadUserInfo() {
   const token = localStorage.getItem('auth_token')
   const cachedName  = localStorage.getItem('user_name')  || 'Nama Pengguna'
@@ -159,20 +141,11 @@ function buildLeftCol(report, status) {
 
   const rejectionBox = status === 'ditolak' ? buildRejectionBox(report) : '';
   
-  // Get image source - handle Supabase file_path
   let imgSrc = '';
   if (report.photos && report.photos.length > 0) {
-    const filePath = report.photos[0].file_path;
-    // If it's a relative path (doesn't start with http), construct Supabase URL
-    if (filePath && !filePath.startsWith('http')) {
-      // Supabase format: https://[project].supabase.co/storage/v1/object/public/[bucket]/[path]
-      imgSrc = `https://bsoaqugvzufxhygwhbhs.supabase.co/storage/v1/object/public/reports/${filePath}`;
-    } else {
-      imgSrc = filePath ?? '';
-    }
+      imgSrc = report.photos[0].url ?? '';
   }
   
-  // Fallback to other possible paths
   if (!imgSrc) {
     imgSrc = report.image_url ?? report.photo_url ?? report.image ?? '';
   }
@@ -227,17 +200,21 @@ function buildRejectionBox(report) {
 function buildTimeline(report, status) {
   if (!logTimeline) return;
 
-  const logItems = buildTimelineFromLogs(report);
-  if (logItems.length > 0) {
-    renderTimelineItems(logItems);
-    return;
-  }
+  const sentAt     = pickTime(report, ['created_at']);
+  const reviewAt   = pickLogTime(report, ['menunggu_validasi', 'tertunda'], ['diterima', 'ditinjau'])
+                  || pickTime(report, ['reviewed_at', 'created_at']);
+  const verifiedAt = pickLogTime(report, ['terverifikasi'], ['verifikasi', 'terverifikasi'])
+                  || pickTime(report, ['verified_at', 'validated_at', 'updated_at']);
+  const rejectedAt = pickLogTime(report, ['ditolak'], ['ditolak'])
+                  || pickTime(report, ['rejected_at', 'validated_at', 'updated_at']);
+  const resolvedAt = pickLogTime(report, ['selesai'], ['selesai'])
+                  || pickTime(report, ['resolved_at', 'completed_at', 'updated_at']);
 
-  const createdAt   = fmtDate(report.created_at);
-  const reviewedAt  = fmtDate(report.reviewed_at  ?? report.updated_at);
-  const resolvedAt  = fmtDate(report.resolved_at  ?? report.completed_at ?? report.updated_at);
-  const rejectedAt  = fmtDate(report.rejected_at  ?? report.validated_at ?? report.updated_at);
-  const verifiedAt  = fmtDate(report.verified_at  ?? report.validated_at ?? report.updated_at);
+  const createdAt   = fmtDate(sentAt);
+  const reviewedAt  = fmtDate(reviewAt);
+  const verifiedTime = fmtDate(verifiedAt);
+  const rejectedTime = fmtDate(rejectedAt);
+  const resolvedTime = fmtDate(resolvedAt);
 
   let items = [];
 
@@ -248,40 +225,26 @@ function buildTimeline(report, status) {
     ];
   } else if (status === 'terverifikasi') {
     items = [
-      { label: 'Laporan diverifikasi', time: verifiedAt, dotClass: 'dot-green-light' },
+      { label: 'Laporan diverifikasi', time: verifiedTime, dotClass: 'dot-green-light' },
       { label: 'Sedang ditinjau',      time: reviewedAt, dotClass: 'dot-yellow' },
       { label: 'Laporan dikirim',      time: createdAt,  dotClass: 'dot-green' },
     ];
   } else if (status === 'selesai') {
     items = [
-      { label: 'Laporan selesai',      time: resolvedAt, dotClass: 'dot-gray'   },
-      { label: 'Laporan diverifikasi', time: verifiedAt, dotClass: 'dot-green-light' },
+      { label: 'Laporan selesai',      time: resolvedTime, dotClass: 'dot-gray'   },
+      { label: 'Laporan diverifikasi', time: verifiedTime, dotClass: 'dot-green-light' },
       { label: 'Sedang ditinjau',      time: reviewedAt, dotClass: 'dot-yellow' },
       { label: 'Laporan dikirim',      time: createdAt,  dotClass: 'dot-green'  },
     ];
   } else if (status === 'ditolak') {
     items = [
-      { label: 'Laporan ditolak', time: rejectedAt, dotClass: 'dot-red'    },
+      { label: 'Laporan ditolak', time: rejectedTime, dotClass: 'dot-red'    },
       { label: 'Sedang ditinjau', time: reviewedAt, dotClass: 'dot-yellow' },
       { label: 'Laporan dikirim', time: createdAt,  dotClass: 'dot-green'  },
     ];
   }
 
   renderTimelineItems(items);
-}
-
-function buildTimelineFromLogs(report) {
-  const logs = Array.isArray(report.logs) ? report.logs : [];
-  if (logs.length === 0) return [];
-
-  return logs
-    .slice()
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .map(log => ({
-      label: log.aksi || getStatusLabel(normalizeStatus(log.status)),
-      time: fmtDate(log.created_at),
-      dotClass: getDotClass(normalizeStatus(log.status)),
-    }));
 }
 
 function renderTimelineItems(items) {
@@ -294,6 +257,31 @@ function renderTimelineItems(items) {
       </div>
     </div>
   `).join('');
+}
+
+function pickTime(report, keys) {
+  for (const key of keys) {
+    if (report?.[key]) return report[key];
+  }
+  return null;
+}
+
+function pickLogTime(report, statuses = [], actionKeywords = []) {
+  const logs = Array.isArray(report?.logs) ? report.logs : [];
+  const normalizedStatuses = statuses.map(normalizeStatus);
+  const keywords = actionKeywords.map(keyword => keyword.toLowerCase());
+
+  const match = logs
+    .slice()
+    .reverse()
+    .find(log => {
+      const status = normalizeStatus(log.status);
+      const action = String(log.aksi || '').toLowerCase();
+      return normalizedStatuses.includes(status)
+        || keywords.some(keyword => action.includes(keyword));
+    });
+
+  return match?.created_at || null;
 }
 
 // ── Map ────────────────────────────────────────────────────────
@@ -330,7 +318,7 @@ function initMap(report) {
 // ── Helpers ────────────────────────────────────────────────────
 function normalizeStatus(s) {
   const map = {
-    pending: 'tertunda', tertunda: 'tertunda', menunggu_validasi: 'tertunda',
+    pending: 'tertunda', tertunda: 'tertunda',
     verified: 'terverifikasi', terverifikasi: 'terverifikasi',
     completed: 'selesai', selesai: 'selesai',
     rejected: 'ditolak', ditolak: 'ditolak',
@@ -343,39 +331,7 @@ function getStatusLabel(s) {
   return labels[s] ?? s;
 }
 
-function getDotClass(status) {
-  const classes = {
-    tertunda: 'dot-yellow',
-    terverifikasi: 'dot-green-light',
-    selesai: 'dot-gray',
-    ditolak: 'dot-red',
-  };
-  return classes[status] || 'dot-green';
-}
-
 function fmtDate(iso) {
-  if (!iso) return '-';
-  const d = new Date(iso);
-  if (isNaN(d)) return '-';
-
-  const tgl = new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'Asia/Jakarta',
-  }).format(d);
-
-  const jam = new Intl.DateTimeFormat('id-ID', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Jakarta',
-  }).format(d).replace('.', ':');
-
-  return `${tgl}, ${jam} WIB`;
-}
-
-function fmtDateLegacy(iso) {
   if (!iso) return '—';
   const d = new Date(iso);
   if (isNaN(d)) return '—';

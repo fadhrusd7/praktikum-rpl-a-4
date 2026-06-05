@@ -2,34 +2,41 @@ import { getProfile, updateProfile, getUserStats, changePassword, deleteAccount,
 import { showToast, showConfirmModal, closeModal, formatMonthYear, setActiveSidebar, updateNavbarTitle, showLoading, hideLoading, setSidebarUser, initTopbarDate, validateImageFile } from './profile-common.js';
 
 /* ================================================================== */
-/*  LOAD PROFILE                                                        */
+/* LOAD PROFILE                                                        */
 /* ================================================================== */
 
 /**
  * Ambil data profil dari API dan isi elemen-elemen halaman.
  */
-
-
 async function loadProfile() {
     try {
         const response = await getProfile();
         const user = response.data || response;
 
-        // Avatar
+        // 1. Benerin pemanggilan nama (gabungin nama depan & belakang, atau pakai username)
+        const fullName = [user.nama_depan, user.nama_belakang].filter(Boolean).join(" ").trim() 
+                         || user.username 
+                         || "Pengguna";
+
+        // 2. Avatar: Pakai foto asli kalau ada, kalau kosong pakai inisial nama
         const avatarImg = document.getElementById("profile-avatar-img");
-        if (avatarImg && user.avatar) {
-            avatarImg.src = user.avatar;
-            avatarImg.alt = `Foto Profil ${user.name || ""}`;
+        if (avatarImg) {
+            // Bikin URL fallback pakai inisial fullName (bold=true biar teksnya tebel)
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=E0FBD2&color=00AA13&bold=true`;
+            
+            // Cek user.avatar, user.foto, atau user.foto_profil (tergantung nama kolom di database lo)
+            avatarImg.src = user.avatar || user.foto || user.foto_profil || fallbackAvatar;
+            avatarImg.alt = `Foto Profil ${fullName}`;
         }
 
-        // Nama & Email (card utama)
+        // 3. Nama & Email (card utama)
         const nameEl  = document.getElementById("profile-name");
         const emailEl = document.getElementById("profile-email");
-        if (nameEl)  nameEl.textContent  = user.name  || "-";
+        if (nameEl)  nameEl.textContent  = fullName;
         if (emailEl) emailEl.textContent = user.email || "-";
 
-        // Sidebar
-        setSidebarUser({ name: user.name, email: user.email });
+        // 4. Update Sidebar pakai data yang udah bener
+        setSidebarUser({ name: fullName, email: user.email });
 
     } catch (err) {
         console.error("[loadProfile] error:", err);

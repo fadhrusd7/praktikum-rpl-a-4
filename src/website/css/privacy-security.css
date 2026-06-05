@@ -214,7 +214,15 @@
   font-size: 14px;
   font-weight: 700;
   border-radius: var(--radius-md);
-  border-width: 1.5px;
+  
+  color: #dc2626 !important; 
+  border: 2px solid #dc2626 !important; 
+  background-color: transparent !important;
+  transition: all 0.2s ease;
+}
+
+.delete-account-section .btn--danger-outline:hover {
+  background-color: #fef2f2 !important; 
 }
 
 /* ================================================================
