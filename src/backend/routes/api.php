@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\FeedbackController;
 
 // PUBLIC
 
@@ -45,7 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile',     [UserController::class, 'profile']);      
     Route::put('/user/profile',     [UserController::class, 'updateProfile']);
     Route::put('/user/change-password',  [UserController::class, 'changePassword']);
-    Route::delete('/user/account',       [UserController::class, 'deleteAccount']); 
+    Route::delete('/user/account',       [UserController::class, 'deleteAccount']);
+    
+    // Feedback (User buat feedback)
+    Route::post('/feedbacks', [FeedbackController::class, 'store']);
 });
 
 // ADMIN
@@ -61,4 +65,9 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'is.admin'])->group(function
     Route::patch('/reports/{id}/validate', [AdminReportController::class, 'validate']);
     Route::patch('/reports/{id}/status',   [AdminReportController::class, 'updateStatus']);
     Route::delete('/reports/{id}',         [AdminReportController::class, 'destroy']);
+    
+    // Feedback Management
+    Route::get('/feedbacks/stats',   [FeedbackController::class, 'stats']);
+    Route::get('/feedbacks',         [FeedbackController::class, 'index']);
+    Route::delete('/feedbacks/{id}', [FeedbackController::class, 'destroy']);
 });
