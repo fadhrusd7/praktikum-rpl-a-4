@@ -1,15 +1,3 @@
-/**
- * history.js — logic halaman Riwayat Laporan
- * API: GET /api/reports/my  (auth:sanctum)
- *      GET /api/auth/me     (auth:sanctum) → sidebar
- *      POST /api/auth/logout               → sidebar
- *
- * FIX LOG:
- *  - Hapus import auth-util.js (file tidak ada → ES Module crash)
- *  - loadUser() inline langsung di sini
- *  - setPageTitle aman dipanggil meski .page-title tidak ada
- */
-
 import { getMyReports, getMe, logout } from './history-api.js'
 
 // ── Auth guard ────────────────────────────────────────────────────
@@ -18,6 +6,7 @@ if (!localStorage.getItem('auth_token')) window.location.replace(LOGIN_PATH)
 
 // ── Constants ─────────────────────────────────────────────────────
 const STATUS_META = {
+  menunggu_validasi: { label: 'Menunggu Validasi', cls: 'badge-tertunda' },
   tertunda:      { label: 'Tertunda',      cls: 'badge-tertunda' },
   terverifikasi: { label: 'Terverifikasi', cls: 'badge-terverifikasi' },
   selesai:       { label: 'Selesai',       cls: 'badge-selesai' },
@@ -120,7 +109,6 @@ function setPageTitle(name) {
   const el = document.querySelector('.page-title')
   if (!el) return
   el.textContent = name ? `Riwayat` : 'Riwayat'
-  // Catatan: title tidak perlu nama user di desain mockup, cukup "Riwayat"
 }
 
 // ── Data loading ──────────────────────────────────────────────────
@@ -186,26 +174,32 @@ function renderTable() {
     const status  = (r.status || 'tertunda').toLowerCase()
     const sMeta   = STATUS_META[status] || { label: status, cls: 'badge-tertunda' }
     const idLabel = r.id_laporan || genId(r.id, r.created_at)
+    
+    // Kategori text only (tanpa emoji)
     const kat     = (r.kategori || '').toLowerCase()
     const katName = kat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || '—'
-    const emoji   = KAT_EMOJI[kat] || '📋'
+    
     const { dayName, dateStr, timeStr } = fmtDate(r.created_at)
 
     return `
       <tr class="table-row">
         <td>
-          <span class="row-judul">${esc(r.judul || '—')}</span>
-          <div class="row-meta">
-            <span class="row-id">${esc(idLabel)}</span>
-            <span class="status-badge ${sMeta.cls}">${sMeta.label}</span>
+          <div class="report-title-cell">
+            <span class="row-judul">${esc(r.judul || '—')}</span>
+            <div class="report-meta">
+              <span class="report-id">${esc(idLabel)}</span>
+              <span class="badge ${sMeta.cls}">${sMeta.label}</span>
+            </div>
           </div>
         </td>
-        <td class="col-kategori">
-          <span class="cat-badge">${emoji} ${esc(katName)}</span>
+        <td>
+          <span class="kategori-badge">${esc(katName)}</span>
         </td>
-        <td class="col-waktu">
-          <span class="waktu-day">${dayName}, ${dateStr}</span>
-          <span class="waktu-time">${timeStr} WIB</span>
+        <td>
+          <div class="waktu-cell">
+            <span class="waktu-day">${dayName}, ${dateStr}</span>
+            <span class="waktu-time">${timeStr} WIB</span>
+          </div>
         </td>
         <td style="text-align:right">
           <button class="btn-detail" onclick="goDetail(${r.id})">Detail</button>

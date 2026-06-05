@@ -13,7 +13,6 @@
 </head>
 <body>
 
-    <!-- ===================== SIDEBAR ===================== -->
  <aside class="sidebar" id="sidebar">
     <div class="sidebar-top">
         <div class="logo">
@@ -93,183 +92,87 @@
         </div>
     </div>
 </aside>
-    <!-- ===================== END SIDEBAR ===================== -->
 
-
-    <!-- ===================== MAIN CONTENT ===================== -->
     <main class="main-content">
-
-        <!-- TOPBAR -->
         <header class="topbar">
             <div class="topbar__left">
                 <a href="profile-users.html" class="topbar__back-btn" aria-label="Kembali ke halaman profil">
                     <span class="topbar__back-icon" aria-hidden="true">&lt;</span>
                 </a>
-                <h1 class="topbar__title">Privasi &amp; Keamanan</h1>
+                <h1 class="topbar__title">Privasi & Keamanan</h1>
             </div>
             <div class="topbar__right">
                 <span class="topbar__date" id="topbar-date">Juni 2026</span>
             </div>
         </header>
-        <!-- END TOPBAR -->
 
-        <!-- PAGE BODY -->
         <section class="page-body page-body--privacy-security">
-
             <div class="privacy-security-layout">
-
-                <!-- LEFT COLUMN: Change Password -->
+                
                 <div class="privacy-security-layout__left">
-
-                    <!-- Change Password Card -->
-                    <div class="change-password-card card" id="change-password-section">
+                    <div class="change-password-card card">
                         <h2 class="card__title">Ganti Sandi</h2>
-
-                        <form
-                            id="change-password-form"
-                            class="form"
-                            method="POST"
-                            novalidate
-                        >
-
-                            <div class="form__group" id="group-old-password">
-                                <label for="input-old-password" class="form__label">Sandi Lama</label>
+                        
+                        <form id="form-change-password" class="form">
+                            <div class="form__group">
+                                <label class="form__label">Sandi Lama</label>
                                 <div class="form__input-wrapper form__input-wrapper--password">
-                                    <input
-                                        type="password"
-                                        id="input-old-password"
-                                        name="old_password"
-                                        class="form__input form__input--password"
-                                        placeholder=""
-                                        autocomplete="current-password"
-                                        required
-                                    >
-                                    <button
-                                        type="button"
-                                        class="form__password-toggle"
-                                        id="toggle-old-password"
-                                        aria-label="Tampilkan atau sembunyikan sandi lama"
-                                        data-target="input-old-password"
-                                    >
-                                        <span class="form__password-toggle-icon" aria-hidden="true"></span>
+                                    <input type="password" id="old-password" class="form__input form__input--password">
+                                    <button type="button" class="form__password-toggle">
+                                        <span class="form__password-toggle-icon"></span>
                                     </button>
                                 </div>
-                                <span class="form__error" id="error-old-password" role="alert" aria-live="polite"></span>
                             </div>
 
-                            <div class="form__group" id="group-new-password">
-                                <label for="input-new-password" class="form__label">Sandi Baru</label>
+                            <div class="form__group">
+                                <label class="form__label">Sandi Baru</label>
                                 <div class="form__input-wrapper form__input-wrapper--password">
-                                    <input
-                                        type="password"
-                                        id="input-new-password"
-                                        name="new_password"
-                                        class="form__input form__input--password"
-                                        placeholder=""
-                                        autocomplete="new-password"
-                                        required
-                                        minlength="8"
-                                    >
-                                    <button
-                                        type="button"
-                                        class="form__password-toggle"
-                                        id="toggle-new-password"
-                                        aria-label="Tampilkan atau sembunyikan sandi baru"
-                                        data-target="input-new-password"
-                                    >
-                                        <span class="form__password-toggle-icon" aria-hidden="true"></span>
+                                    <input type="password" id="new-password" class="form__input form__input--password">
+                                    <button type="button" class="form__password-toggle">
+                                        <span class="form__password-toggle-icon"></span>
                                     </button>
                                 </div>
-                                <span class="form__error" id="error-new-password" role="alert" aria-live="polite"></span>
                             </div>
 
-                            <div class="form__group" id="group-confirm-password">
-                                <label for="input-confirm-password" class="form__label">Konfirmasi Sandi</label>
+                            <div class="form__group">
+                                <label class="form__label">Konfirmasi Sandi</label>
                                 <div class="form__input-wrapper form__input-wrapper--password">
-                                    <input
-                                        type="password"
-                                        id="input-confirm-password"
-                                        name="confirm_password"
-                                        class="form__input form__input--password"
-                                        placeholder=""
-                                        autocomplete="new-password"
-                                        required
-                                        minlength="8"
-                                    >
-                                    <button
-                                        type="button"
-                                        class="form__password-toggle"
-                                        id="toggle-confirm-password"
-                                        aria-label="Tampilkan atau sembunyikan konfirmasi sandi"
-                                        data-target="input-confirm-password"
-                                    >
-                                        <span class="form__password-toggle-icon" aria-hidden="true"></span>
+                                    <input type="password" id="confirm-password" class="form__input form__input--password">
+                                    <button type="button" class="form__password-toggle">
+                                        <span class="form__password-toggle-icon"></span>
                                     </button>
                                 </div>
-                                <span class="form__error" id="error-confirm-password" role="alert" aria-live="polite"></span>
                             </div>
 
-                            <div class="form__actions">
-                                <button
-                                    type="submit"
-                                    class="btn btn--primary"
-                                    id="btn-change-password"
-                                >
-                                    Simpan
-                                </button>
-                            </div>
-
+                            <button type="submit" class="btn btn--primary">Simpan</button>
                         </form>
                     </div>
-                    <!-- END Change Password Card -->
-
                 </div>
-                <!-- END LEFT COLUMN -->
 
-
-                <!-- RIGHT COLUMN: Privacy Preferences + Delete Account -->
                 <div class="privacy-security-layout__right">
-
-                    <!-- Privacy Preferences Card -->
-                    <div class="privacy-preferences-card card" id="privacy-preferences-section">
+                    
+                    <div class="privacy-preferences-card card">
                         <h2 class="card__title">Preferensi Privasi</h2>
-
                         <div class="toggle-list">
-
-                            <div class="toggle-item" id="toggle-item-show-name">
-                                <label class="toggle-item__label" for="toggle-show-name">
+                            
+                            <div class="toggle-item">
+                                <label class="toggle-item__label" for="toggle-public-name">
                                     <span class="toggle-item__text">Tampilkan nama di laporan publik</span>
                                     <div class="toggle-item__control">
-                                        <input
-                                            type="checkbox"
-                                            id="toggle-show-name"
-                                            name="show_name_public"
-                                            class="toggle-item__input visually-hidden"
-                                            role="switch"
-                                            aria-checked="true"
-                                            checked
-                                        >
-                                        <span class="toggle-item__track" aria-hidden="true">
+                                        <input type="checkbox" id="toggle-public-name" class="toggle-item__input" checked>
+                                        <span class="toggle-item__track">
                                             <span class="toggle-item__thumb"></span>
                                         </span>
                                     </div>
                                 </label>
                             </div>
 
-                            <div class="toggle-item" id="toggle-item-share-location">
+                            <div class="toggle-item">
                                 <label class="toggle-item__label" for="toggle-share-location">
                                     <span class="toggle-item__text">Bagikan lokasi saat laporan</span>
                                     <div class="toggle-item__control">
-                                        <input
-                                            type="checkbox"
-                                            id="toggle-share-location"
-                                            name="share_location"
-                                            class="toggle-item__input visually-hidden"
-                                            role="switch"
-                                            aria-checked="true"
-                                            checked
-                                        >
-                                        <span class="toggle-item__track" aria-hidden="true">
+                                        <input type="checkbox" id="toggle-share-location" class="toggle-item__input" checked>
+                                        <span class="toggle-item__track">
                                             <span class="toggle-item__thumb"></span>
                                         </span>
                                     </div>
@@ -278,32 +181,17 @@
 
                         </div>
                     </div>
-                    <!-- END Privacy Preferences Card -->
 
-
-                    <!-- Delete Account Section -->
-                    <div class="delete-account-section" id="delete-account-section">
-                        <button
-                            type="button"
-                            class="btn btn--danger-outline"
-                            id="btn-delete-account"
-                            aria-label="Hapus akun secara permanen"
-                        >
+                    <div class="delete-account-section">
+                        <button type="button" id="btn-delete-account" class="btn btn--danger-outline">
                             Hapus Akun
                         </button>
                     </div>
-                    <!-- END Delete Account Section -->
 
                 </div>
-                <!-- END RIGHT COLUMN -->
-
             </div>
-
         </section>
-        <!-- END PAGE BODY -->
-
     </main>
-    <!-- ===================== END MAIN CONTENT ===================== -->
 
     <!-- Delete Account Confirmation Modal -->
     <div

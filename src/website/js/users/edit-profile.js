@@ -9,26 +9,37 @@ async function loadProfileForm() {
         const response = await getProfile();
         const user = response.data || response;
 
+        // 1. Ambil Nama Depan & Belakang (cek properti nama_depan/nama_belakang dari Laravel)
+        let firstName = user.nama_depan || user.first_name || "";
+        let lastName  = user.nama_belakang || user.last_name || "";
+
+        // Fallback kalau API cuma ngasih field 'name' atau 'username' jadi satu string
+        if (!firstName && !lastName) {
+            const fallbackName = user.username || user.name || "Pengguna";
+            const parts = fallbackName.trim().split(/\s+/);
+            firstName = parts[0] || "";
+            lastName  = parts.slice(1).join(" ") || "";
+        }
+
+        const fullName = [firstName, lastName].filter(Boolean).join(" ").trim();
+
+        // 2. Avatar: Pakai foto asli, kalau kosong otomatis bikin inisial dari fullName
         const previewImg = document.getElementById("photo-preview-img");
-        if (previewImg && user.avatar) {
-            previewImg.src = user.avatar;
+        if (previewImg) {
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=E0FBD2&color=00AA13&bold=true`;
+            previewImg.src = user.avatar || user.foto || user.foto_profil || fallbackAvatar;
         }
 
-        if (user.first_name !== undefined) {
-            _setVal("input-first-name", user.first_name);
-            _setVal("input-last-name",  user.last_name || "");
-        } else if (user.name) {
-            const parts = user.name.trim().split(/\s+/);
-            _setVal("input-first-name", parts[0] || "");
-            _setVal("input-last-name",  parts.slice(1).join(" ") || "");
-        }
-
-        _setVal("input-phone", user.phone || "");
+        // 3. Isi form input pakai data yang udah bener
+        _setVal("input-first-name", firstName);
+        _setVal("input-last-name",  lastName);
+        // Tambahin fallback barangkali nama kolomnya no_telp atau kota di database lo
+        _setVal("input-phone", user.phone || user.no_telp || "");
         _setVal("input-email", user.email || "");
-        _setVal("input-city",  user.city  || "");
+        _setVal("input-city",  user.city  || user.kota || "");
 
-        // Sidebar
-        setSidebarUser({ name: user.name || `${user.first_name} ${user.last_name}`, email: user.email });
+        // 4. Update Sidebar pakai fullName
+        setSidebarUser({ name: fullName, email: user.email || "-" });
 
     } catch (err) {
         console.error("[loadProfileForm] error:", err);

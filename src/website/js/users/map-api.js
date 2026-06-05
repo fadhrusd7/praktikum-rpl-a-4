@@ -9,6 +9,7 @@ const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_AP
 export async function getMapReports() {
   const res = await fetch(`${BASE_URL}/reports/map`, {
     method:  'GET',
+    cache:   'no-store',
     headers: { 'Accept': 'application/json' }
   })
 

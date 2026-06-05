@@ -113,8 +113,12 @@ export function renderReview(data) {
   const category = data.kategori || 'lainnya'
   setText('reviewDeskripsi', data.deskripsi || '—')
   setText('reviewKategoriName', CATEGORY_LABELS[category] || category)
-  setText('reviewKategoriEmoji', CATEGORY_EMOJIS[category] || '📋')
 
+  const emojiEl = document.getElementById('reviewKategoriEmoji')
+  if (emojiEl) {
+    emojiEl.innerHTML = CATEGORY_EMOJIS[category] || '📋'
+  }
+  
   const now = new Date()
   setText('reviewDate', new Intl.DateTimeFormat('id-ID', {
     day: 'numeric',
