@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Laporan — Lestari</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="../../css/map-users.css" />
+  <link rel="stylesheet" href="../../css/history-detail.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-top">
+
+    <!-- Logo -->
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="../../assets/Logo.png" alt="Logo Lestari" class="logo-img">
+            </div>
+            <div>
+                <div class="logo-text">Lestari</div>
+                <div class="logo-tagline">Lapor Isu Lingkungan</div>
+            </div>
+        </div>
+
+    <!-- Nav -->
+    <nav class="nav-menu">
+      <ul>
+        <li>
+          <a href="../dashboard/map.html" class="nav-item">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"/>
+              </svg>
+            </span>
+            Peta
+          </a>
+        </li>
+        <li>
+          <a href="../laporan/report.html" class="nav-item">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </span>
+            Laporan
+          </a>
+        </li>
+        <li>
+          <a href="riwayat.html" class="nav-item active">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"/>
+              </svg>
+            </span>
+            Riwayat
+          </a>
+        </li>
+        <li>
+          <a href="../profil/profil.html" class="nav-item">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            Profil
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- User -->
+  <div class="sidebar-bottom">
+    <div class="sidebar-divider"></div>
+    <div class="user-profile">
+      <div class="user-avatar">
+        <svg viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="20" fill="#e5e7eb"/>
+          <circle cx="20" cy="16" r="7" fill="#9ca3af"/>
+          <path d="M4 36c0-8 7-13 16-13s16 5 16 13" fill="#9ca3af"/>
+        </svg>
+        <span class="user-status"></span>
+      </div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarUserName">Nama Pengguna</div>
+        <div class="user-email" id="sidebarUserEmail">email@gmail.com</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="main-content">
+ 
+      <!-- Header / Breadcrumb -->
+      <header class="page-header">
+        <nav class="breadcrumb">
+          <a class="breadcrumb-link" href="./riwayat.html">Riwayat</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current" id="breadcrumbId">—</span>
+        </nav>
+        <span class="date-badge" id="dateBadgeEl">—</span>
+      </header>
+ 
+      <!-- Body -->
+      <main class="page-body">
+ 
+        <!-- Title Row -->
+        <div class="detail-title-row">
+          <div class="detail-title-group">
+            <h1 class="detail-title" id="detailTitle">
+              <div class="sk-block sk-title skeleton"></div>
+            </h1>
+            <p class="detail-id" id="detailId">
+              <div class="sk-block sk-id skeleton"></div>
+            </p>
+          </div>
+          <span class="status-badge" id="statusBadge"></span>
+        </div>
+ 
+        <!-- Two Columns -->
+        <div class="detail-columns">
+ 
+          <!-- Left: Bukti + Deskripsi (+ rejection box if applicable) -->
+          <div class="detail-left" id="leftCol">
+            <!-- Filled by JS -->
+          </div>
+ 
+          <!-- Right: Map + Log Aktivitas -->
+          <div class="detail-right">
+ 
+            <!-- Map Card -->
+            <div class="card" style="padding:20px 22px">
+              <div class="map-card-title">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                </svg>
+                Deskripsi Laporan
+              </div>
+              <div class="map-wrap">
+                <div id="detail-map"></div>
+                <div class="map-coords" id="mapCoords"></div>
+              </div>
+            </div>
+ 
+            <!-- Log Aktivitas Card -->
+            <div class="card">
+              <div class="log-card-title">LOG AKTIVITAS</div>
+              <div class="timeline" id="logTimeline">
+                <!-- Filled by JS -->
+              </div>
+            </div>
+ 
+          </div>
+        </div>
+ 
+      </main>
+    </div>
+  </div>
+ 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Page JS (module) -->
+  <script type="module" src="../../js/users/history-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+/* ================================================================
+   feedback.css — Lestari | Beri Masukan
+   Depends on: profile-common.css
+   ================================================================ */
+
+/* ── Page body modifier ──────────────────────────────────────── */
+.page-body--feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Intro text above card */
+.page-body__intro {
+  font-size: 14px;
+  color: var(--gray-500);
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+/* ── Feedback card ───────────────────────────────────────────── */
+.feedback-card {
+  max-width: 720px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.feedback-card .form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================================================================
+   STAR RATING SECTION
+   ================================================================ */
+.feedback-rating {
+  margin-bottom: 4px;
+}
+
+.feedback-rating__question {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+/* Fieldset reset */
+.star-rating {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Stars row */
+.star-rating__group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-direction: row-reverse; /* reverse for CSS-only hover trick */
+  justify-content: flex-end;
+}
+
+/* Hidden radio */
+.star-rating__input { display: none; }
+
+/* Star label */
+.star-rating__label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition);
+}
+
+.star-rating__label:hover { transform: scale(1.15); }
+
+/* Star icon — hollow by default */
+.star-rating__icon {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--gray-300, #d1d5db);
+  transition: color var(--transition), text-shadow var(--transition);
+  font-style: normal;
+  user-select: none;
+}
+
+/* Filled star — when radio is checked */
+.star-rating__input:checked ~ .star-rating__label .star-rating__icon,
+.star-rating__input:checked + .star-rating__label .star-rating__icon {
+  color: #f59e0b;
+}
+
+/* CSS-only hover: fill this star and all stars after it (reversed flex) */
+.star-rating__label:hover .star-rating__icon,
+.star-rating__label:hover ~ .star-rating__label .star-rating__icon {
+  color: #fbbf24;
+}
+
+/* Active/selected state via JS: .star--active added to label */
+.star-rating__label.star--active .star-rating__icon {
+  color: #f59e0b;
+  text-shadow: 0 0 8px rgba(251,191,36,.4);
+}
+
+/* ── Divider between rating and textarea ─────────────────────── */
+.feedback-divider {
+  border: none;
+  border-top: 1px solid var(--gray-100);
+  margin: 20px 0;
+}
+
+/* ── Label large variant ─────────────────────────────────────── */
+.form__label--lg {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* ── Feedback textarea ───────────────────────────────────────── */
+.form__textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--gray-900);
+  background: var(--white);
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.65;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form__textarea::placeholder { color: var(--gray-400); }
+
+.form__textarea:focus {
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 3px rgba(34,197,94,.1);
+}
+
+/* Char counter */
+.form__char-count {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.form__char-count--warn { color: #f59e0b; }
+.form__char-count--over { color: var(--red-500); }
+
+/* ================================================================
+   ATTACHMENT UPLOAD SECTION
+   ================================================================ */
+.attachment-upload {
+  margin-top: 4px;
+}
+
+/* Dashed dropzone */
+.attachment-upload__dropzone {
+  border: 2px dashed var(--gray-200);
+  border-radius: var(--radius-md);
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.attachment-upload__dropzone:hover,
+.attachment-upload__dropzone.drag-over {
+  border-color: var(--green-500);
+  background: var(--green-50);
+}
+
+/* Placeholder content (before file chosen) */
+.attachment-upload__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+/* Cloud upload icon */
+.attachment-upload__upload-icon {
+  display: block;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='16 16 12 12 8 16'/%3E%3Cline x1='12' y1='12' x2='12' y2='21'/%3E%3Cpath d='M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.attachment-upload__hint-primary {
+  font-size: 13px;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+.attachment-upload__hint-secondary {
+  font-size: 11px;
+  color: var(--gray-400);
+}
+
+.attachment-upload__choose-btn {
+  height: 34px;
+  padding: 0 16px;
+  font-size: 12px;
+  margin-top: 4px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+}
+
+/* Hidden native file input */
+.attachment-upload__input { display: none; }
+
+/* Preview state (after file chosen) */
+.attachment-upload__preview-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attachment-upload__preview-img {
+  max-width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+/* Remove (×) button on preview */
+.attachment-upload__remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.5);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  transition: background var(--transition);
+  z-index: 2;
+}
+
+.attachment-upload__remove-btn:hover { background: rgba(0,0,0,.75); }
+
+.attachment-upload__remove-icon {
+  display: block;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+/* ================================================================
+   SUBMIT BUTTON
+   ================================================================ */
+.feedback-card .form__actions {
+  margin-top: 24px;
+  padding-top: 0;
+}
+
+.feedback-card .btn--primary {
+  height: 46px;
+  padding: 0 36px;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 1199px) {
+  .feedback-card {
+    max-width: 100%;
+    padding: 24px 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .feedback-card {
+    padding: 20px 18px;
+  }
+
+  .star-rating__icon { font-size: 26px; }
+
+  .attachment-upload__dropzone { min-height: 120px; }
+
+  .feedback-card .btn--primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .feedback-card { padding: 18px 16px; }
+  .star-rating__icon { font-size: 24px; }
+  .star-rating__group { gap: 4px; }
+}

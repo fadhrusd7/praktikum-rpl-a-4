@@ -1,0 +1,17 @@
+{
+  "name": "auth-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check:secrets": "grep -rn 'supabase.co\\|sb_publishable\\|sb_secret\\|service_role' src/ && echo 'SECRET DITEMUKAN!' || echo 'Tidak ada secret di source code'"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+
+  
+}
