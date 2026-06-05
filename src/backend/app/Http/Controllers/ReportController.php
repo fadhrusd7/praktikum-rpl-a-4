@@ -138,7 +138,7 @@ class ReportController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data'    => $reports,
+                'data'    => $reports->map(fn($report) => $this->formatReport($report)),
             ], 200);
 
         } catch (\Exception $e) {
@@ -169,6 +169,7 @@ class ReportController extends Controller
             'photos'        => $report->photos->map(fn($photo) => [
                 'id'          => $photo->id,
                 'file_path'   => $photo->file_path,
+                'url'         => $photo->file_url,
                 'file_type'   => $photo->file_type,
                 'file_size'   => $photo->file_size,
                 'uploaded_at' => $photo->uploaded_at,
