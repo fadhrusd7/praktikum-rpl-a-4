@@ -1,16 +1,22 @@
 import { authAPI, adminAPI } from './api.js'
 
-const REDIRECT_LOGIN       = '/src/website/auth/login.html'
-const REDIRECT_ADMIN_LOGIN = '/src/website/admin/login.html'
-const REDIRECT_USER        = import.meta.env.VITE_REDIRECT_URL_USER  || '/src/website/users/dashboard/map.html'
-const REDIRECT_ADMIN       = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/src/website/admin/dashboard/dashboard-admin.html'
+const REDIRECT_LOGIN       = import.meta.env.VITE_REDIRECT_LOGIN || '/users/auth/login.html'
+const REDIRECT_ADMIN_LOGIN = import.meta.env.VITE_REDIRECT_ADMIN_LOGIN || '/admin/login/login-admin.html'
+const REDIRECT_USER        = import.meta.env.VITE_REDIRECT_URL_USER || '/users/dashboard/map-users.html'
+const REDIRECT_ADMIN       = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/admin/dashboard/dashboard-admin.html'
 
 // ─── Token helpers ────────────────────────────────────────────
 
-/** Simpan token + role setelah login berhasil */
-export function saveSession(token, role) {
-  localStorage.setItem('auth_token', token)
-  localStorage.setItem('auth_role',  role)
+// js/shared/session.js — update saveSession
+export function saveSession(token, role, user = {}) {
+  localStorage.setItem('auth_token',  token)
+  localStorage.setItem('auth_role',   role)
+  // Simpan nama sementara dari response login/register
+  // (akan di-overwrite oleh /api/auth/me yang lebih lengkap)
+  const displayName = [user.nama_depan, user.nama_belakang]
+    .filter(Boolean).join(' ').trim() || user.username || ''
+  if (displayName)  localStorage.setItem('user_name',  displayName)
+  if (user.email)   localStorage.setItem('user_email', user.email)
 }
 
 /** Hapus semua data sesi */

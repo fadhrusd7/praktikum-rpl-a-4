@@ -4,16 +4,16 @@
  * Halaman terpisah dari login user biasa.
  */
 
-import { adminAPI }         from './api.js'
-import { saveSession, getToken, getRole } from './session.js'
+import { adminAPI }         from '../shared/api.js'
+import { saveSession, getToken, getRole } from '../shared/session.js'
 import {
   validateEmail,
   showError,
   clearAllErrors,
   setLoading,
   initPasswordToggles
-} from './ui.js'
-import { showToast } from './toast.js'
+} from '../shared/ui.js'
+import { showToast } from '../shared/toast.js'
 
 const REDIRECT_ADMIN = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/admin/dashboard/dashboard-admin.html'
 
