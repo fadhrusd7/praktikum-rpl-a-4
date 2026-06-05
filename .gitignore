@@ -25,3 +25,5 @@ bootstrap/cache/
 # Postman
 .postman/
 postman/
+
+echo "dist/"
