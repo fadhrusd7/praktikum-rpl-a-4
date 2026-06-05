@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beri Masukan - Lestari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link rel="stylesheet" href="../../css/feedback.css" />
+    <link rel="stylesheet" href="../../css/profile-common.css" />
+
+</head>
+<body>
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="../../assets/Logo.png" alt="Logo Lestari" class="logo-img">
+            </div>
+            <div>
+                <div class="logo-text">Lestari</div>
+                <div class="logo-tagline">Lapor Isu Lingkungan</div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li>
+                    <a href="../dashboard/map-users.html" class="nav-item" data-page="peta">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                <circle cx="12" cy="9" r="2.5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Peta</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../laporan/report-users.html" class="nav-item" data-page="laporan">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Laporan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../riwayat/history-users.html" class="nav-item" data-page="riwayat">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="12 8 12 12 14 14"/>
+                                <path d="M3.05 11a9 9 0 1 1 .5 4M3 21v-6h6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Riwayat</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../profil/profile-users.html" class="nav-item active" data-page="profil">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Profil</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+        <div class="sidebar-divider"></div>
+        <div class="user-profile">
+            <div class="user-avatar">
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="20" fill="#E0FBD2"/>
+                    <circle cx="20" cy="16" r="7" fill="#00AA13"/>
+                    <ellipse cx="20" cy="34" rx="11" ry="8" fill="#00AA13"/>
+                </svg>
+                <span class="user-status"></span>
+            </div>
+            <div class="user-info">
+                <p class="user-name" id="sidebarUserName">Nama Pengguna</p>
+                <p class="user-email" id="sidebarUserEmail">email@gmail.com</p>
+            </div>
+        </div>
+    </div>
+</aside>
+    <!-- ===================== END SIDEBAR ===================== -->
+
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar__left">
+                <a href="profile-users.html" class="topbar__back-btn" aria-label="Kembali ke halaman profil">
+                    <span class="topbar__back-icon" aria-hidden="true">&lt;</span>
+                </a>
+                <h1 class="topbar__title">Beri Masukan</h1>
+            </div>
+            <div class="topbar__right">
+                <span class="topbar__date" id="topbar-date">Juni 2026</span>
+            </div>
+        </header>
+        <!-- END TOPBAR -->
+
+        <!-- PAGE BODY -->
+        <section class="page-body page-body--feedback">
+
+            <p class="page-body__intro">
+                Bantu kami meningkatkan layanan Lestari (lapor isu lingkungan).
+            </p>
+
+            <!-- FEEDBACK CARD -->
+            <div class="feedback-card card">
+
+                <form
+                    id="feedback-form"
+                    class="form"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    novalidate
+                >
+
+                    <!-- Rating Section -->
+                    <div class="feedback-rating" id="feedback-rating-section">
+                        <p class="feedback-rating__question">Berapa bintang untuk pengalaman Anda?</p>
+
+                        <fieldset class="star-rating" id="star-rating" aria-label="Rating pengalaman">
+                            <legend class="visually-hidden">Pilih rating bintang</legend>
+
+                            <div class="star-rating__group">
+
+                                <input
+                                    type="radio"
+                                    id="star-1"
+                                    name="rating"
+                                    value="1"
+                                    class="star-rating__input visually-hidden"
+                                >
+                                <label for="star-1" class="star-rating__label" aria-label="1 bintang">
+                                    <span class="star-rating__icon" aria-hidden="true">&#9734;</span>
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="star-2"
+                                    name="rating"
+                                    value="2"
+                                    class="star-rating__input visually-hidden"
+                                >
+                                <label for="star-2" class="star-rating__label" aria-label="2 bintang">
+                                    <span class="star-rating__icon" aria-hidden="true">&#9734;</span>
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="star-3"
+                                    name="rating"
+                                    value="3"
+                                    class="star-rating__input visually-hidden"
+                                >
+                                <label for="star-3" class="star-rating__label" aria-label="3 bintang">
+                                    <span class="star-rating__icon" aria-hidden="true">&#9734;</span>
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="star-4"
+                                    name="rating"
+                                    value="4"
+                                    class="star-rating__input visually-hidden"
+                                >
+                                <label for="star-4" class="star-rating__label" aria-label="4 bintang">
+                                    <span class="star-rating__icon" aria-hidden="true">&#9734;</span>
+                                </label>
+
+                                <input
+                                    type="radio"
+                                    id="star-5"
+                                    name="rating"
+                                    value="5"
+                                    class="star-rating__input visually-hidden"
+                                >
+                                <label for="star-5" class="star-rating__label" aria-label="5 bintang">
+                                    <span class="star-rating__icon" aria-hidden="true">&#9734;</span>
+                                </label>
+
+                            </div>
+
+                        </fieldset>
+
+                        <span class="form__error" id="error-rating" role="alert" aria-live="polite"></span>
+                    </div>
+                    <!-- END Rating Section -->
+
+                    <hr class="feedback-divider" aria-hidden="true">
+
+                    <!-- Feedback Text Section -->
+                    <div class="form__group" id="group-feedback-message">
+                        <label for="textarea-feedback" class="form__label form__label--lg">
+                            Tulis Masukkan atau Saran
+                        </label>
+                        <textarea
+                            id="textarea-feedback"
+                            name="message"
+                            class="form__textarea"
+                            placeholder="Ceritakan pengalaman Anda menggunakan website ini..."
+                            rows="6"
+                            maxlength="2000"
+                            aria-describedby="feedback-char-count"
+                        ></textarea>
+                        <span class="form__char-count" id="feedback-char-count" aria-live="polite">0 / 2000</span>
+                        <span class="form__error" id="error-feedback-message" role="alert" aria-live="polite"></span>
+                    </div>
+                    <!-- END Feedback Text Section -->
+
+                    <!-- Attachment Section -->
+                    <div class="form__group attachment-upload" id="attachment-upload-section">
+                        <p class="form__label form__label--lg">Lampirkan Foto (Opsional)</p>
+
+                        <div
+                            class="attachment-upload__dropzone"
+                            id="attachment-dropzone"
+                            role="button"
+                            tabindex="0"
+                            aria-label="Klik atau seret gambar ke area ini untuk melampirkan foto"
+                        >
+                            <div class="attachment-upload__placeholder" id="attachment-placeholder">
+                                <span class="attachment-upload__upload-icon" aria-hidden="true"></span>
+                                <p class="attachment-upload__hint-primary">Klik atau seret gambar ke sini</p>
+                                <p class="attachment-upload__hint-secondary">PNG, JPG up to 1MB</p>
+                                <label for="input-attachment" class="attachment-upload__choose-btn btn btn--secondary btn--sm">
+                                    Pilih File
+                                </label>
+                            </div>
+
+                            <div class="attachment-upload__preview-wrapper" id="attachment-preview-wrapper" hidden>
+                                <img
+                                    src=""
+                                    alt="Preview lampiran"
+                                    class="attachment-upload__preview-img"
+                                    id="attachment-preview-img"
+                                >
+                                <button
+                                    type="button"
+                                    class="attachment-upload__remove-btn"
+                                    id="btn-remove-attachment"
+                                    aria-label="Hapus lampiran"
+                                >
+                                    <span class="attachment-upload__remove-icon" aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <input
+                            type="file"
+                            id="input-attachment"
+                            name="attachment"
+                            class="attachment-upload__input visually-hidden"
+                            accept="image/jpeg, image/png"
+                            aria-label="Pilih file lampiran"
+                        >
+
+                        <span class="form__error" id="error-attachment" role="alert" aria-live="polite"></span>
+                    </div>
+                    <!-- END Attachment Section -->
+
+                    <!-- Action Buttons -->
+                    <div class="form__actions">
+                        <button
+                            type="submit"
+                            class="btn btn--primary"
+                            id="btn-submit-feedback"
+                        >
+                            Kirim
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+            <!-- END FEEDBACK CARD -->
+
+        </section>
+        <!-- END PAGE BODY -->
+
+    </main>
+    <!-- ===================== END MAIN CONTENT ===================== -->
+
+    <script type="module" src="../../js/users/feedback.js"></script>
+</body>
+</html>

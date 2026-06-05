@@ -1,0 +1,240 @@
+/* ================================================
+   RESPONSIVE.CSS — Lestari
+   ================================================ */
+
+/* === LARGE DESKTOP (≤1200px) === */
+@media (max-width: 1200px) {
+  .fitur-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+
+  .footer-grid .footer-col:last-child {
+    grid-column: span 1;
+  }
+
+  /* Auth: sedikit kurangi padding */
+  .auth-page > .auth-content {
+    padding: 48px 48px;
+  }
+}
+
+/* === TABLET (≤992px) === */
+@media (max-width: 992px) {
+  .navbar-links,
+  .navbar-actions {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .mobile-nav {
+    display: flex;
+  }
+
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 60px;
+    text-align: center;
+  }
+
+  .hero-visual {
+    height: 380px;
+    order: -1;
+  }
+
+  .hero-circle-main {
+    width: 300px;
+    height: 300px;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-stats {
+    justify-content: center;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .about-visual {
+    display: none;
+  }
+
+  .statistik-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  /* === AUTH TABLET === */
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sembunyikan panel visual di tablet */
+  .auth-visual {
+    display: none;
+  }
+
+  /* auth-content langsung di auth-page (login/register) */
+  .auth-page > .auth-content {
+    padding: 48px 40px;
+    justify-content: flex-start;
+    padding-top: 64px;
+  }
+
+  .auth-panel {
+    padding: 40px 40px;
+  }
+
+  .auth-panel .auth-content {
+    max-width: 100%;
+  }
+
+  /* ===================================== */
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-brand {
+    grid-column: span 2;
+  }
+}
+
+/* === MOBILE (≤640px) === */
+@media (max-width: 640px) {
+  .navbar-inner {
+    padding: 0 24px;
+  }
+
+  .hero-inner {
+    padding: 0 24px;
+  }
+
+  .section-inner {
+    padding: 0 24px;
+  }
+
+  .hero-circle-main {
+    width: 240px;
+    height: 240px;
+  }
+
+  .card-1, .card-2, .card-3 {
+    display: none;
+  }
+
+  .hero-stats {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .fitur-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .statistik-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .cta-card {
+    padding: 48px 28px;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-brand {
+    grid-column: span 1;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  /* === AUTH MOBILE === */
+  .auth-page > .auth-content {
+    padding: 40px 24px;
+    padding-top: 56px;
+  }
+
+  .auth-panel {
+    padding: 32px 24px;
+  }
+
+  .auth-panel .auth-content {
+    max-width: 100%;
+  }
+
+  .auth-title {
+    font-size: 1.8rem;
+  }
+
+  .auth-back {
+    margin-bottom: 28px;
+  }
+
+  .auth-logo {
+    margin-bottom: 32px;
+  }
+
+  /* OTP input lebih kecil di mobile */
+  .otp-container {
+    gap: 8px;
+  }
+
+  .otp-input {
+    width: 44px;
+    height: 54px;
+    font-size: 1.2rem;
+  }
+
+  /* About */
+  .about-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === SMALL MOBILE (≤380px) === */
+@media (max-width: 380px) {
+  .auth-page > .auth-content {
+    padding: 32px 20px;
+  }
+
+  .auth-panel {
+    padding: 28px 20px;
+  }
+
+  .auth-title {
+    font-size: 1.6rem;
+  }
+
+  .otp-container {
+    gap: 6px;
+  }
+
+  .otp-input {
+    width: 38px;
+    height: 50px;
+    font-size: 1.1rem;
+  }
+}
