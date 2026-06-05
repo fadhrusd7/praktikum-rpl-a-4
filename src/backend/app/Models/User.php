@@ -20,7 +20,8 @@ class User extends Authenticatable
         'nama_depan',    
         'nama_belakang',
         'no_telepon',    
-        'kota',         
+        'kota',
+        'foto_profil',
     ];
 
     protected $hidden = [
@@ -36,5 +37,40 @@ class User extends Authenticatable
     public function reports()
     {
         return $this->hasMany(Report::class, 'user_id');
+    }
+
+    public function getFotoProfilUrlAttribute()
+    {
+        if (!$this->foto_profil) {
+            return null;
+        }
+
+        if (preg_match('/^https?:\/\//i', $this->foto_profil)) {
+            return $this->foto_profil;
+        }
+
+        $bucket = trim((string) env('SUPABASE_PROFILE_BUCKET', 'profile-photos'), '/');
+        $path = ltrim($this->foto_profil, '/');
+
+        if ($bucket && str_starts_with($path, $bucket . '/')) {
+            $path = substr($path, strlen($bucket) + 1);
+        }
+
+        $baseUrl = rtrim((string) env('SUPABASE_PUBLIC_URL', ''), '/');
+
+        if (!$baseUrl) {
+            $endpoint = rtrim((string) env('SUPABASE_ENDPOINT', ''), '/');
+            $baseUrl = preg_replace(
+                '#\.storage\.supabase\.co/storage/v1/s3$#',
+                '.supabase.co',
+                $endpoint
+            );
+        }
+
+        if (!$baseUrl || !$bucket) {
+            return null;
+        }
+
+        return "{$baseUrl}/storage/v1/object/public/{$bucket}/{$path}";
     }
 }
