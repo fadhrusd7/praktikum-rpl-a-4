@@ -67,7 +67,7 @@ class ReportController extends Controller
         try {
             $report = Report::where('id', $id)
                 ->where('user_id', auth('sanctum')->id())
-                ->with('photos', 'logs')
+                ->with('user', 'photos', 'logs')
                 ->first();
 
             if (!$report) {
@@ -99,7 +99,7 @@ class ReportController extends Controller
     {
         try {
             $reports = Report::where('user_id', auth('sanctum')->id())
-                ->with('photos')
+                ->with('user', 'photos')
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
@@ -131,8 +131,8 @@ class ReportController extends Controller
     {
         try {
             $reports = Report::verified()
-                ->with('photos')
-                ->select(['id', 'nomor_laporan', 'judul', 'kategori', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'created_at'])
+                ->with('user', 'photos')
+                ->select(['id', 'user_id', 'nomor_laporan', 'judul', 'kategori', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'created_at'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -166,6 +166,11 @@ class ReportController extends Controller
             'longitude'     => $report->longitude,
             'status'        => $report->status,
             'created_at'    => $report->created_at,
+            'user'          => $report->user ? [
+                'id'    => $report->user->id,
+                'nama'  => $report->user->nama_depan . ' ' . $report->user->nama_belakang,
+                'email' => $report->user->email,
+            ] : null,
             'photos'        => $report->photos->map(fn($photo) => [
                 'id'          => $photo->id,
                 'file_path'   => $photo->file_path,
