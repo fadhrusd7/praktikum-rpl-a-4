@@ -167,9 +167,12 @@ class ReportController extends Controller
             'status'        => $report->status,
             'created_at'    => $report->created_at,
             'user'          => $report->user ? [
-                'id'    => $report->user->id,
-                'nama'  => $report->user->nama_depan . ' ' . $report->user->nama_belakang,
-                'email' => $report->user->email,
+                'id'            => $report->user->id,
+                'nama'          => trim(($report->user->nama_depan ?? '') . ' ' . ($report->user->nama_belakang ?? '')) ?: $report->user->username,
+                'username'      => $report->user->username,
+                'nama_depan'    => $report->user->nama_depan,
+                'nama_belakang' => $report->user->nama_belakang,
+                'email'         => $report->user->email,
             ] : null,
             'photos'        => $report->photos->map(fn($photo) => [
                 'id'          => $photo->id,
