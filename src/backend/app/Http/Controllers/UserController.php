@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -53,6 +54,8 @@ class UserController extends Controller
                     'nama_belakang'=> $user->nama_belakang,
                     'no_telepon'   => $user->no_telepon,
                     'kota'         => $user->kota,
+                    'foto_profil'  => $user->foto_profil,
+                    'foto_profil_url' => $user->foto_profil_url,
                     'email'        => $user->email,
                     'created_at'   => $user->created_at,
                 ],
@@ -78,18 +81,30 @@ class UserController extends Controller
             'no_telepon'    => 'nullable|string|max:20',
             'kota'          => 'nullable|string|max:100',
             'username'      => 'nullable|string|max:255|unique:users,username,' . $request->user()->id,
+            'foto_profil'   => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
         ]);
 
         try {
             $user = $request->user();
 
-            $user->update($request->only([
+            $user->fill($request->only([
                 'username',
                 'nama_depan',
                 'nama_belakang',
                 'no_telepon',
                 'kota',
             ]));
+
+            if ($request->hasFile('foto_profil')) {
+                if ($user->foto_profil) {
+                    Storage::disk('supabase_profiles')->delete($user->foto_profil);
+                }
+
+                $path = Storage::disk('supabase_profiles')->putFile('users', $request->file('foto_profil'), 'public');
+                $user->foto_profil = $path;
+            }
+
+            $user->save();
 
             return response()->json([
                 'success' => true,
@@ -101,6 +116,8 @@ class UserController extends Controller
                     'nama_belakang' => $user->nama_belakang,
                     'no_telepon'    => $user->no_telepon,
                     'kota'          => $user->kota,
+                    'foto_profil'   => $user->foto_profil,
+                    'foto_profil_url' => $user->foto_profil_url,
                     'email'         => $user->email,
                 ],
             ]);
