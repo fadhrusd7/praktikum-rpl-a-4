@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         email:                 resetEmail,
         password:              passEl.value,
         password_confirmation: confirmEl.value,
-        ...(resetToken ? { token: resetToken } : {})
+        ...(resetToken ? { reset_token: resetToken } : {})
       }
 
       const res = await authAPI.resetPassword(payload)

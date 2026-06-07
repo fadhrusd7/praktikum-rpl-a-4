@@ -35,7 +35,7 @@ class ForgotPasswordController extends Controller
             DB::table('password_reset_otps')->insert([
                 'email'      => $request->email,
                 'otp'        => $otp,
-                'used'       => false,
+                'used'       => DB::raw('false'),
                 'expires_at' => now()->addMinutes(10),
                 'created_at' => now(),
             ]);
@@ -82,7 +82,7 @@ class ForgotPasswordController extends Controller
             $record = DB::table('password_reset_otps')
                 ->where('email', $request->email)
                 ->where('otp', $request->otp)
-                ->where('used', false)
+                ->whereRaw('"used" = false')
                 ->where('expires_at', '>', now())
                 ->first();
 
@@ -100,7 +100,7 @@ class ForgotPasswordController extends Controller
             DB::table('password_reset_otps')
                 ->where('email', $request->email)
                 ->update([
-                    'used' => true,
+                    'used' => DB::raw('true'),
                     'otp'  => $resetToken, // reuse kolom untuk simpan token
                 ]);
 
@@ -136,7 +136,7 @@ class ForgotPasswordController extends Controller
             $record = DB::table('password_reset_otps')
                 ->where('email', $request->email)
                 ->where('otp', $request->reset_token)
-                ->where('used', true)
+                ->whereRaw('"used" = true')
                 ->first();
 
             if (!$record) {
