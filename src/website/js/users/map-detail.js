@@ -222,18 +222,18 @@ function buildLeftCol(report, status) {
 
   const namaAdminRaw =
     report.diverifikasi_oleh           
-    ?? report.validator?.name           
-    ?? report.validator?.username
     ?? report.admin?.name               
     ?? report.admin?.username
+    ?? report.validator?.name           
+    ?? report.validator?.username
     ?? report.verified_by
-    ?? pickFromLogs(report.logs, ['terverifikasi', 'divalidasi'], 'user')  
+    ?? pickFromLogs(report.logs, ['terverifikasi', 'divalidasi'], 'admin')  
     ?? null;
   const namaAdmin = escHtml(namaAdminRaw ?? '—');
 
   const waktuVerifRaw =
-    report.waktu_verifikasi             
-    ?? report.validated_at             
+    report.validated_at
+    ?? report.waktu_verifikasi             
     ?? report.verified_at
     ?? pickFromLogs(report.logs, ['terverifikasi', 'divalidasi'], 'created_at');  
   const waktuVerif = fmtDateTime(waktuVerifRaw);
@@ -561,7 +561,10 @@ function pickFromLogs(logs, statuses, field) {
   if (!entry) return null;
 
   if (field === 'user') {
-    return entry.user?.name ?? entry.user?.username ?? entry.admin?.name ?? null;
+    return entry.user?.name ?? entry.user?.username ?? entry.admin?.name ?? entry.admin?.username ?? null;
+  }
+  if (field === 'admin') {
+    return entry.admin?.name ?? entry.admin?.username ?? entry.user?.name ?? entry.user?.username ?? null;
   }
   return entry[field] ?? null;
 }
