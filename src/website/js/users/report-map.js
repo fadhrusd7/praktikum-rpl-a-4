@@ -1,13 +1,3 @@
-/**
- * laporan-map.js
- * Leaflet map initialization & interaction.
- *
- * KEAMANAN:
- *  - MAPTILER_API_KEY dibaca dari import.meta.env.VITE_MAPTILER_API_KEY
- *  - Tidak ada API key yang di-hardcode
- *  - Vite hanya meng-expose variabel dengan prefix VITE_ ke browser
- */
-
 // Baca API key dari environment — TIDAK pernah hardcode di sini
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY 
 

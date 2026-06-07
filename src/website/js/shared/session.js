@@ -113,7 +113,7 @@ export async function logoutUser() {
     // Tetap bersihkan lokal meski server error
   } finally {
     clearSession()
-    window.location.replace(REDIRECT_LOGIN)
+    window.location.replace(VITE_REDIRECT_LOGIN)
   }
 }
 
@@ -125,6 +125,6 @@ export async function logoutAdmin() {
     // Tetap bersihkan lokal meski server error
   } finally {
     clearSession()
-    window.location.replace(REDIRECT_ADMIN_LOGIN)
+    window.location.replace(VITE_REDIRECT_ADMIN_LOGIN)
   }
 }

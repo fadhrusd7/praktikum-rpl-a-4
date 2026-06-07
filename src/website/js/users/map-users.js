@@ -1,4 +1,4 @@
-import { getMapReports }                              from './map-api.js'
+import { getMapReports }                              from './api.js'
 import { createMarkerIcon, getCategoryConfig,
          CATEGORY_CONFIG, normalizeKey }              from './marker.js'
 import { initFilter, registerMarker,
@@ -25,14 +25,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ── User Info ──────────────────────────────────────────────
 function _loadUserInfo() {
   const token = localStorage.getItem('auth_token')
-  const cachedName  = localStorage.getItem('user_name')  || 'Nama Pengguna'
-  const cachedEmail = localStorage.getItem('user_email') || 'email@email.com'
+  const cachedName   = localStorage.getItem('user_name')   || 'Nama Pengguna'
+  const cachedEmail  = localStorage.getItem('user_email')  || 'email@email.com'
+  const cachedAvatar = localStorage.getItem('user_avatar') || null
 
-  _setUserDOM(cachedName, cachedEmail)
+  _setUserDOM(cachedName, cachedEmail, cachedAvatar)
 
   if (!token) return
 
-  fetch('/api/auth/me', {
+  // Ganti ke /api/user/profile agar foto_profil_url pasti tersedia
+  fetch('/api/user/profile', {
     headers: {
       'Accept':        'application/json',
       'Authorization': `Bearer ${token}`
@@ -41,25 +43,42 @@ function _loadUserInfo() {
   .then(r => r.json())
   .then(body => {
     if (!body.success) return
-    
+
     const u = body.data
     const displayName = [u.nama_depan, u.nama_belakang]
       .filter(Boolean).join(' ').trim() || u.username || cachedName
-    
-    const email = u.email || cachedEmail
 
-    _setUserDOM(displayName, email)
+    const email  = u.email  || cachedEmail
+    const avatar = u.foto_profil_url || u.foto_profil || null
+
+    _setUserDOM(displayName, email, avatar)
+
     localStorage.setItem('user_name',  displayName)
     localStorage.setItem('user_email', email)
+    if (avatar) localStorage.setItem('user_avatar', avatar)
   })
   .catch(() => {/* tetap pakai cache */})
 }
 
-function _setUserDOM(name, email) {
-  const n = document.querySelector('#sidebarUserName')
-  const e = document.querySelector('#userEmailDisplay') 
-  if (n) n.textContent = name || 'Nama Pengguna'
+function _setUserDOM(name, email, avatar) {
+  const n   = document.querySelector('#sidebarUserName')
+  const e   = document.querySelector('#sidebarUserEmail') || document.querySelector('#userEmailDisplay')
+  const img = document.querySelector('#sidebar-avatar-img')
+
+  if (n) n.textContent = name  || 'Nama Pengguna'
   if (e) e.textContent = email || 'email@email.com'
+
+  if (img) {
+    if (avatar) {
+      img.src = avatar
+      img.onerror = () => {
+        img.onerror = null
+        img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Pengguna')}&background=E0FBD2&color=00AA13&bold=true`
+      }
+    } else {
+      img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Pengguna')}&background=E0FBD2&color=00AA13&bold=true`
+    }
+  }
 }
 
 // ── Init Leaflet Map ───────────────────────────────────────
@@ -80,27 +99,18 @@ function _initMap() {
 
   map.setView(DEFAULT_CENTER, DEFAULT_ZOOM)
 
-  // Tutup panel detail saat klik peta
   map.on('click', () => _closeDetail())
 
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 200);
+  setTimeout(() => { map.invalidateSize() }, 200)
 
-  const mapContainer = map.getContainer();
-  mapContainer.setAttribute('tabindex', '0'); 
-  mapContainer.addEventListener('mouseenter', () => {
-    mapContainer.focus();
-  });
-
+  const mapContainer = map.getContainer()
+  mapContainer.setAttribute('tabindex', '0')
+  mapContainer.addEventListener('mouseenter', () => { mapContainer.focus() })
   mapContainer.addEventListener('wheel', (e) => {
-    e.preventDefault(); 
-    if (e.deltaY < 0) {
-      map.zoomIn();     
-    } else {
-      map.zoomOut();    
-    }
-  }, { passive: false });
+    e.preventDefault()
+    if (e.deltaY < 0) map.zoomIn()
+    else              map.zoomOut()
+  }, { passive: false })
 }
 
 // ── Legend ─────────────────────────────────────────────────
@@ -116,7 +126,7 @@ function _buildLegend() {
 
 // ── Sidebar Binding (Stub) ──────────────────────────────────
 function _bindSidebar() {
-  console.log('[Sidebar] Binding dikonfigurasi.');
+  console.log('[Sidebar] Binding dikonfigurasi.')
 }
 
 // ── Load Reports ───────────────────────────────────────────
@@ -135,12 +145,7 @@ async function _loadReports() {
     _showEmpty('Gagal memuat data. Periksa koneksi Anda.')
   } finally {
     _showSkeleton(false)
-
-    if (map) {
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 50);
-    }
+    if (map) setTimeout(() => { map.invalidateSize() }, 50)
   }
 }
 
@@ -178,7 +183,7 @@ function _renderMarkers(reports) {
 
   markerLayer.addTo(map)
 
-  if (bounds.length > 1)      map.fitBounds(bounds, { padding: [50, 50] })
+  if (bounds.length > 1)        map.fitBounds(bounds, { padding: [50, 50] })
   else if (bounds.length === 1) map.setView(bounds[0], 17)
 
   initFilter(map, markerLayer)
@@ -239,12 +244,12 @@ function _showDetail(report) {
         <div>
           <span class="detail-meta-label">Pelapor</span>
           <span class="detail-meta-value">
-              ${_esc(
-                  report.user?.nama || 
-                  (report.user?.nama_depan ? (report.user.nama_depan + ' ' + (report.user.nama_belakang || '')) : '') || 
-                  '—'
-              )}
-          </span>       
+            ${_esc(
+              report.user?.nama ||
+              (report.user?.nama_depan ? (report.user.nama_depan + ' ' + (report.user.nama_belakang || '')) : '') ||
+              '—'
+            )}
+          </span>
         </div>
       </div>
       <div class="detail-meta-row">
@@ -262,10 +267,9 @@ function _showDetail(report) {
     <div class="detail-desc">${_esc(report.deskripsi || '')}</div>
   `
 
-  // Tombol Detail
   if (footerBtn) {
     footerBtn.onclick = () => {
-      window.location.href = `../riwayat/detail.html?id=${report.id}`
+      window.location.href = `../dashboard/detail.html?id=${report.id}`
     }
   }
 
@@ -286,12 +290,10 @@ function _showDetail(report) {
 }
 
 function _closeDetail() {
-  const panel = document.querySelector('#detailPanel')
+  const panel   = document.querySelector('#detailPanel')
   const overlay = document.querySelector('#detailOverlay')
-  if (overlay) {
-    overlay.classList.add('hidden')
-  }
-  if (!panel) return
+  if (overlay) overlay.classList.add('hidden')
+  if (!panel)  return
   panel.classList.remove('slide-in')
   panel.classList.add('hidden')
 }
@@ -334,12 +336,8 @@ function _esc(s) {
 
 function _getReporterName(user) {
   if (!user) return '—'
-
   const fullName = [user.nama_depan, user.nama_belakang]
-    .filter(Boolean)
-    .join(' ')
-    .trim()
-
+    .filter(Boolean).join(' ').trim()
   return String(user.nama || fullName || user.username || user.email || '—').trim() || '—'
 }
 
