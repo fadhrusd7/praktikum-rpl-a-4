@@ -3,22 +3,23 @@ import { setLoading } from '../shared/ui.js'
 import { showToast }  from '../shared/toast.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-
-  // ── Tampilkan email asli dari sessionStorage ──────────────
-  const email        = sessionStorage.getItem('resetEmail')
+  const purpose = sessionStorage.getItem('otpPurpose') || 'reset'
+  const isRegister = purpose === 'register'
+  const email = isRegister
+    ? sessionStorage.getItem('registerEmail')
+    : sessionStorage.getItem('resetEmail')
   const emailDisplay = document.querySelector('#emailDisplay')
 
   if (!email) {
-    showToast('Sesi habis. Silakan ulangi dari halaman lupa password.', 'error')
+    showToast('Sesi habis. Silakan ulangi dari awal.', 'error')
     setTimeout(() => {
-      window.location.href = 'forgot-password.html'
+      window.location.href = isRegister ? 'register.html' : 'forgot-password.html'
     }, 1800)
     return
   }
 
   if (emailDisplay) emailDisplay.textContent = email
 
-  // ── OTP Input: auto-focus, paste, backspace ───────────────
   const inputs = document.querySelectorAll('.otp-input')
 
   inputs.forEach((input, index) => {
@@ -61,8 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  // ── Countdown timer ───────────────────────────────────────
-  let seconds     = 60
+  let seconds = 60
   const resendBtn = document.querySelector('#resendbtn')
   const countdown = document.querySelector('.countdown')
 
@@ -81,18 +81,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   startTimer()
 
-  // ── Resend OTP ────────────────────────────────────────────
   resendBtn.addEventListener('click', async () => {
-    const currentEmail = sessionStorage.getItem('resetEmail')
+    const currentEmail = isRegister
+      ? sessionStorage.getItem('registerEmail')
+      : sessionStorage.getItem('resetEmail')
+
     if (!currentEmail) {
-      showToast('Sesi habis. Silakan ulangi dari halaman lupa password.', 'error')
-      setTimeout(() => { window.location.href = 'forgot-password.html' }, 1500)
+      showToast('Sesi habis. Silakan ulangi dari awal.', 'error')
+      setTimeout(() => {
+        window.location.href = isRegister ? 'register.html' : 'forgot-password.html'
+      }, 1500)
       return
     }
 
     setLoading(resendBtn, true)
     try {
-      const res = await authAPI.forgotPassword(currentEmail)
+      const res = isRegister
+        ? await authAPI.resendRegisterOtp(currentEmail)
+        : await authAPI.forgotPassword(currentEmail)
+
       showToast(res.message || 'Kode OTP baru telah dikirim', 'success')
       seconds = 60
       if (countdown) countdown.textContent = `(${seconds}s)`
@@ -105,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  // ── Submit: verifikasi OTP ────────────────────────────────
   const form = document.querySelector('#otpForm')
 
   form.addEventListener('submit', async (e) => {
@@ -118,10 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return
     }
 
-    const currentEmail = sessionStorage.getItem('resetEmail')
+    const currentEmail = isRegister
+      ? sessionStorage.getItem('registerEmail')
+      : sessionStorage.getItem('resetEmail')
+
     if (!currentEmail) {
-      showToast('Sesi habis. Silakan ulangi dari halaman lupa password.', 'error')
-      setTimeout(() => { window.location.href = 'forgot-password.html' }, 1500)
+      showToast('Sesi habis. Silakan ulangi dari awal.', 'error')
+      setTimeout(() => {
+        window.location.href = isRegister ? 'register.html' : 'forgot-password.html'
+      }, 1500)
       return
     }
 
@@ -129,18 +140,27 @@ document.addEventListener('DOMContentLoaded', () => {
     setLoading(btn, true)
 
     try {
-      // POST /api/auth/verify-otp — { email, otp }
-      const res = await authAPI.verifyOtp(currentEmail, otp)
+      const res = isRegister
+        ? await authAPI.verifyRegisterOtp(currentEmail, otp)
+        : await authAPI.verifyOtp(currentEmail, otp)
 
       showToast(res.message || 'Verifikasi berhasil!', 'success')
 
-      // Simpan token reset sementara jika backend mengembalikannya
-      if (res.token) sessionStorage.setItem('resetToken', res.token)
+      if (isRegister) {
+        sessionStorage.removeItem('otpPurpose')
+        sessionStorage.removeItem('registerEmail')
+
+        setTimeout(() => {
+          window.location.href = 'login.html'
+        }, 1000)
+        return
+      }
+
+      if (res.reset_token) sessionStorage.setItem('resetToken', res.reset_token)
 
       setTimeout(() => {
         window.location.href = 'new-password.html'
       }, 1000)
-
     } catch (err) {
       console.error('[auth/verify-otp]', err)
       showToast(err.message || 'Kode OTP tidak valid atau sudah kedaluwarsa', 'error')

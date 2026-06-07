@@ -28,12 +28,12 @@ export async function apiFetch(endpoint, opts = {}) {
 
   // Tangani HTTP error (4xx, 5xx)
   if (!res.ok) {
-    throw new Error(body?.message || `HTTP ${res.status}`)
+    throw new Error(body?.error || body?.message || `HTTP ${res.status}`)
   }
 
   // Tangani success:false dari Laravel (status 200 tapi gagal logis)
   if (body.success === false) {
-    throw new Error(body.message || 'Terjadi kesalahan.')
+    throw new Error(body.error || body.message || 'Terjadi kesalahan.')
   }
 
   return body
@@ -59,6 +59,20 @@ export const authAPI = {
     apiFetch('/auth/register', {
       method: 'POST',
       body:   JSON.stringify(payload)
+    }),
+
+  /** POST /api/auth/register/verify-otp */
+  verifyRegisterOtp: (email, otp) =>
+    apiFetch('/auth/register/verify-otp', {
+      method: 'POST',
+      body:   JSON.stringify({ email, otp })
+    }),
+
+  /** POST /api/auth/register/resend-otp */
+  resendRegisterOtp: (email) =>
+    apiFetch('/auth/register/resend-otp', {
+      method: 'POST',
+      body:   JSON.stringify({ email })
     }),
 
   /** POST /api/auth/login */
