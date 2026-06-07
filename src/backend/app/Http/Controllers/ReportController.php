@@ -74,7 +74,7 @@ class ReportController extends Controller
                           // Syarat 2: ATAU statusnya terverifikasi/selesai (bisa dilihat publik/user lain)
                           ->orWhereIn('status', ['terverifikasi', 'selesai']); 
                 })
-                ->with(['user', 'photos', 'logs.admin']) // Load relasi admin dari logs
+                ->with(['user', 'photos', 'admin', 'logs.admin']) // Load relasi admin dari logs
                 ->first();
 
             if (!$report) {
@@ -173,6 +173,8 @@ class ReportController extends Controller
             'longitude'     => $report->longitude,
             'status'        => $report->status,
             'created_at'    => $report->created_at,
+            'validated_at'  => $report->validated_at,
+            'alasan_penolakan' => $report->alasan_penolakan,
             'user'          => $report->user ? [
                 'id'            => $report->user->id,
                 'nama'          => trim(($report->user->nama_depan ?? '') . ' ' . ($report->user->nama_belakang ?? '')) ?: $report->user->username,
@@ -180,6 +182,10 @@ class ReportController extends Controller
                 'nama_depan'    => $report->user->nama_depan,
                 'nama_belakang' => $report->user->nama_belakang,
                 'email'         => $report->user->email,
+            ] : null,
+            'admin'         => $report->admin ? [
+                'id'       => $report->admin->id,
+                'username' => $report->admin->username,
             ] : null,
             'photos'        => $report->photos->map(fn($photo) => [
                 'id'          => $photo->id,
@@ -197,9 +203,9 @@ class ReportController extends Controller
                 'status'     => $log->status,
                 'catatan'    => $log->catatan,
                 'created_at' => $log->created_at,
-                // Tambahkan field admin di dalam respon logs JSON
                 'admin'      => $log->admin ? [
-                    'username' => $log->admin->username
+                    'id'       => $log->admin->id,
+                    'username' => $log->admin->username,
                 ] : null,
             ]);
         }
