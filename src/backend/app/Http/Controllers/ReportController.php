@@ -60,20 +60,27 @@ class ReportController extends Controller
 
     /**
      * GET /api/reports/{id}
-     * User lihat detail laporan miliknya (US-03)
+     * User lihat detail laporan miliknya ATAU laporan public yang terverifikasi (US-03 & US-02)
      */
     public function show($id)
     {
         try {
+            $userId = auth('sanctum')->id();
+
             $report = Report::where('id', $id)
-                ->where('user_id', auth('sanctum')->id())
-                ->with('user', 'photos', 'logs')
+                ->where(function ($query) use ($userId) {
+                    // Syarat 1: Milik user itu sendiri
+                    $query->where('user_id', $userId)
+                          // Syarat 2: ATAU statusnya terverifikasi/selesai (bisa dilihat publik/user lain)
+                          ->orWhereIn('status', ['terverifikasi', 'selesai']); 
+                })
+                ->with(['user', 'photos', 'logs.admin']) // Load relasi admin dari logs
                 ->first();
 
             if (!$report) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Laporan tidak ditemukan.',
+                    'message' => 'Laporan tidak ditemukan atau Anda tidak memiliki akses untuk melihatnya.',
                 ], 404);
             }
 
@@ -190,6 +197,10 @@ class ReportController extends Controller
                 'status'     => $log->status,
                 'catatan'    => $log->catatan,
                 'created_at' => $log->created_at,
+                // Tambahkan field admin di dalam respon logs JSON
+                'admin'      => $log->admin ? [
+                    'username' => $log->admin->username
+                ] : null,
             ]);
         }
 
