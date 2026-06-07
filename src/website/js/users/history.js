@@ -1,4 +1,4 @@
-import { getMyReports, getMe, logout } from './history-api.js'
+import { getMyReports, getMe, logout } from './api.js'
 
 // ── Auth guard ────────────────────────────────────────────────────
 const LOGIN_PATH = import.meta.env.VITE_PATH_LOGIN || '/users/auth/login.html'
@@ -70,12 +70,13 @@ function _loadUserInfo() {
   const token = localStorage.getItem('auth_token')
   const cachedName  = localStorage.getItem('user_name')  || 'Nama Pengguna'
   const cachedEmail = localStorage.getItem('user_email') || 'email@gmail.com'
+  const cachedAvatar = localStorage.getItem('user_avatar') || null
 
-  _setUserDOM(cachedName, cachedEmail)
+  _setUserDOM(cachedName, cachedEmail, cachedAvatar)
 
   if (!token) return
 
-  fetch('/api/auth/me', {
+  fetch('/api/user/profile', {
     headers: {
       'Accept':        'application/json',
       'Authorization': `Bearer ${token}`
@@ -90,19 +91,34 @@ function _loadUserInfo() {
       .filter(Boolean).join(' ').trim() || u.username || cachedName
     
     const email = u.email || cachedEmail
+    const avatar = u.foto_profil_url || u.foto_profil || null
 
-    _setUserDOM(displayName, email)
+    _setUserDOM(displayName, email, avatar)
     localStorage.setItem('user_name',  displayName)
     localStorage.setItem('user_email', email)
+    if (avatar) localStorage.setItem('user_avatar', avatar)
   })
   .catch(() => {/* tetap pakai cache */})
 }
 
-function _setUserDOM(name, email) {
+function _setUserDOM(name, email, avatar) {
   const n = document.querySelector('#sidebarUserName')
   const e = document.querySelector('#sidebarUserEmail') 
+  const img = document.querySelector('#sidebar-avatar-img')  
   if (n) n.textContent = name || 'Nama Pengguna'
   if (e) e.textContent = email || 'email@gmail.com'
+  
+  if (img) {
+    if (avatar) {
+      img.src = avatar
+      img.onerror = () => {
+        img.onerror = null
+        img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Pengguna')}&background=E0FBD2&color=00AA13&bold=true`
+      }
+    } else {
+      img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Pengguna')}&background=E0FBD2&color=00AA13&bold=true`
+    }
+  }
 }
 
 function setPageTitle(name) {

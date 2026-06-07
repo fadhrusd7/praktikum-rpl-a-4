@@ -137,8 +137,6 @@ body {
   flex-shrink: 0;
 }
 
-.nav-item svg { flex-shrink: 0; }
-
 .nav-item:hover {
   background: var(--green-50);
   color: var(--green-600);
