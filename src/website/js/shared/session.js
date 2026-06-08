@@ -1,10 +1,9 @@
 import { authAPI, adminAPI } from './api.js'
 
-// ─── Konfigurasi URL Redirect (Sudah mendukung Env + Fallback) ────────────────
-const REDIRECT_LOGIN       = import.meta.env.VITE_REDIRECT_LOGIN || '/users/auth/login.html'
-const REDIRECT_ADMIN_LOGIN = import.meta.env.VITE_REDIRECT_ADMIN_LOGIN || '/admin/login/login-admin.html'
-const REDIRECT_USER        = import.meta.env.VITE_REDIRECT_URL_USER || '/users/dashboard/map-users.html'
-const REDIRECT_ADMIN       = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/admin/dashboard/dashboard-admin.html'
+const REDIRECT_LOGIN       = import.meta.env.VITE_REDIRECT_LOGIN || ''
+const REDIRECT_ADMIN_LOGIN = import.meta.env.VITE_REDIRECT_ADMIN_LOGIN || ''
+const REDIRECT_USER        = import.meta.env.VITE_REDIRECT_URL_USER || ''
+const REDIRECT_ADMIN       = import.meta.env.VITE_REDIRECT_URL_ADMIN || ''
 
 // ─── Token helpers ────────────────────────────────────────────
 
