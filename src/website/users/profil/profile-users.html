@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil dan Pengaturan - Lestari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link rel="stylesheet" href="../../css/profile-users.css" />
+    <link rel="stylesheet" href="../../css/profile-common.css" />
+
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="../../assets/Logo.png" alt="Logo Lestari" class="logo-img">
+                </div>
+                <div>
+                    <div class="logo-text">Lestari</div>
+                    <div class="logo-tagline">Lapor Isu Lingkungan</div>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li>
+                        <a href="../dashboard/map-users.html" class="nav-item" data-page="peta">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                    <circle cx="12" cy="9" r="2.5"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Peta</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../laporan/report-users.html" class="nav-item" data-page="laporan">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Laporan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../riwayat/history-users.html" class="nav-item" data-page="riwayat">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="12 8 12 12 14 14"/>
+                                    <path d="M3.05 11a9 9 0 1 1 .5 4M3 21v-6h6"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Riwayat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../profil/profile-users.html" class="nav-item active" data-page="profil">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Profil</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-divider"></div>
+            <div class="user-profile">
+               <div class="user-avatar">
+                    <img 
+                        src="https://ui-avatars.com/api/?name=User&background=E0FBD2&color=00AA13" 
+                        alt="Foto Profil Sidebar" 
+                        id="sidebar-avatar-img" 
+                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #E0FBD2;"
+                    >
+                    <span class="user-status"></span>
+                </div>
+                <div class="user-info">
+                    <p class="user-name" id="sidebarUserName">Nama Pengguna</p>
+                    <p class="user-email" id="sidebarUserEmail">email@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="topbar__left">
+                <h1 class="topbar__title">Profil dan Pengaturan</h1>
+            </div>
+            <div class="topbar__right">
+                <span class="topbar__date" id="topbar-date">Juni 2026</span>
+            </div>
+        </header>
+        <section class="page-body page-body--profile">
+
+            <div class="profile-card card">
+
+                <div class="profile-card__info">
+                    <div class="profile-card__avatar-wrapper">
+                        <img
+                            src="https://ui-avatars.com/api/?name=User&background=E0FBD2&color=00AA13"
+                            alt="Foto Profil"
+                            class="profile-card__avatar"
+                            id="profile-avatar-img"
+                        >
+                        <span class="profile-card__avatar-badge" aria-hidden="true"></span>
+                    </div>
+                    <div class="profile-card__details">
+                        <h2 class="profile-card__name" id="profile-name">Nama Pengguna</h2>
+                        <p class="profile-card__email" id="profile-email">email@email.com</p>
+                        <button
+                            type="button"
+                            class="profile-card__change-photo-btn"
+                            id="btn-change-photo"
+                            aria-label="Ganti foto profil"
+                        >
+                            Ganti Foto
+                        </button>
+                        <input
+                            type="file"
+                            id="input-change-photo"
+                            class="profile-card__photo-input visually-hidden"
+                            accept="image/jpeg, image/png"
+                            aria-label="Pilih foto profil baru"
+                        >
+                    </div>
+                </div>
+
+                <div class="profile-stats" id="profile-stats">
+                    <div class="profile-stats__card profile-stats__card--total" id="stat-total">
+                        <span class="profile-stats__count" id="stat-total-count">12</span>
+                        <span class="profile-stats__label">Laporan</span>
+                    </div>
+                    <div class="profile-stats__card profile-stats__card--verified" id="stat-verified">
+                        <span class="profile-stats__count" id="stat-verified-count">9</span>
+                        <span class="profile-stats__label">Terverifikasi</span>
+                    </div>
+                    <div class="profile-stats__card profile-stats__card--pending" id="stat-pending">
+                        <span class="profile-stats__count" id="stat-pending-count">3</span>
+                        <span class="profile-stats__label">Tertunda</span>
+                    </div>
+                </div>
+
+                <nav class="settings-menu" aria-label="Menu Pengaturan">
+                    <ul class="settings-menu__list">
+
+                        <li class="settings-menu__item">
+                            <a href="edit-profile.html" class="settings-menu__link" id="menu-edit-profile">
+                                <span class="settings-menu__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                    </svg>
+                                </span>
+                                <span class="settings-menu__label">Edit Profil</span>
+                                <span class="settings-menu__arrow" aria-hidden="true"></span>
+                            </a>
+                        </li>
+
+                        <li class="settings-menu__item">
+                            <a href="privacy-security.html" class="settings-menu__link" id="menu-privacy">
+                                <span class="settings-menu__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </span>
+                                <span class="settings-menu__label">Privasi &amp; Keamanan</span>
+                                <span class="settings-menu__arrow" aria-hidden="true"></span>
+                            </a>
+                        </li>
+
+                        <li class="settings-menu__item">
+                            <a href="feedback.html" class="settings-menu__link" id="menu-feedback">
+                                <span class="settings-menu__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                </span>
+                                <span class="settings-menu__label">Beri Masukan</span>
+                                <span class="settings-menu__arrow" aria-hidden="true"></span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+                <div class="profile-card__logout-area" id="profile-logout-area">
+                    </div>
+
+            </div>
+            <div class="logout-wrapper">
+                <button
+                    type="button"
+                    class="btn btn--logout"
+                    id="btn-logout"
+                    aria-label="Keluar dari akun"
+                >
+                    <span class="btn__icon btn__icon--logout" aria-hidden="true"></span>
+                    <span class="btn__text">Keluar</span>
+                </button>
+            </div>
+
+        </section>
+        </main>
+    <script type="module" src="../../js/users/profile-users.js"></script>
+</body>
+</html>

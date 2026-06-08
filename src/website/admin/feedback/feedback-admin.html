@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Lihat Feedback – Lestari Admin Panel"/>
+  <title>Lihat Feedback – Lestari Admin</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="../../css/feedback-admin.css"/>
+  <link rel="stylesheet" href="../../shared/toast.css"/>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Brand -->
+    <a href="#" class="sidebar-brand">
+      <img src="../../assets/Logo.png" alt="Lestari Logo" class="brand-logo"/>
+      <div class="brand-text-wrap">
+        <span class="brand-name">Lestari</span>
+        <span class="brand-tagline">Lapor Isu Lingkungan</span>
+      </div>
+    </a>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav" aria-label="Menu utama">
+
+      <a href="../dashboard/dashboard-admin.html" class="nav-item" data-page="dashboard">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a href="../laporan/report-admin.html" class="nav-item" data-page="laporan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+        </svg>
+        Laporan
+      </a>
+
+      <a href="../peta/peta-admin.html" class="nav-item" data-page="peta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+          <circle cx="12" cy="9" r="2.5"/>
+        </svg>
+        Peta
+      </a>
+
+      <a href="../riwayat/history-admin.html" class="nav-item" data-page="riwayat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="12 8 12 12 14 14"/>
+          <path d="M3.05 11a9 9 0 1 1 .5 4M3 21v-6h6"/>
+        </svg>
+        Riwayat
+      </a>
+
+      <!-- Profil tetap aktif karena Feedback adalah sub-halaman Profil -->
+      <a href="../profil/profile-admin.html" class="nav-item active" data-page="profil" aria-current="page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profil
+      </a>
+
+    </nav>
+
+    <!-- User profile -->
+    <div class="sidebar-user">
+      <div class="user-avatar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+          stroke="currentColor" stroke-width="1.8">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-admin-name">Administrator – 1</div>
+        <div class="user-email">Lestari Admin Panel</div>
+      </div>
+    </div>
+
+  </aside><!-- /sidebar -->
+
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- Page Header -->
+    <header class="page-header">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Buka menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+          stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+
+      <!-- Back link + title -->
+      <div class="page-title-group">
+        <a href="../profil/profile-admin.html" class="back-link">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </a>
+        <h1 class="page-title">Lihat Feedback</h1>
+      </div>
+
+      <div class="header-date" id="headerDate"></div>
+    </header>
+
+    <!-- Page Body -->
+    <div class="page-body">
+
+      <!-- Summary Cards Row -->
+      <div class="summary-row">
+
+        <!-- Total Masukan -->
+        <div class="summary-card">
+          <div class="summary-icon green">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+          </div>
+          <div class="summary-body">
+            <div class="summary-label">TOTAL MASUKAN</div>
+            <div class="summary-value" id="stat-total">—</div>
+          </div>
+        </div>
+
+        <!-- Rata-rata Rating -->
+        <div class="summary-card">
+          <div class="summary-icon green">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div class="summary-body">
+            <div class="summary-label">RATA-RATA RATING</div>
+            <div class="summary-value" id="stat-avg-rating">
+              —<span class="rating-scale">/5.0</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /summary-row -->
+
+      <!-- Feedback Table Card -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <h2 class="table-title">Daftar Masukan Terbaru</h2>
+        </div>
+
+        <div class="table-wrap">
+          <table class="feedback-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="feedback-tbody">
+              <!-- Rows injected by JS -->
+              <tr class="skeleton-row" id="skeleton-row">
+                <td colspan="4">
+                  <div class="loading-state">
+                    <div class="spinner"></div>
+                    <span>Memuat data feedback…</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div><!-- /table-wrap -->
+
+        <!-- Empty state (hidden by default) -->
+        <div class="empty-state hidden" id="empty-state">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none"
+            stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+          <p>Belum ada feedback yang masuk.</p>
+        </div>
+
+      </div><!-- /table-card -->
+
+    </div><!-- /page-body -->
+
+  </div><!-- /main-content -->
+
+</div><!-- /app-shell -->
+
+<script type="module" src="../../js/admin/feedback-admin.js"></script>
+<script>
+  (function () {
+    const el = document.getElementById('headerDate');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+  })();
+</script>
+</body>
+</html>
