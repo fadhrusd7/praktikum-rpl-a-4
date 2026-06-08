@@ -1,4 +1,3 @@
-
 const REDIRECT_LOGIN   = import.meta.env.VITE_REDIRECT_LOGIN       || '/users/auth/login.html'
 const API_BASE         = import.meta.env.VITE_API_BASE_URL         || '/api'
 const REDIRECT_USER    = import.meta.env.VITE_REDIRECT_URL_USER    || '/users/dashboard/map-users.html'
@@ -6,7 +5,7 @@ const REDIRECT_HISTORY = import.meta.env.VITE_REDIRECT_URL_HISTORY || '/users/ri
 const REDIRECT_PROFILE = import.meta.env.VITE_REDIRECT_URL_PROFILE || '/users/profil/profile-users.html'
 const MAPTILER_KEY     = import.meta.env.VITE_MAPTILER_KEY
 
-import { geocodeSearch, reverseGeocode, submitReport } from './report-api.js'
+import { geocodeSearch, reverseGeocode, submitReport } from './api.js'
 import { initReportMap, flyToLocation, invalidateReportMap } from './report-map.js'
 import { validateStep1, validateStep2, showFieldError, clearAllErrors } from './report-validation.js'
 import { showStep, initKategoriCards, initFotoUpload, initCharCounter, renderReview, renderDateBadge, renderSidebarUser } from './report-ui.js'
@@ -27,12 +26,13 @@ function _loadUserInfo() {
   const token = localStorage.getItem('auth_token')
   const cachedName  = localStorage.getItem('user_name')  || 'Nama Pengguna'
   const cachedEmail = localStorage.getItem('user_email') || 'email@gmail.com'
+  const cachedAvatar = localStorage.getItem('user_avatar') || null
 
-  _setUserDOM(cachedName, cachedEmail)
+  _setUserDOM(cachedName, cachedEmail, cachedAvatar)
 
   if (!token) return
 
-  fetch('/api/auth/me', {
+  fetch('/api/user/profile', {
     headers: {
       'Accept':        'application/json',
       'Authorization': `Bearer ${token}`
@@ -47,19 +47,35 @@ function _loadUserInfo() {
       .filter(Boolean).join(' ').trim() || u.username || cachedName
     
     const email = u.email || cachedEmail
+    const avatar = u.foto_profil_url || u.foto_profil || null
 
-    _setUserDOM(displayName, email)
+    _setUserDOM(displayName, email, avatar)
     localStorage.setItem('user_name',  displayName)
     localStorage.setItem('user_email', email)
+    if (avatar) localStorage.setItem('user_avatar', avatar)
   })
   .catch(() => {/* tetap pakai cache */})
 }
 
-function _setUserDOM(name, email) {
+function _setUserDOM(name, email, avatar) {
   const n = document.querySelector('#sidebarUserName')
   const e = document.querySelector('#sidebarUserEmail') 
+  const img = document.querySelector('#sidebar-avatar-img') 
+  
   if (n) n.textContent = name || 'Nama Pengguna'
   if (e) e.textContent = email || 'email@gmail.com'
+  
+  if (img) {
+    if (avatar) {
+      img.src = avatar
+      img.onerror = () => {
+        img.onerror = null
+        img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Pengguna')}&background=E0FBD2&color=00AA13&bold=true`
+      }
+    } else {
+      img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Pengguna')}&background=E0FBD2&color=00AA13&bold=true`
+    }
+  }
 }
 
 // ── Global state ──────────────────────────────────────────────────
@@ -290,9 +306,21 @@ document.getElementById('btnKirimLaporan')?.addEventListener('click', async () =
     showStep(4)
     startSuccessCountdown()
   } catch (err) {
-    showToast(err.message || 'Gagal mengirim laporan. Silakan coba kembali.', 'error')
-    btn.disabled = false
-    btn.innerHTML = `Kirim Laporan`
+    if (err.status === 409) {
+      // Laporan duplikat — kembalikan ke Step 2 agar user pilih lokasi berbeda
+      // Jangan enable tombol lagi supaya tidak bisa submit ulang di lokasi yang sama
+      showToast(err.message, 'warning', 6000)
+      setTimeout(() => {
+        showStep(2, () => {
+          invalidateReportMap()
+        })
+        showToast('Silakan pilih lokasi yang berbeda.', 'info', 4000)
+      }, 800)
+    } else {
+      showToast(err.message || 'Gagal mengirim laporan. Silakan coba kembali.', 'error')
+      btn.disabled = false
+      btn.innerHTML = `Kirim Laporan`
+    }
   }
 })
 

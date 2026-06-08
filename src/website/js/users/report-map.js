@@ -1,13 +1,3 @@
-/**
- * laporan-map.js
- * Leaflet map initialization & interaction.
- *
- * KEAMANAN:
- *  - MAPTILER_API_KEY dibaca dari import.meta.env.VITE_MAPTILER_API_KEY
- *  - Tidak ada API key yang di-hardcode
- *  - Vite hanya meng-expose variabel dengan prefix VITE_ ke browser
- */
-
 // Baca API key dari environment — TIDAK pernah hardcode di sini
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY 
 
@@ -76,7 +66,7 @@ export function initReportMap(onLocationPicked) {
     placeOrMoveMarker(lat, lng)
 
     try {
-      const { reverseGeocode } = await import('./report-api.js')
+      const { reverseGeocode } = await import('./api.js')
       const address = await reverseGeocode(lat, lng)
       onLocationPicked(lat, lng, address)
     } catch {

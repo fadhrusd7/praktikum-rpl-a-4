@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     e.preventDefault()
     clearAllErrors()
 
-    const usernameEl        = form.querySelector('#username')
+    const usernameEl        = form.querySelector('#username') || form.querySelector('#name')
     const emailEl           = form.querySelector('#email')
     const passwordEl        = form.querySelector('#password')
     const confirmPasswordEl = form.querySelector('#confirmPassword')
@@ -89,10 +89,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         password_confirmation: confirmPassword
       })
 
-      showToast(res.message || 'Akun berhasil dibuat! Silakan login.', 'success')
+      sessionStorage.setItem('otpPurpose', 'register')
+      sessionStorage.setItem('registerEmail', email)
+
+      showToast(res.message || 'Kode OTP telah dikirim ke email kamu.', 'success')
 
       setTimeout(() => {
-        window.location.href = 'login.html'
+        window.location.href = 'verify-otp.html'
       }, 1500)
 
     } catch (err) {

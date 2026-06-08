@@ -16,6 +16,8 @@ use App\Http\Controllers\FeedbackController;
 // Auth User
 Route::prefix('auth')->group(function () {
     Route::post('/register',        [AuthController::class, 'register']);
+    Route::post('/register/verify-otp', [AuthController::class, 'verifyRegisterOtp']);
+    Route::post('/register/resend-otp', [AuthController::class, 'resendRegisterOtp']);
     Route::post('/login',           [AuthController::class, 'login']);
     Route::get('/google',           [GoogleAuthController::class, 'redirect']);    
     Route::get('/google/callback',  [GoogleAuthController::class, 'callback']);    

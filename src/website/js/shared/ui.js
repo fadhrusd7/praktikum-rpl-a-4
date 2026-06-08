@@ -105,6 +105,20 @@ export function setLoading(btn, loading = true) {
   }
 }
 
+export function initSidebarNavigation(activePage) {
+  document.querySelectorAll('.nav-item').forEach((item) => {
+    const page = item.dataset.page
+    const isActive = page === activePage
+
+    item.classList.toggle('active', isActive)
+    if (isActive) {
+      item.setAttribute('aria-current', 'page')
+    } else {
+      item.removeAttribute('aria-current')
+    }
+  })
+}
+
 function injectSpinnerStyle() {
   if (document.querySelector('#ui-spinner-style')) return
   const style = document.createElement('style')

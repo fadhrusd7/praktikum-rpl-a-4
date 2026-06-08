@@ -27,15 +27,15 @@ export function validateStep1(reportData) {
     errors.deskripsi = 'Deskripsi maksimal 1000 karakter.'
   }
 
-  // Foto is optional; validate only if present
+  // Foto opsional — validasi format & ukuran kasar (kompresi ke 512 KB ditangani backend)
   if (reportData.foto) {
-    const maxSize = 512 * 1024 // 512 KB
+    const maxSize = 10 * 1024 * 1024 // 10 MB (batas raw sebelum dikompres backend)
     if (reportData.foto.size > maxSize) {
-      errors.foto = 'Ukuran foto maksimal 512 KB.'
+      errors.foto = 'Ukuran foto terlalu besar (maks 10 MB).'
     }
-    const allowed = ['image/jpeg', 'image/jpg', 'image/png']
+    const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
     if (!allowed.includes(reportData.foto.type)) {
-      errors.foto = 'Format foto harus JPG atau PNG.'
+      errors.foto = 'Format foto harus JPG, PNG, atau WebP.'
     }
   }
 

@@ -83,9 +83,15 @@ export function initFotoUpload(onChange) {
       preview.style.display = 'block'
     }
     dropZone?.classList.add('has-file')
+    // Reset value agar event 'change' selalu terpicu,
+    // bahkan jika user memilih file yang sama setelah error
+    if (input) input.value = ''
   }
 
-  input?.addEventListener('change', () => setFile(input.files?.[0]))
+  input?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0]
+    if (file) setFile(file)
+  })
   dropZone?.addEventListener('click', () => input?.click())
   remove?.addEventListener('click', (event) => {
     event.stopPropagation()

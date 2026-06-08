@@ -9,8 +9,8 @@ import {
 } from '../shared/ui.js'
 import { showToast } from '../shared/toast.js'
 
-const REDIRECT_USER  = import.meta.env.VITE_REDIRECT_URL_USER 
-const REDIRECT_ADMIN = import.meta.env.VITE_REDIRECT_URL_ADMIN 
+const REDIRECT_USER  = import.meta.env.VITE_REDIRECT_URL_USER  || ''
+const REDIRECT_ADMIN = import.meta.env.VITE_REDIRECT_URL_ADMIN || ''
 
 
 document.addEventListener('DOMContentLoaded', async () => {

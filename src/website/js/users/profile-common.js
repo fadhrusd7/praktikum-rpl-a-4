@@ -1,13 +1,4 @@
 /**
- * profile-common.js
- * Lestari — Utility global yang digunakan seluruh halaman profil
- */
-
-/* ================================================================== */
-/* TOAST                                                             */
-/* ================================================================== */
-
-/**
  * Tampilkan notifikasi toast.
  * @param {string} message
  * @param {'success'|'error'|'info'|'warning'} type
@@ -78,7 +69,7 @@ function showToast(message, type = "info", duration = 3000) {
 }
 
 /* ================================================================== */
-/* CONFIRM MODAL                                                     */
+/* CONFIRM MODAL                                                      */
 /* ================================================================== */
 
 function showConfirmModal({
@@ -141,17 +132,9 @@ function closeModal() {
     if (overlay) overlay.remove();
 }
 
-/* ================================================================== */
-/* DATE FORMATTER                                                    */
-/* ================================================================== */
-
 function formatMonthYear(date = new Date()) {
     return date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
 }
-
-/* ================================================================== */
-/* SIDEBAR ACTIVE STATE                                              */
-/* ================================================================== */
 
 function setActiveSidebar(page) {
     document.querySelectorAll(".nav-item").forEach((item) => {
@@ -159,18 +142,10 @@ function setActiveSidebar(page) {
     });
 }
 
-/* ================================================================== */
-/* NAVBAR / TOPBAR TITLE                                             */
-/* ================================================================== */
-
 function updateNavbarTitle(title) {
     const el = document.querySelector(".topbar__title");
     if (el) el.textContent = title;
 }
-
-/* ================================================================== */
-/* BUTTON LOADING STATE                                              */
-/* ================================================================== */
 
 function showLoading(button, loadingText = "Memproses...") {
     if (!button) return;
@@ -189,28 +164,33 @@ function hideLoading(button) {
     button.style.cursor = "";
 }
 
-/* ================================================================== */
-/* SIDEBAR USER INFO                                                 */
-/* ================================================================== */
-
 function setSidebarUser(user) {
     const nameEl = document.getElementById("sidebarUserName");
     const emailEl = document.getElementById("sidebarUserEmail");
+    const avatarImg = document.getElementById("sidebar-avatar-img"); // Tangkep image sidebar
+
     if (nameEl && user.name) nameEl.textContent = user.name;
     if (emailEl && user.email) emailEl.textContent = user.email;
-}
 
-/* ================================================================== */
-/* LOAD USER DATA DARI API/CACHE (TAMBAHAN BARU)                     */
-/* ================================================================== */
+    // Handle foto sidebar
+    if (avatarImg) {
+        if (user.avatar) {
+            avatarImg.src = user.avatar;
+        } else {
+            const fallbackName = user.name || "Pengguna";
+            avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fallbackName)}&background=E0FBD2&color=00AA13&bold=true`;
+        }
+    }
+}
 
 function loadUserInfo() {
     const token = localStorage.getItem('auth_token');
     const cachedName  = localStorage.getItem('user_name')  || 'Nama Pengguna';
     const cachedEmail = localStorage.getItem('user_email') || 'email@email.com';
+    const cachedAvatar = localStorage.getItem('user_avatar') || null;
 
     // Langsung set pake data cache dulu biar UI gak kosong nunggu API
-    setSidebarUser({ name: cachedName, email: cachedEmail });
+    setSidebarUser({ name: cachedName, email: cachedEmail, avatar: cachedAvatar });
 
     if (!token) return;
 
@@ -229,34 +209,30 @@ function loadUserInfo() {
             .filter(Boolean).join(' ').trim() || u.username || cachedName;
         
         const email = u.email || cachedEmail;
+        const avatar = u.foto_profil_url || u.foto_profil || null; // Ambil avatar dari API
 
         // Timpa tampilannya pake data yang paling fresh dari API
-        setSidebarUser({ name: displayName, email: email });
+        setSidebarUser({ name: displayName, email: email, avatar: avatar });
         
         // Simpan update terbarunya ke cache
         localStorage.setItem('user_name', displayName);
         localStorage.setItem('user_email', email);
+        if (avatar) {
+            localStorage.setItem('user_avatar', avatar);
+        }
     })
     .catch(() => {
         console.warn("Gagal fetch data user, tetap pakai cache.");
     });
 }
 
-/* ================================================================== */
-/* TOPBAR DATE                                                       */
-/* ================================================================== */
-
 function initTopbarDate() {
     const el = document.getElementById("topbar-date");
     if (el) el.textContent = formatMonthYear();
 }
 
-/* ================================================================== */
-/* FILE VALIDATION                                                   */
-/* ================================================================== */
-
 function validateImageFile(file) {
-    const allowed = ["image/jpeg", "image/png"];
+    const allowed = ["image/jpeg", "image/png", "image/jpg"];
     const maxSize = 1 * 1024 * 1024; // 1 MB
 
     if (!allowed.includes(file.type)) {
@@ -267,10 +243,6 @@ function validateImageFile(file) {
     }
     return { valid: true };
 }
-
-/* ================================================================== */
-/* AUTO-INIT                                                         */
-/* ================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
     initTopbarDate();
@@ -290,7 +262,7 @@ export {
     showLoading, 
     hideLoading, 
     setSidebarUser, 
-    loadUserInfo, // Jangan lupa diexport kalau misal butuh dipanggil manual di file lain
+    loadUserInfo, 
     initTopbarDate, 
     validateImageFile 
 };

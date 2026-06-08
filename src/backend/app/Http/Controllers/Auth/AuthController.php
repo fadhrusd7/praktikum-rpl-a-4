@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -31,24 +33,29 @@ class AuthController extends Controller
         ]);
 
         try {
-            $user = User::create([
-                'username' => $validated['username'],
-                'email'    => $validated['email'],
-                'password' => Hash::make($validated['password']),
+            $otp = $this->generateOtp();
+
+            DB::table('registration_otps')
+                ->where('email', $validated['email'])
+                ->delete();
+
+            DB::table('registration_otps')->insert([
+                'username'   => $validated['username'],
+                'email'      => $validated['email'],
+                'password'   => Hash::make($validated['password']),
+                'otp'        => $otp,
+                'attempts'   => 0,
+                'expires_at' => now()->addMinutes(10),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            $token = $user->createToken('user_token')->plainTextToken;
+            $this->sendRegistrationOtpEmail($validated['email'], $otp);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Registrasi berhasil.',
-                'data'    => [
-                    'id'         => $user->id,
-                    'username'   => $user->username,
-                    'email'      => $user->email,
-                    'created_at' => $user->created_at,
-                ],
-                'token' => $token,
+                'message' => 'Kode OTP registrasi telah dikirim ke email kamu.',
+                'requires_otp' => true,
             ], 201);
 
         } catch (\Exception $e) {
@@ -56,6 +63,111 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'Registrasi gagal. Silakan coba lagi.',
                 'error'   => $e->getMessage(), // hapus baris ini saat production
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/auth/register/verify-otp
+     * Buat akun setelah OTP email registrasi valid.
+     */
+    public function verifyRegisterOtp(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'otp'   => 'required|string|size:6',
+        ]);
+
+        try {
+            $pending = DB::table('registration_otps')
+                ->where('email', $validated['email'])
+                ->where('expires_at', '>', now())
+                ->first();
+
+            if (! $pending || ! hash_equals($pending->otp, $validated['otp'])) {
+                if ($pending) {
+                    DB::table('registration_otps')
+                        ->where('id', $pending->id)
+                        ->increment('attempts');
+                }
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'OTP tidak valid atau sudah kadaluarsa.',
+                ], 422);
+            }
+
+            if (User::where('email', $pending->email)->exists() || User::where('username', $pending->username)->exists()) {
+                DB::table('registration_otps')->where('id', $pending->id)->delete();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email atau username sudah digunakan.',
+                ], 422);
+            }
+
+            $user = User::create([
+                'username'          => $pending->username,
+                'email'             => $pending->email,
+                'password'          => $pending->password,
+                'email_verified_at' => now(),
+            ]);
+
+            DB::table('registration_otps')->where('id', $pending->id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Email berhasil diverifikasi. Akun berhasil dibuat.',
+                'data'    => [
+                    'id'         => $user->id,
+                    'username'   => $user->username,
+                    'email'      => $user->email,
+                    'created_at' => $user->created_at,
+                ],
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal verifikasi OTP registrasi.',
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/auth/register/resend-otp
+     */
+    public function resendRegisterOtp(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:registration_otps,email',
+        ]);
+
+        try {
+            $otp = $this->generateOtp();
+
+            DB::table('registration_otps')
+                ->where('email', $validated['email'])
+                ->update([
+                    'otp'        => $otp,
+                    'attempts'   => 0,
+                    'expires_at' => now()->addMinutes(10),
+                    'updated_at' => now(),
+                ]);
+
+            $this->sendRegistrationOtpEmail($validated['email'], $otp);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Kode OTP baru telah dikirim ke email kamu.',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengirim ulang OTP registrasi.',
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -161,5 +273,25 @@ class AuthController extends Controller
                 'error'   => $e->getMessage(), // hapus baris ini saat production
             ], 500);
         }
+    }
+
+    private function generateOtp(): string
+    {
+        return str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    }
+
+    private function sendRegistrationOtpEmail(string $email, string $otp): void
+    {
+        Mail::send([], [], function ($message) use ($email, $otp) {
+            $message->to($email)
+                ->subject('Kode OTP Registrasi - Lestari')
+                ->html("
+                    <h2>Verifikasi Email Lestari</h2>
+                    <p>Kode OTP registrasi kamu adalah:</p>
+                    <h1 style='letter-spacing: 8px; color: #2d6a4f;'>{$otp}</h1>
+                    <p>Kode ini berlaku selama <strong>10 menit</strong>.</p>
+                    <p>Jika kamu tidak mendaftar akun Lestari, abaikan email ini.</p>
+                ");
+        });
     }
 }
