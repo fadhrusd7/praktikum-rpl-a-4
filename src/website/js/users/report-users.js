@@ -306,9 +306,21 @@ document.getElementById('btnKirimLaporan')?.addEventListener('click', async () =
     showStep(4)
     startSuccessCountdown()
   } catch (err) {
-    showToast(err.message || 'Gagal mengirim laporan. Silakan coba kembali.', 'error')
-    btn.disabled = false
-    btn.innerHTML = `Kirim Laporan`
+    if (err.status === 409) {
+      // Laporan duplikat — kembalikan ke Step 2 agar user pilih lokasi berbeda
+      // Jangan enable tombol lagi supaya tidak bisa submit ulang di lokasi yang sama
+      showToast(err.message, 'warning', 6000)
+      setTimeout(() => {
+        showStep(2, () => {
+          invalidateReportMap()
+        })
+        showToast('Silakan pilih lokasi yang berbeda.', 'info', 4000)
+      }, 800)
+    } else {
+      showToast(err.message || 'Gagal mengirim laporan. Silakan coba kembali.', 'error')
+      btn.disabled = false
+      btn.innerHTML = `Kirim Laporan`
+    }
   }
 })
 

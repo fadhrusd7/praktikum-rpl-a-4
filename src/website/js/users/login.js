@@ -9,8 +9,8 @@ import {
 } from '../shared/ui.js'
 import { showToast } from '../shared/toast.js'
 
-const REDIRECT_USER  = import.meta.env.VITE_REDIRECT_URL_USER  || '/users/dashboard/map-users.html'
-const REDIRECT_ADMIN = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/admin/dashboard/dashboard-admin.html'
+const REDIRECT_USER  = import.meta.env.VITE_REDIRECT_URL_USER  || ''
+const REDIRECT_ADMIN = import.meta.env.VITE_REDIRECT_URL_ADMIN || ''
 
 
 document.addEventListener('DOMContentLoaded', async () => {
