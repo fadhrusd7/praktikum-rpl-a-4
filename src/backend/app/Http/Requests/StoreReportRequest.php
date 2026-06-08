@@ -22,6 +22,7 @@ class StoreReportRequest extends FormRequest
             'longitude' => 'required|numeric|between:-180,180',
             // Terima hingga 10MB raw — backend akan kompres ke ≤512KB sebelum upload Supabase
             'foto' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240',
+            'is_anonymous' => 'nullable|boolean',
         ];
     }
 

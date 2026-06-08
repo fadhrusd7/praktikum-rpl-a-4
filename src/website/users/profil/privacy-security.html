@@ -109,87 +109,69 @@
 
         <section class="page-body page-body--privacy-security">
             <div class="privacy-security-layout">
-                
+
+                <!-- Kiri: Ganti Sandi -->
                 <div class="privacy-security-layout__left">
-                    <div class="change-password-card card">
+                    <div class="change-password-card">
                         <h2 class="card__title">Ganti Sandi</h2>
-                        
+                        <p class="card__subtitle">Pastikan menggunakan sandi yang kuat dan unik.</p>
+
                         <form id="form-change-password" class="form">
                             <div class="form__group">
-                                <label class="form__label">Sandi Lama</label>
+                                <label class="form__label" for="old-password">Sandi Lama</label>
                                 <div class="form__input-wrapper form__input-wrapper--password">
-                                    <input type="password" id="old-password" class="form__input form__input--password">
-                                    <button type="button" class="form__password-toggle">
+                                    <input type="password" id="old-password" class="form__input form__input--password" placeholder="Masukkan sandi saat ini">
+                                    <button type="button" class="form__password-toggle" aria-label="Toggle sandi lama">
                                         <span class="form__password-toggle-icon"></span>
                                     </button>
                                 </div>
                             </div>
 
                             <div class="form__group">
-                                <label class="form__label">Sandi Baru</label>
+                                <label class="form__label" for="new-password">Sandi Baru</label>
                                 <div class="form__input-wrapper form__input-wrapper--password">
-                                    <input type="password" id="new-password" class="form__input form__input--password">
-                                    <button type="button" class="form__password-toggle">
+                                    <input type="password" id="new-password" class="form__input form__input--password" placeholder="Min. 8 karakter">
+                                    <button type="button" class="form__password-toggle" aria-label="Toggle sandi baru">
                                         <span class="form__password-toggle-icon"></span>
                                     </button>
                                 </div>
                             </div>
 
                             <div class="form__group">
-                                <label class="form__label">Konfirmasi Sandi</label>
+                                <label class="form__label" for="confirm-password">Konfirmasi Sandi Baru</label>
                                 <div class="form__input-wrapper form__input-wrapper--password">
-                                    <input type="password" id="confirm-password" class="form__input form__input--password">
-                                    <button type="button" class="form__password-toggle">
+                                    <input type="password" id="confirm-password" class="form__input form__input--password" placeholder="Ulangi sandi baru">
+                                    <button type="button" class="form__password-toggle" aria-label="Toggle konfirmasi sandi">
                                         <span class="form__password-toggle-icon"></span>
                                     </button>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn--primary">Simpan</button>
+                            <button type="submit" class="btn btn--primary">Simpan Perubahan</button>
                         </form>
                     </div>
                 </div>
 
+                <!-- Kanan: Hapus Akun -->
                 <div class="privacy-security-layout__right">
-                    
-                    <div class="privacy-preferences-card card">
-                        <h2 class="card__title">Preferensi Privasi</h2>
-                        <div class="toggle-list">
-                            
-                            <div class="toggle-item">
-                                <label class="toggle-item__label" for="toggle-public-name">
-                                    <span class="toggle-item__text">Tampilkan nama di laporan publik</span>
-                                    <div class="toggle-item__control">
-                                        <input type="checkbox" id="toggle-public-name" class="toggle-item__input" checked>
-                                        <span class="toggle-item__track">
-                                            <span class="toggle-item__thumb"></span>
-                                        </span>
-                                    </div>
-                                </label>
-                            </div>
-
-                            <div class="toggle-item">
-                                <label class="toggle-item__label" for="toggle-share-location">
-                                    <span class="toggle-item__text">Bagikan lokasi saat laporan</span>
-                                    <div class="toggle-item__control">
-                                        <input type="checkbox" id="toggle-share-location" class="toggle-item__input" checked>
-                                        <span class="toggle-item__track">
-                                            <span class="toggle-item__thumb"></span>
-                                        </span>
-                                    </div>
-                                </label>
-                            </div>
-
+                    <div class="delete-account-card">
+                        <div class="delete-account-card__title">
+                            <svg width="18" height="18" fill="none" stroke="#b91c1c" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                            </svg>
+                            Zona Bahaya
+                        </div>
+                        <p class="delete-account-card__desc">
+                            Menghapus akun akan menghapus semua data Anda secara permanen termasuk laporan dan riwayat aktivitas. Tindakan ini tidak dapat dibatalkan.
+                        </p>
+                        <div class="delete-account-section">
+                            <button type="button" id="btn-delete-account" class="btn btn--danger-outline">
+                                Hapus Akun Saya
+                            </button>
                         </div>
                     </div>
-
-                    <div class="delete-account-section">
-                        <button type="button" id="btn-delete-account" class="btn btn--danger-outline">
-                            Hapus Akun
-                        </button>
-                    </div>
-
                 </div>
+
             </div>
         </section>
     </main>

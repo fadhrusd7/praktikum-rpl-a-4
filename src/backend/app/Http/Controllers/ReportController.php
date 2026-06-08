@@ -65,6 +65,7 @@ class ReportController extends Controller
                     'latitude' => $validated['latitude'],
                     'longitude' => $validated['longitude'],
                     'status' => 'menunggu_validasi',
+                    'is_anonymous' => filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false',
                 ]);
 
                 if ($compressed) {
@@ -104,6 +105,7 @@ class ReportController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
+            \Log::error('Report Store Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal membuat laporan.',
@@ -193,7 +195,7 @@ class ReportController extends Controller
         try {
             $reports = Report::verified()
                 ->with('user', 'photos')
-                ->select(['id', 'user_id', 'nomor_laporan', 'judul', 'kategori', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'created_at'])
+                ->select(['id', 'user_id', 'nomor_laporan', 'judul', 'kategori', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'is_anonymous', 'created_at'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -401,12 +403,12 @@ class ReportController extends Controller
             'validated_at' => $report->validated_at,
             'alasan_penolakan' => $report->alasan_penolakan,
             'user' => $report->user ? [
-                'id' => $report->user->id,
-                'nama' => trim(($report->user->nama_depan ?? '') . ' ' . ($report->user->nama_belakang ?? '')) ?: $report->user->username,
-                'username' => $report->user->username,
-                'nama_depan' => $report->user->nama_depan,
-                'nama_belakang' => $report->user->nama_belakang,
-                'email' => $report->user->email,
+                'id' => $report->is_anonymous ? null : $report->user->id,
+                'nama' => $report->is_anonymous ? 'Anonim' : (trim(($report->user->nama_depan ?? '') . ' ' . ($report->user->nama_belakang ?? '')) ?: $report->user->username),
+                'username' => $report->is_anonymous ? 'anonim' : $report->user->username,
+                'nama_depan' => $report->is_anonymous ? 'Anonim' : $report->user->nama_depan,
+                'nama_belakang' => $report->is_anonymous ? '' : $report->user->nama_belakang,
+                'email' => $report->is_anonymous ? 'anonim@lestari.com' : $report->user->email,
             ] : null,
             'admin' => $report->admin ? [
                 'id' => $report->admin->id,
