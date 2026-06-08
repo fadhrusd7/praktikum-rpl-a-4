@@ -21,6 +21,7 @@ class Report extends Model
         'latitude',
         'longitude',
         'status',
+        'is_anonymous',
         'alasan_penolakan',
         'validated_at',
     ];
@@ -28,6 +29,7 @@ class Report extends Model
     protected $casts = [
         'latitude'     => 'float',
         'longitude'    => 'float',
+        'is_anonymous' => 'boolean',
         'validated_at' => 'datetime',
         'created_at'   => 'datetime',
         'updated_at'   => 'datetime',

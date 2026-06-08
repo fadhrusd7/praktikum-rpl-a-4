@@ -95,7 +95,8 @@ const reportData = {
   lokasi:    '',
   latitude:  null,
   longitude: null,
-  foto:      null
+  foto:      null,
+  is_anonymous: false
 }
 
 // ── Init UI ───────────────────────────────────────────────────────
@@ -123,6 +124,11 @@ document.getElementById('judulInput')?.addEventListener('input', (e) => {
 // Bind deskripsi input
 document.getElementById('deskripsiInput')?.addEventListener('input', (e) => {
   reportData.deskripsi = e.target.value
+})
+
+// Bind anonymous input
+document.getElementById('isAnonymousInput')?.addEventListener('change', (e) => {
+  reportData.is_anonymous = e.target.checked
 })
 
 // ── Step 1 → Step 2 ───────────────────────────────────────────────
@@ -299,6 +305,7 @@ document.getElementById('btnKirimLaporan')?.addEventListener('click', async () =
   formData.append('lokasi',    reportData.lokasi)
   formData.append('latitude',  reportData.latitude)
   formData.append('longitude', reportData.longitude)
+  formData.append('is_anonymous', reportData.is_anonymous ? '1' : '0')
   if (reportData.foto) formData.append('foto', reportData.foto)
 
   try {

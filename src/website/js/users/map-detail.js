@@ -212,10 +212,8 @@ function buildLeftCol(report, status) {
   const fotoUrl  = getPhotoUrl(report);
 
   const namaUser = escHtml(
-    report.nama_pelapor                 
-    ?? report.user?.name                
-    ?? report.user?.username
-    ?? report.user?.nama_depan          
+    report.user?.nama
+    ?? report.nama_pelapor
     ?? report.pelapor
     ?? '—'
   );

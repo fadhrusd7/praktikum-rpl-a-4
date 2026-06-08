@@ -246,7 +246,6 @@ function _showDetail(report) {
           <span class="detail-meta-value">
             ${_esc(
               report.user?.nama ||
-              (report.user?.nama_depan ? (report.user.nama_depan + ' ' + (report.user.nama_belakang || '')) : '') ||
               '—'
             )}
           </span>
