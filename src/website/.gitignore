@@ -1,4 +1,3 @@
-# === ENVIRONMENT (WAJIB — jangan pernah push .env!) ===
 .env
 .env.local
 .env.production

@@ -60,20 +60,27 @@ class ReportController extends Controller
 
     /**
      * GET /api/reports/{id}
-     * User lihat detail laporan miliknya (US-03)
+     * User lihat detail laporan miliknya ATAU laporan public yang terverifikasi (US-03 & US-02)
      */
     public function show($id)
     {
         try {
+            $userId = auth('sanctum')->id();
+
             $report = Report::where('id', $id)
-                ->where('user_id', auth('sanctum')->id())
-                ->with('photos', 'logs')
+                ->where(function ($query) use ($userId) {
+                    // Syarat 1: Milik user itu sendiri
+                    $query->where('user_id', $userId)
+                          // Syarat 2: ATAU statusnya terverifikasi/selesai (bisa dilihat publik/user lain)
+                          ->orWhereIn('status', ['terverifikasi', 'selesai']); 
+                })
+                ->with(['user', 'photos', 'admin', 'logs.admin']) // Load relasi admin dari logs
                 ->first();
 
             if (!$report) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Laporan tidak ditemukan.',
+                    'message' => 'Laporan tidak ditemukan atau Anda tidak memiliki akses untuk melihatnya.',
                 ], 404);
             }
 
@@ -99,7 +106,7 @@ class ReportController extends Controller
     {
         try {
             $reports = Report::where('user_id', auth('sanctum')->id())
-                ->with('photos')
+                ->with('user', 'photos')
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
@@ -131,14 +138,14 @@ class ReportController extends Controller
     {
         try {
             $reports = Report::verified()
-                ->with('photos')
-                ->select(['id', 'nomor_laporan', 'judul', 'kategori', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'created_at'])
+                ->with('user', 'photos')
+                ->select(['id', 'user_id', 'nomor_laporan', 'judul', 'kategori', 'deskripsi', 'lokasi', 'latitude', 'longitude', 'status', 'created_at'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
             return response()->json([
                 'success' => true,
-                'data'    => $reports,
+                'data'    => $reports->map(fn($report) => $this->formatReport($report)),
             ], 200);
 
         } catch (\Exception $e) {
@@ -166,9 +173,24 @@ class ReportController extends Controller
             'longitude'     => $report->longitude,
             'status'        => $report->status,
             'created_at'    => $report->created_at,
+            'validated_at'  => $report->validated_at,
+            'alasan_penolakan' => $report->alasan_penolakan,
+            'user'          => $report->user ? [
+                'id'            => $report->user->id,
+                'nama'          => trim(($report->user->nama_depan ?? '') . ' ' . ($report->user->nama_belakang ?? '')) ?: $report->user->username,
+                'username'      => $report->user->username,
+                'nama_depan'    => $report->user->nama_depan,
+                'nama_belakang' => $report->user->nama_belakang,
+                'email'         => $report->user->email,
+            ] : null,
+            'admin'         => $report->admin ? [
+                'id'       => $report->admin->id,
+                'username' => $report->admin->username,
+            ] : null,
             'photos'        => $report->photos->map(fn($photo) => [
                 'id'          => $photo->id,
                 'file_path'   => $photo->file_path,
+                'url'         => $photo->file_url,
                 'file_type'   => $photo->file_type,
                 'file_size'   => $photo->file_size,
                 'uploaded_at' => $photo->uploaded_at,
@@ -181,6 +203,10 @@ class ReportController extends Controller
                 'status'     => $log->status,
                 'catatan'    => $log->catatan,
                 'created_at' => $log->created_at,
+                'admin'      => $log->admin ? [
+                    'id'       => $log->admin->id,
+                    'username' => $log->admin->username,
+                ] : null,
             ]);
         }
 

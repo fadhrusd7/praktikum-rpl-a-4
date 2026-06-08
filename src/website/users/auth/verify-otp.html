@@ -21,7 +21,7 @@
 
             <div class="auth-content">
                 <h1 class="auth-title">Cek Email Anda</h1>
-                <p class="auth-subtitle">Kami telah mengirimkan Kode OTP ke<br/><strong>Email Anda</strong></p>
+                <p class="auth-subtitle">Kami telah mengirimkan Kode OTP ke<br/><strong id="emailDisplay">Email Anda</strong></p>
                 <form id="otpForm" novalidate>
                     <div class="form-group">
                     <div class="otp-container" id="otpContainer">
@@ -38,7 +38,7 @@
 
                 <div class="resend-otp">
                     Tidak menerima kode? 
-                    <button type="button" class="resend-btn" id="resendbtn"disabled>
+                    <button type="button" class="resend-btn" id="resendbtn" disabled>
                         Kirim ulang <span class="countdown">(60s)</span>
                     </button>
                 </div>
@@ -59,9 +59,9 @@
     </div>
     <div class="toast-container" aria-live="polite"></div>
     
-    <script type="module" src="../../js/toast.js"></script>
-    <script type="module" src="../../js/ui.js"></script>
-    <script type="module" src="../../js/verify-otp.js"></script>
+    <script type="module" src="../../js/shared/toast.js"></script>
+    <script type="module" src="../../js/shared/ui.js"></script>
+    <script type="module" src="../../js/users/verify-otp.js"></script>
 
 </body>
 </html>

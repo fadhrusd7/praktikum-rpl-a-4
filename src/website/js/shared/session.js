@@ -1,22 +1,50 @@
 import { authAPI, adminAPI } from './api.js'
 
-const REDIRECT_LOGIN       = '/src/website/auth/login.html'
-const REDIRECT_ADMIN_LOGIN = '/src/website/admin/login.html'
-const REDIRECT_USER        = import.meta.env.VITE_REDIRECT_URL_USER  || '/src/website/users/dashboard/map.html'
-const REDIRECT_ADMIN       = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/src/website/admin/dashboard/dashboard-admin.html'
+// ─── Konfigurasi URL Redirect (Sudah mendukung Env + Fallback) ────────────────
+const REDIRECT_LOGIN       = import.meta.env.VITE_REDIRECT_LOGIN || '/users/auth/login.html'
+const REDIRECT_ADMIN_LOGIN = import.meta.env.VITE_REDIRECT_ADMIN_LOGIN || '/admin/login/login-admin.html'
+const REDIRECT_USER        = import.meta.env.VITE_REDIRECT_URL_USER || '/users/dashboard/map-users.html'
+const REDIRECT_ADMIN       = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/admin/dashboard/dashboard-admin.html'
 
 // ─── Token helpers ────────────────────────────────────────────
 
-/** Simpan token + role setelah login berhasil */
-export function saveSession(token, role) {
+/** * Simpan token + role setelah login berhasil.
+ * Aman untuk User (simpan nama/email) & Admin (mencegah bentrok).
+ */
+export function saveSession(token, role, user = {}) {
   localStorage.setItem('auth_token', token)
   localStorage.setItem('auth_role',  role)
+  
+  // Fitur User: Simpan nama sementara dari response login/register
+  const displayName = [user.nama_depan, user.nama_belakang]
+    .filter(Boolean).join(' ').trim() || user.username || ''
+  if (displayName)  localStorage.setItem('user_name',  displayName)
+  if (user.email)   localStorage.setItem('user_email', user.email)
+
+  // Fitur Admin: Jika yang login admin, bersihkan sisa token admin lama di storage agar tidak conflict
+  if (role === 'admin') {
+    localStorage.removeItem('admin_token')
+    localStorage.removeItem('admin_user')
+    sessionStorage.removeItem('admin_token')
+    sessionStorage.removeItem('admin_user')
+  }
 }
 
-/** Hapus semua data sesi */
+/** Hapus semua data sesi (Sapu bersih data User & Admin saat logout) */
 export function clearSession() {
+  // Hapus data utama
   localStorage.removeItem('auth_token')
   localStorage.removeItem('auth_role')
+  
+  // Hapus data profile milik User
+  localStorage.removeItem('user_name')
+  localStorage.removeItem('user_email')
+  
+  // Hapus data session milik Admin
+  localStorage.removeItem('admin_token')
+  localStorage.removeItem('admin_user')
+  sessionStorage.removeItem('admin_token')
+  sessionStorage.removeItem('admin_user')
 }
 
 /** Ambil token yang tersimpan (null jika belum login) */
@@ -35,7 +63,6 @@ export function getRole() {
  * Wajib login sebagai user biasa.
  * Tidak ada token → redirect ke login.
  * Ada token → validasi ke GET /api/auth/me.
- * @returns {object|null} data user dari server
  */
 export async function requireAuth() {
   const token = getToken()
@@ -57,7 +84,6 @@ export async function requireAuth() {
 /**
  * Wajib login sebagai admin.
  * Validasi via GET /api/admin/me.
- * @returns {object|null} data admin dari server
  */
 export async function requireAdminAuth() {
   const token = getToken()

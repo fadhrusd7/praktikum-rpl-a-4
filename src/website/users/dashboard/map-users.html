@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Peta laporan isu lingkungan - Lestari"/>
+    <title>Peta - Lestari</title>
+    <link rel="stylesheet" href="../../css/map-users.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="../../assets/Logo.png" alt="Logo Lestari" class="logo-img">
+            </div>
+            <div>
+                <div class="logo-text">Lestari</div>
+                <div class="logo-tagline">Lapor Isu Lingkungan</div>
+            </div>
+        </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li>
+                        <a href="../dashboard/map-users.html" class="nav-item active" data-page="peta">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                    <circle cx="12" cy="9" r="2.5"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Peta</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../laporan/report-users.html" class="nav-item" data-page="laporan">
+                             <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Laporan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../riwayat/history-users.html" class="nav-item" data-page="riwayat">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4M3 21v-6h6"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Riwayat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../profil/profile-users.html" class="nav-item" data-page="profil">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            </span>
+                            <span class="nav-text">Profil</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="sidebar-divider"></div>
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img 
+                        src="https://ui-avatars.com/api/?name=User&background=E0FBD2&color=00AA13" 
+                        alt="Foto Profil Sidebar" 
+                        id="sidebar-avatar-img" 
+                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #E0FBD2;"
+                    >
+                    <span class="user-status"></span>
+                </div>
+                <div class="user-info">
+                    <p class="user-name" id="sidebarUserName">Nama Pengguna</p>
+                    <p class="user-email" id="userEmailDisplay">email@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+        <header class="page-header">
+            <div class="page-header-left">
+                <div class="page-title-wrap">
+                    <h1 class="page-title" id="pageTitle">Peta</h1>
+                </div>
+            </div>
+            <div class="page-header-right">
+                <button class="btn-filter" id="filterBtn" aria-haspopup="true" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                        <path d="M22 3H2l8 9.46V19l4 2V12.46L22 3z"/>
+                    </svg>
+                    <span class="filter-label">Filter</span>
+                </button>
+                <button class="btn-add-report" id="addReportBtn" onclick="window.location.href='../laporan/report-users.html'">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5"  y1="12" x2="19" y2="12"/>
+                    </svg> 
+                    <span>Tambah Laporan</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="map-wrapper" id="mapWrapper">
+            <div id="map"></div>
+
+            <div class="map-skeleton" id="mapSkeleton">
+                <div class="skeleton-spinner"></div>
+                <p class="skeleton-text">Memuat data laporan</p>
+            </div>
+        </div>
+
+        <div class="map-empty-state hidden" id="mapEmptyState">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="#d1d5db">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <p>Belum ada laporan terverifikasi.</p>
+        </div>
+
+        <div class="map-legend" role="note" aria-label="Legenda kategori">
+            <div class="legend-title">Kategori Isu</div>
+            <ul class="legend-list" id="legendList">
+            </ul>
+        </div>
+
+        <div class="detail-overlay hidden" id="detailOverlay" aria-hidden="true"></div>
+
+        <aside class="detail-panel hidden" id="detailPanel" aria-live="polite">
+            <div class="detail-body" id="detailBody">
+            </div>
+            <div class="detail-footer">
+                <button class="detail-btn" id="detailActionBtn">Detail</button>
+            </div>
+        </aside>
+    </main>
+ 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script type="module" src="../../js/users/map-users.js"></script>
+</body>
+</html>

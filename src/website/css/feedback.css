@@ -1,0 +1,200 @@
+/* ── Page body modifier ──────────────────────────────────────── */
+.page-body--feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Intro text above card */
+.page-body__intro {
+  font-size: 14px;
+  color: var(--gray-500);
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+/* ── Feedback card ───────────────────────────────────────────── */
+.feedback-card {
+  max-width: 720px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.feedback-card .form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================================================================
+   STAR RATING SECTION
+   ================================================================ */
+.feedback-rating {
+  margin-bottom: 4px;
+}
+
+.feedback-rating__question {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+/* Fieldset reset */
+.star-rating {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Stars row */
+.star-rating__group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-direction: row-reverse; /* reverse for CSS-only hover trick */
+  justify-content: flex-end;
+}
+
+/* Hidden radio */
+.star-rating__input { display: none; }
+
+/* Star label */
+.star-rating__label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition);
+}
+
+.star-rating__label:hover { transform: scale(1.15); }
+
+/* Star icon — hollow by default */
+.star-rating__icon {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--gray-300, #d1d5db);
+  transition: color var(--transition), text-shadow var(--transition);
+  font-style: normal;
+  user-select: none;
+}
+
+/* Filled star — when radio is checked */
+.star-rating__input:checked ~ .star-rating__label .star-rating__icon,
+.star-rating__input:checked + .star-rating__label .star-rating__icon {
+  color: #f59e0b;
+}
+
+/* CSS-only hover: fill this star and all stars after it (reversed flex) */
+.star-rating__label:hover .star-rating__icon,
+.star-rating__label:hover ~ .star-rating__label .star-rating__icon {
+  color: #fbbf24;
+}
+
+/* Active/selected state via JS: .star--active added to label */
+.star-rating__label.star--active .star-rating__icon {
+  color: #f59e0b;
+  text-shadow: 0 0 8px rgba(251,191,36,.4);
+}
+
+/* ── Divider between rating and textarea ─────────────────────── */
+.feedback-divider {
+  border: none;
+  border-top: 1px solid var(--gray-100);
+  margin: 20px 0;
+}
+
+/* ── Label large variant ─────────────────────────────────────── */
+.form__label--lg {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* ── Feedback textarea ───────────────────────────────────────── */
+.form__textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--gray-900);
+  background: var(--white);
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.65;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form__textarea::placeholder { color: var(--gray-400); }
+
+.form__textarea:focus {
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 3px rgba(34,197,94,.1);
+}
+
+/* Char counter */
+.form__char-count {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.form__char-count--warn { color: #f59e0b; }
+.form__char-count--over { color: var(--red-500); }
+
+/* ================================================================
+   SUBMIT BUTTON
+   ================================================================ */
+.feedback-card .form__actions {
+  margin-top: 24px;
+  padding-top: 0;
+}
+
+.feedback-card .btn--primary {
+  height: 46px;
+  padding: 0 36px;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 1199px) {
+  .feedback-card {
+    max-width: 100%;
+    padding: 24px 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .feedback-card {
+    padding: 20px 18px;
+  }
+
+  .star-rating__icon { font-size: 26px; }
+
+  .attachment-upload__dropzone { min-height: 120px; }
+
+  .feedback-card .btn--primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .feedback-card { padding: 18px 16px; }
+  .star-rating__icon { font-size: 24px; }
+  .star-rating__group { gap: 4px; }
+}

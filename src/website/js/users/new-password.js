@@ -4,15 +4,15 @@
  * Membaca email dari sessionStorage dan token reset (jika ada).
  */
 
-import { authAPI }    from '.../shared/api.js'
-import { clearSession } from '.../shared/session.js'
+import { authAPI }    from '../shared/api.js'
+import { clearSession } from '../shared/session.js'
 import {
   showError,
   clearAllErrors,
   setLoading,
   initPasswordToggles
-} from '.../shared/ui.js'
-import { showToast } from './toast.js'
+} from '../shared/ui.js'
+import { showToast } from '../shared/toast.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         email:                 resetEmail,
         password:              passEl.value,
         password_confirmation: confirmEl.value,
-        ...(resetToken ? { token: resetToken } : {})
+        ...(resetToken ? { reset_token: resetToken } : {})
       }
 
       const res = await authAPI.resetPassword(payload)

@@ -18,19 +18,24 @@ class AdminReportController extends Controller
             $query = Report::with('photos', 'user', 'admin')
                 ->orderBy('created_at', 'desc');
 
-            if ($request->has('status')) {
-                $query->where('status', $request->status);
+            if ($request->filled('status')) {
+                $query->whereIn('status', $this->statusAliases($request->status));
             }
 
-            if ($request->has('kategori')) {
+            if ($request->filled('kategori')) {
                 $query->where('kategori', $request->kategori);
             }
 
-            if ($request->has('search')) {
+            if ($request->filled('search')) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('judul', 'like', "%$search%")
-                      ->orWhere('nomor_laporan', 'like', "%$search%");
+                      ->orWhere('nomor_laporan', 'like', "%$search%")
+                      ->orWhere('kategori', 'like', "%$search%")
+                      ->orWhereHas('user', function ($userQuery) use ($search) {
+                          $userQuery->where('username', 'like', "%$search%")
+                              ->orWhere('email', 'like', "%$search%");
+                      });
                 });
             }
 
@@ -219,6 +224,7 @@ class AdminReportController extends Controller
             'photos' => $report->photos->map(fn($p) => [
                 'id'          => $p->id,
                 'file_path'   => $p->file_path,
+                'url'         => $p->file_url,
                 'file_type'   => $p->file_type,
                 'file_size'   => $p->file_size,
                 'uploaded_at' => $p->uploaded_at,
@@ -239,6 +245,17 @@ class AdminReportController extends Controller
         }
 
         return $data;
+    }
+
+    private function statusAliases(string $status): array
+    {
+        return match ($status) {
+            'menunggu_validasi', 'tertunda', 'pending' => ['menunggu_validasi'],
+            'terverifikasi', 'divalidasi', 'diproses', 'verified' => ['terverifikasi', 'divalidasi', 'diproses'],
+            'selesai', 'done' => ['selesai'],
+            'ditolak', 'rejected' => ['ditolak'],
+            default => [$status],
+        };
     }
 
     private function errorResponse(string $message, \Exception $e)
