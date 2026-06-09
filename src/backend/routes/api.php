@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\NotificationController;
 
 // PUBLIC
 
@@ -53,6 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Feedback (User buat feedback)
     Route::post('/feedbacks', [FeedbackController::class, 'store']);
+
+    // Notifikasi
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markAllRead']);
 });
 
 // ADMIN

@@ -16,7 +16,7 @@ function handleUnauthorized() {
 }
 
 // Helper fetch dari history-api.js
-async function apiFetch(endpoint, options = {}) {
+export async function apiFetch(endpoint, options = {}) {
     const token = getToken();
     if (!token) {
         handleUnauthorized();
