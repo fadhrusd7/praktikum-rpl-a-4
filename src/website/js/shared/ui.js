@@ -2,6 +2,10 @@ export function initPasswordToggles() {
   const toggleButtons = document.querySelectorAll('.password-toggle')
 
   toggleButtons.forEach((btn) => {
+    // Cegah binding event berulang kali (terutama karena Vite HMR)
+    if (btn.hasAttribute('data-toggle-bound')) return
+    btn.setAttribute('data-toggle-bound', 'true')
+
     btn.addEventListener('click', () => {
       const input =
         btn.previousElementSibling ||
@@ -14,34 +18,37 @@ export function initPasswordToggles() {
 
       btn.innerHTML = isVisible
         ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
             <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
             <path d="M14.12 14.12a3 3 0 01-4.24-4.24"/>
             <line x1="1" y1="1" x2="23" y2="23"/>
-          </svg>`
-        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
           </svg>`
     })
   })
 }
 
 export function initPasswordStrength() {
-  const input        = document.querySelector('#password')
-  const bars         = document.querySelectorAll('.strength-bar')
+  const input = document.querySelector('#password')
+  const bars = document.querySelectorAll('.strength-bar')
   const strengthText = document.querySelector('.strength-text')
 
   if (!input || !bars.length) return
+
+  if (input.hasAttribute('data-strength-bound')) return
+  input.setAttribute('data-strength-bound', 'true')
 
   input.addEventListener('input', () => {
     const value = input.value
     let score = 0
 
-    if (value.length >= 8)            score++
-    if (/[A-Z]/.test(value))          score++
-    if (/[0-9]/.test(value))          score++
-    if (/[^A-Za-z0-9]/.test(value))   score++
+    if (value.length >= 8) score++
+    if (/[A-Z]/.test(value)) score++
+    if (/[0-9]/.test(value)) score++
+    if (/[^A-Za-z0-9]/.test(value)) score++
 
     const levels = ['', 'weak', 'medium', 'strong', 'strong']
     const labels = ['', 'Lemah', 'Sedang', 'Kuat', 'Sangat Kuat']
@@ -62,46 +69,45 @@ export function validateEmail(email) {
 }
 
 export function showError(inputEl, message) {
-  if (!inputEl) return
   inputEl.classList.add('error')
-  const errorEl = inputEl.closest('.form-group')?.querySelector('.form-error')
-  if (errorEl) {
-    errorEl.textContent = message
-    errorEl.classList.add('show')
+  const errEl = inputEl.parentElement.parentElement.querySelector('.form-error')
+  if (errEl) {
+    errEl.textContent = message
+    errEl.style.display = 'block'
   }
 }
 
 export function clearError(inputEl) {
-  if (!inputEl) return
   inputEl.classList.remove('error')
-  const errorEl = inputEl.closest('.form-group')?.querySelector('.form-error')
-  if (errorEl) {
-    errorEl.textContent = ''
-    errorEl.classList.remove('show')
+  const errEl = inputEl.parentElement.parentElement.querySelector('.form-error')
+  if (errEl) {
+    errEl.textContent = ''
+    errEl.style.display = 'none'
   }
 }
 
 export function clearAllErrors() {
-  document.querySelectorAll('.form-input.error').forEach(input => clearError(input))
+  document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'))
+  document.querySelectorAll('.form-error').forEach(el => {
+    el.textContent = ''
+    el.style.display = 'none'
+  })
 }
 
-export function setLoading(btn, loading = true) {
-  if (!btn) return
-
-  if (loading) {
+export function setLoading(btn, isLoading, loadingText = 'Memproses...') {
+  if (isLoading) {
     btn.dataset.originalText = btn.innerHTML
-    btn.disabled  = true
-    btn.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2.5" class="spinner">
-        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0" opacity="0.2"/>
-        <path d="M21 12a9 9 0 00-9-9"/>
-      </svg>`
-    btn.classList.add('loading')
+    btn.innerHTML = `<span class="spinner" style="display:inline-block; margin-right:8px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; width:14px; height:14px;"></span> ${loadingText}`
+    btn.disabled = true
+    btn.style.opacity = '0.8'
+    btn.style.cursor = 'not-allowed'
   } else {
-    btn.innerHTML = btn.dataset.originalText || 'Submit'
-    btn.disabled  = false
-    btn.classList.remove('loading')
+    if (btn.dataset.originalText) {
+      btn.innerHTML = btn.dataset.originalText
+    }
+    btn.disabled = false
+    btn.style.opacity = '1'
+    btn.style.cursor = 'pointer'
   }
 }
 
@@ -130,12 +136,20 @@ function injectSpinnerStyle() {
   document.head.appendChild(style)
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initUI() {
   injectSpinnerStyle()
   initPasswordToggles()
   initPasswordStrength()
 
   document.querySelectorAll('.form-input').forEach(input => {
+    if (input.hasAttribute('data-error-bound')) return
+    input.setAttribute('data-error-bound', 'true')
     input.addEventListener('input', () => clearError(input))
   })
-})
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initUI)
+} else {
+  initUI()
+}
