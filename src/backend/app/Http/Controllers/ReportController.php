@@ -404,10 +404,8 @@ class ReportController extends Controller
             'alasan_penolakan' => $report->alasan_penolakan,
             'user' => $report->user ? [
                 'id' => $report->is_anonymous ? null : $report->user->id,
-                'nama' => $report->is_anonymous ? 'Anonim' : (trim(($report->user->nama_depan ?? '') . ' ' . ($report->user->nama_belakang ?? '')) ?: $report->user->username),
-                'username' => $report->is_anonymous ? 'anonim' : $report->user->username,
-                'nama_depan' => $report->is_anonymous ? 'Anonim' : $report->user->nama_depan,
-                'nama_belakang' => $report->is_anonymous ? '' : $report->user->nama_belakang,
+                'nama' => $report->is_anonymous ? 'Anonim' : $report->user->nama_lengkap,
+                'nama_lengkap' => $report->is_anonymous ? 'Anonim' : $report->user->nama_lengkap,
                 'email' => $report->is_anonymous ? 'anonim@lestari.com' : $report->user->email,
             ] : null,
             'admin' => $report->admin ? [

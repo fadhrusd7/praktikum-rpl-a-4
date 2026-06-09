@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('registration_otps', function (Blueprint $table) {
             $table->id();
-            $table->string('username', 100);
+            $table->string('nama_lengkap', 255);
             $table->string('email', 255)->unique();
             $table->string('password');
             $table->string('otp', 6);

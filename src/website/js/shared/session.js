@@ -15,8 +15,7 @@ export function saveSession(token, role, user = {}) {
   localStorage.setItem('auth_role',  role)
   
   // Fitur User: Simpan nama sementara dari response login/register
-  const displayName = [user.nama_depan, user.nama_belakang]
-    .filter(Boolean).join(' ').trim() || user.username || ''
+  const displayName = user.nama_lengkap || user.username || ''
   if (displayName)  localStorage.setItem('user_name',  displayName)
   if (user.email)   localStorage.setItem('user_email', user.email)
 

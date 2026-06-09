@@ -49,9 +49,7 @@ class UserController extends Controller
                 'success' => true,
                 'data'    => [
                     'id'           => $user->id,
-                    'username'     => $user->username,
-                    'nama_depan'   => $user->nama_depan,
-                    'nama_belakang'=> $user->nama_belakang,
+                    'nama_lengkap' => $user->nama_lengkap,
                     'no_telepon'   => $user->no_telepon,
                     'kota'         => $user->kota,
                     'foto_profil'  => $user->foto_profil,
@@ -76,11 +74,9 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         $request->validate([
-            'nama_depan'    => 'nullable|string|max:100',
-            'nama_belakang' => 'nullable|string|max:100',
+            'nama_lengkap'  => 'nullable|string|max:255',
             'no_telepon'    => 'nullable|string|max:20',
             'kota'          => 'nullable|string|max:100',
-            'username'      => 'nullable|string|max:255|unique:users,username,' . $request->user()->id,
             'foto_profil'   => 'nullable|image|mimes:jpg,jpeg,png|max:1024',
         ]);
 
@@ -88,9 +84,7 @@ class UserController extends Controller
             $user = $request->user();
 
             $user->fill($request->only([
-                'username',
-                'nama_depan',
-                'nama_belakang',
+                'nama_lengkap',
                 'no_telepon',
                 'kota',
             ]));
@@ -111,9 +105,7 @@ class UserController extends Controller
                 'message' => 'Profil berhasil diupdate.',
                 'data'    => [
                     'id'            => $user->id,
-                    'username'      => $user->username,
-                    'nama_depan'    => $user->nama_depan,
-                    'nama_belakang' => $user->nama_belakang,
+                    'nama_lengkap'  => $user->nama_lengkap,
                     'no_telepon'    => $user->no_telepon,
                     'kota'          => $user->kota,
                     'foto_profil'   => $user->foto_profil,

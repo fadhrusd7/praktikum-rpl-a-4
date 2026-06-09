@@ -167,8 +167,7 @@ export function renderDateBadge() {
 }
 
 export function renderSidebarUser(user = {}) {
-  const displayName = [user.nama_depan, user.nama_belakang]
-    .filter(Boolean).join(' ').trim() || user.nama || user.username || 'Nama Pengguna'
+  const displayName = user.nama_lengkap || user.username || 'Pengguna'
 
   setText('sidebarUserName', displayName)
   setText('userEmailDisplay', user.email || 'email@gmail.com')

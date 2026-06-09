@@ -8,17 +8,7 @@ async function loadProfileForm() {
         const response = await getProfile();
         const user = response.data || response;
 
-        let firstName = user.nama_depan || "";
-        let lastName  = user.nama_belakang || "";
-
-        if (!firstName && !lastName) {
-            const fallbackName = user.username || "Pengguna";
-            const parts = fallbackName.trim().split(/\s+/);
-            firstName = parts[0] || "";
-            lastName  = parts.slice(1).join(" ") || "";
-        }
-
-        const fullName = [firstName, lastName].filter(Boolean).join(" ").trim();
+        const fullName = user.nama_lengkap || user.name || user.username || "Pengguna";
 
         const previewImg = document.getElementById("photo-preview-img");
         if (previewImg) {
@@ -26,8 +16,7 @@ async function loadProfileForm() {
             previewImg.src = user.foto_profil_url || user.foto_profil || fallbackAvatar;
         }
 
-        _setVal("input-first-name", firstName);
-        _setVal("input-last-name",  lastName);
+        _setVal("input-nama-lengkap", fullName);
         _setVal("input-phone", user.no_telepon || "");
         _setVal("input-email", user.email || "");
         _setVal("input-city",  user.kota || "");
@@ -101,17 +90,11 @@ function validateProfileForm() {
         if (el) el.textContent = "";
     }
 
-    ["error-first-name", "error-last-name", "error-phone", "error-email", "error-city"].forEach(clearError);
+    ["error-nama-lengkap", "error-phone", "error-email", "error-city"].forEach(clearError);
 
-    const firstName = document.getElementById("input-first-name")?.value.trim();
-    if (!firstName) {
-        setError("error-first-name", "Nama depan wajib diisi.");
-        isValid = false;
-    }
-
-    const lastName = document.getElementById("input-last-name")?.value.trim();
-    if (!lastName) {
-        setError("error-last-name", "Nama belakang wajib diisi.");
+    const namaLengkap = document.getElementById("input-nama-lengkap")?.value.trim();
+    if (!namaLengkap) {
+        setError("error-nama-lengkap", "Nama Lengkap wajib diisi.");
         isValid = false;
     }
 
@@ -144,8 +127,7 @@ async function handleUpdateProfile(e) {
     try {
         const formData = new FormData();
         
-        formData.append("nama_depan", document.getElementById("input-first-name").value.trim());
-        formData.append("nama_belakang",  document.getElementById("input-last-name").value.trim());
+        formData.append("nama_lengkap", document.getElementById("input-nama-lengkap").value.trim());
         formData.append("email", document.getElementById("input-email").value.trim());
         formData.append("no_telepon", document.getElementById("input-phone")?.value.trim() || "");
         formData.append("kota", document.getElementById("input-city")?.value.trim()  || "");
@@ -168,8 +150,7 @@ async function handleUpdateProfile(e) {
         const errors = err.data?.errors || err.errors; 
         
         if (errors) {
-            if (errors.nama_depan) document.getElementById("error-first-name").textContent = errors.nama_depan[0];
-            if (errors.nama_belakang)  document.getElementById("error-last-name").textContent  = errors.nama_belakang[0];
+            if (errors.nama_lengkap) document.getElementById("error-nama-lengkap").textContent = errors.nama_lengkap[0];
             if (errors.email)      document.getElementById("error-email").textContent      = errors.email[0];
             if (errors.no_telepon) document.getElementById("error-phone").textContent      = errors.no_telepon[0];
             if (errors.kota)       document.getElementById("error-city").textContent       = errors.kota[0];
@@ -196,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("edit-profile-form");
     if (form) form.addEventListener("submit", handleUpdateProfile);
 
-    ["input-first-name", "input-last-name", "input-email", "input-phone", "input-city"].forEach((id) => {
+    ["input-nama-lengkap", "input-email", "input-phone", "input-city"].forEach((id) => {
         const el = document.getElementById(id);
         if (!el) return;
         const errorId = `error-${id.replace("input-", "")}`;
