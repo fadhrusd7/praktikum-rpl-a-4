@@ -45,7 +45,7 @@ class NotificationController extends Controller
     {
         try {
             $count = Notification::where('user_id', auth('sanctum')->id())
-                ->where('is_read', 'false')
+                ->where('is_read', false)
                 ->count();
 
             return response()->json([
@@ -65,8 +65,8 @@ class NotificationController extends Controller
     {
         try {
             Notification::where('user_id', auth('sanctum')->id())
-                ->where('is_read', 'false')
-                ->update(['is_read' => 'true']);
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
 
             return response()->json([
                 'success' => true,
