@@ -340,10 +340,11 @@ function _renderPagination() {
 // ═══════════════════════════════════════════════════════════════
 
 const STATUS_CONFIG = {
-  menunggu_validasi: { label: 'Tertunda',      cls: 'status-tertunda'      },
+  menunggu_validasi: { label: 'Tertunda',      cls: 'status-tertunda' },
   terverifikasi:     { label: 'Terverifikasi', cls: 'status-terverifikasi' },
-  selesai:           { label: 'Selesai',       cls: 'status-selesai'       },
-  ditolak:           { label: 'Ditolak',       cls: 'status-ditolak'       }
+  divalidasi:        { label: 'Terverifikasi', cls: 'status-terverifikasi' },
+  selesai:           { label: 'Selesai',       cls: 'status-selesai' },
+  ditolak:           { label: 'Ditolak',       cls: 'status-ditolak' },
 }
 
 function _renderTable(reports) {
@@ -365,7 +366,7 @@ function _renderTable(reports) {
     const st       = STATUS_CONFIG[r.status] || { label: r.status || '—', cls: 'status-tertunda' }
     const { tgl, jam } = _formatDate(r.created_at)
     const lapNum   = _lapNum(r.created_at, r.id)
-    const nama     = r.user?.username || r.user?.nama || '?'
+    const nama     = r.user?.nama_lengkap || r.user?.nama || '?';
     const initials = nama.slice(0, 2).toUpperCase()
 
     return `

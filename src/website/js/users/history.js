@@ -6,11 +6,24 @@ if (!localStorage.getItem('auth_token')) window.location.replace(LOGIN_PATH)
 
 // ── Constants ─────────────────────────────────────────────────────
 const STATUS_META = {
-  menunggu_validasi: { label: 'Menunggu Validasi', cls: 'badge-tertunda' },
+  menunggu_validasi: { label: 'Tertunda',      cls: 'badge-tertunda' },
   tertunda:      { label: 'Tertunda',      cls: 'badge-tertunda' },
+  divalidasi:    { label: 'Terverifikasi', cls: 'badge-terverifikasi' },
   terverifikasi: { label: 'Terverifikasi', cls: 'badge-terverifikasi' },
   selesai:       { label: 'Selesai',       cls: 'badge-selesai' },
   ditolak:       { label: 'Ditolak',       cls: 'badge-ditolak' },
+}
+
+function normalizeStatus(status) {
+  if (!status) return 'tertunda';
+  const s = status.toLowerCase();
+  const map = {
+    menunggu_validasi: 'tertunda', tertunda: 'tertunda', pending: 'tertunda',
+    terverifikasi: 'terverifikasi', divalidasi: 'terverifikasi', diproses: 'terverifikasi',
+    verified: 'terverifikasi', selesai: 'selesai', done: 'selesai',
+    ditolak: 'ditolak', rejected: 'ditolak'
+  };
+  return map[s] || 'tertunda';
 }
 
 const KAT_EMOJI = {
@@ -168,7 +181,7 @@ function renderTable() {
   if (!tbody) return
 
   const filtered = allReports.filter(r => {
-    const status = (r.status || '').toLowerCase()
+    const status = normalizeStatus(r.status)
     const tabOk  = activeTab === 'semua' || status === activeTab
     const q      = searchQuery
     const srchOk = !q
@@ -186,8 +199,8 @@ function renderTable() {
   if (empty) empty.style.display = 'none'
 
   tbody.innerHTML = filtered.map(r => {
-    const status  = (r.status || 'tertunda').toLowerCase()
-    const sMeta   = STATUS_META[status] || { label: status, cls: 'badge-tertunda' }
+    const status  = normalizeStatus(r.status)
+    const sMeta   = STATUS_META[status] || { label: 'Tertunda', cls: 'badge-tertunda' }
     const idLabel = r.id_laporan || genId(r.id, r.created_at)
     
     // Kategori text only (tanpa emoji)

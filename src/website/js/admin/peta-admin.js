@@ -354,7 +354,7 @@ function openInspectCard(report, color) {
   }
 
   // Reporter
-  const reporter = report.user?.username || report.user?.name || '—';
+  const reporter = report.user?.nama_lengkap || report.user?.name || '—';
   document.getElementById('inspectReporter').textContent = reporter;
 
   // Date
