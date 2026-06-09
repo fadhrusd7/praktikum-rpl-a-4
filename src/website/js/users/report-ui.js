@@ -92,7 +92,6 @@ export function initFotoUpload(onChange) {
     const file = e.target.files?.[0]
     if (file) setFile(file)
   })
-  dropZone?.addEventListener('click', () => input?.click())
   remove?.addEventListener('click', (event) => {
     event.stopPropagation()
     if (input) input.value = ''
