@@ -21,7 +21,7 @@ class UserController extends Controller
                 'success' => true,
                 'data'    => [
                     'total'             => Report::where('user_id', $userId)->count(),
-                    'terverifikasi'     => Report::where('user_id', $userId)->where('status', 'terverifikasi')->count(),
+                    'terverifikasi'     => Report::where('user_id', $userId)->whereIn('status', ['terverifikasi', 'divalidasi'])->count(),
                     'menunggu_validasi' => Report::where('user_id', $userId)->where('status', 'menunggu_validasi')->count(),
                     'ditolak'           => Report::where('user_id', $userId)->where('status', 'ditolak')->count(),
                     'selesai'           => Report::where('user_id', $userId)->where('status', 'selesai')->count(),

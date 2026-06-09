@@ -333,8 +333,8 @@ function initMap(report) {
 // ── Helpers ────────────────────────────────────────────────────
 function normalizeStatus(s) {
   const map = {
-    pending: 'tertunda', tertunda: 'tertunda',
-    verified: 'terverifikasi', terverifikasi: 'terverifikasi',
+    menunggu_validasi: 'tertunda', pending: 'tertunda', tertunda: 'tertunda',
+    divalidasi: 'terverifikasi', verified: 'terverifikasi', terverifikasi: 'terverifikasi', diproses: 'terverifikasi',
     completed: 'selesai', selesai: 'selesai',
     rejected: 'ditolak', ditolak: 'ditolak',
   };

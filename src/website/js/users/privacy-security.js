@@ -102,8 +102,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    await _loadSidebarProfile();
-
     // Binding form ganti sandi
     document.getElementById('form-change-password')
         ?.addEventListener('submit', handleChangePassword);
@@ -115,10 +113,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Show/hide password toggle (ikon mata)
     document.querySelectorAll('.form__password-toggle').forEach(btn => {
         btn.addEventListener('click', function () {
-            const input = this.previousElementSibling;
-            const isHidden = input.type === 'password';
-            input.type = isHidden ? 'text' : 'password';
-            this.classList.toggle('form__password-toggle--hide', isHidden);
+            const input = this.parentElement.querySelector('input');
+            if (input) {
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                this.classList.toggle('form__password-toggle--hide', isHidden);
+            }
         });
     });
+
+    await _loadSidebarProfile();
 });

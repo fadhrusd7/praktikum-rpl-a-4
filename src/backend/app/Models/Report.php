@@ -82,7 +82,7 @@ class Report extends Model
     // SCOPES
     public function scopeVerified($query)
     {
-        return $query->where('status', 'terverifikasi');
+        return $query->whereIn('status', ['terverifikasi', 'divalidasi']);
     }
 
     public function scopePending($query)
@@ -98,7 +98,7 @@ class Report extends Model
 
     public function isVerified(): bool
     {
-        return $this->status === 'terverifikasi';
+        return in_array($this->status, ['terverifikasi', 'divalidasi']);
     }
 
     public function isRejected(): bool
