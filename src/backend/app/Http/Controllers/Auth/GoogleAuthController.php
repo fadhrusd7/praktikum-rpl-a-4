@@ -50,23 +50,12 @@ class GoogleAuthController extends Controller
             $user->tokens()->delete();
             $token = $user->createToken('google_token')->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Login Google berhasil.',
-                'data'    => [
-                    'id'       => $user->id,
-                    'nama_lengkap' => $user->nama_lengkap,
-                    'email'    => $user->email,
-                ],
-                'token' => $token,
-            ]);
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            return redirect()->away($frontendUrl . '/users/auth/google-callback.html?token=' . $token . '&role=user');
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Login Google gagal.',
-                'error'   => app()->isLocal() ? $e->getMessage() : null,
-            ], 500);
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            return redirect()->away($frontendUrl . '/users/auth/google-callback.html?error=1');
         }
     }
 }

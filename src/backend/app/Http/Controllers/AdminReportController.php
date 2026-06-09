@@ -130,7 +130,7 @@ class AdminReportController extends Controller
                 'report_id' => $report->id,
                 'pesan' => $pesanNotif,
                 'status_baru' => $request->status,
-                'is_read' => false,
+                'is_read' => 'false',
             ]);
 
             return response()->json([
@@ -188,7 +188,7 @@ class AdminReportController extends Controller
                 'report_id' => $report->id,
                 'pesan' => $pesanNotif,
                 'status_baru' => $request->status,
-                'is_read' => false,
+                'is_read' => 'false',
             ]);
 
             return response()->json([
