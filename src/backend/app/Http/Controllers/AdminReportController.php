@@ -34,7 +34,7 @@ class AdminReportController extends Controller
                         ->orWhere('nomor_laporan', 'like', "%$search%")
                         ->orWhere('kategori', 'like', "%$search%")
                         ->orWhereHas('user', function ($userQuery) use ($search) {
-                            $userQuery->where('username', 'like', "%$search%")
+                            $userQuery->where('nama_lengkap', 'like', "%$search%")
                                 ->orWhere('email', 'like', "%$search%");
                         });
                 });
@@ -240,7 +240,7 @@ class AdminReportController extends Controller
             'created_at' => $report->created_at,
             'user' => $report->user ? [
                 'id' => $report->user->id,
-                'username' => $report->user->username,
+                'nama_lengkap' => $report->user->nama_lengkap,
                 'email' => $report->user->email,
             ] : null,
             'admin' => $report->admin ? [

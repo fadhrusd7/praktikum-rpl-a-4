@@ -18,12 +18,11 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'username' => 'required|string|max:100|unique:users,username',
+            'nama_lengkap' => 'required|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ], [
-            'username.required'  => 'Username wajib diisi.',
-            'username.unique'    => 'Username sudah digunakan.',
+            'nama_lengkap.required'  => 'Nama Lengkap wajib diisi.',
             'email.required'     => 'Email wajib diisi.',
             'email.email'        => 'Format email tidak valid.',
             'email.unique'       => 'Email sudah digunakan.',
@@ -40,7 +39,7 @@ class AuthController extends Controller
                 ->delete();
 
             DB::table('registration_otps')->insert([
-                'username'   => $validated['username'],
+                'nama_lengkap' => $validated['nama_lengkap'],
                 'email'      => $validated['email'],
                 'password'   => Hash::make($validated['password']),
                 'otp'        => $otp,
@@ -97,17 +96,17 @@ class AuthController extends Controller
                 ], 422);
             }
 
-            if (User::where('email', $pending->email)->exists() || User::where('username', $pending->username)->exists()) {
+            if (User::where('email', $pending->email)->exists()) {
                 DB::table('registration_otps')->where('id', $pending->id)->delete();
 
                 return response()->json([
                     'success' => false,
-                    'message' => 'Email atau username sudah digunakan.',
+                    'message' => 'Email sudah digunakan.',
                 ], 422);
             }
 
             $user = User::create([
-                'username'          => $pending->username,
+                'nama_lengkap'      => $pending->nama_lengkap,
                 'email'             => $pending->email,
                 'password'          => $pending->password,
                 'email_verified_at' => now(),
@@ -120,7 +119,7 @@ class AuthController extends Controller
                 'message' => 'Email berhasil diverifikasi. Akun berhasil dibuat.',
                 'data'    => [
                     'id'         => $user->id,
-                    'username'   => $user->username,
+                    'nama_lengkap' => $user->nama_lengkap,
                     'email'      => $user->email,
                     'created_at' => $user->created_at,
                 ],
@@ -207,7 +206,7 @@ class AuthController extends Controller
                 'message' => 'Login berhasil.',
                 'data'    => [
                     'id'       => $user->id,
-                    'username' => $user->username,
+                    'nama_lengkap' => $user->nama_lengkap,
                     'email'    => $user->email,
                     'role'     => 'user',
                 ],
@@ -259,7 +258,7 @@ class AuthController extends Controller
                 'success' => true,
                 'data'    => [
                     'id'         => $user->id,
-                    'username'   => $user->username,
+                    'nama_lengkap' => $user->nama_lengkap,
                     'email'      => $user->email,
                     'role'       => 'user',
                     'created_at' => $user->created_at,
