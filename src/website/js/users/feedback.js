@@ -73,7 +73,7 @@ async function handleFeedbackSubmit(e) {
     try {
         const formData = new FormData();
         formData.append("rating", _activeRating);
-        formData.append("message", message);
+        formData.append("komentar", message);
         
         if (_attachmentFile) {
             formData.append("attachment", _attachmentFile);

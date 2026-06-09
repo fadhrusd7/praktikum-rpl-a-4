@@ -357,7 +357,7 @@ function renderTertunda(r) {
       <div style="display:flex;flex-direction:column;gap:14px;">
         <!-- Peta -->
         <div class="detail-card" style="padding:16px;">
-          <div class="card-section-title">${iconPin(20)} Deskripsi Laporan</div>
+          <div class="card-section-title">${iconPin(20)} Lokasi Laporan</div>
           ${renderMapThumb(r)}
         </div>
 

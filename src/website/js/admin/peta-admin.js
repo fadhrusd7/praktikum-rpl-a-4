@@ -256,8 +256,8 @@ function renderMarkers(reports, filter) {
   const visibleReports = reports.filter(report => {
     const status = normalizeStatus(report.status);
     if (filter === 'tertunda') return status === 'menunggu_validasi';
-    if (filter === 'terverifikasi') return status === 'terverifikasi' || status === 'selesai';
-    return status !== 'ditolak';
+    if (filter === 'terverifikasi') return status === 'terverifikasi';
+    return status === 'menunggu_validasi' || status === 'terverifikasi';
   });
 
   visibleReports.forEach(report => {
