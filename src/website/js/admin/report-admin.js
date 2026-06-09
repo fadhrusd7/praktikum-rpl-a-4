@@ -62,10 +62,18 @@ setHeaderDate();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', setHeaderDate);
 }
+// ─── Status mapping: UI tab → API query param ────────────────
+const STATUS_UI_TO_API = {
+  semua:         null,
+  tertunda:      'menunggu_validasi',
+  terverifikasi: 'terverifikasi',
+  selesai:       'selesai',
+  ditolak:       'ditolak',
+};
+
 // Load admin name and initial data
 loadAdminName();
 loadReports(currentStatus, 1);
-
 // ─── Tab group ───────────────────────────────────────────────
 document.getElementById('tab-group').addEventListener('click', e => {
   const tab = e.target.closest('.tab');
@@ -87,16 +95,7 @@ document.getElementById('breadcrumb-back').addEventListener('click', () => {
   showTableView();
 });
 
-// ─── Status mapping: UI tab → API query param ────────────────
-// API: menunggu_validasi | terverifikasi | selesai | ditolak
-// Tab "tertunda" di UI = "menunggu_validasi" di backend
-const STATUS_UI_TO_API = {
-  semua:         null,                // tanpa filter → GET /api/admin/reports
-  tertunda:      'menunggu_validasi',
-  terverifikasi: 'terverifikasi',
-  selesai:       'selesai',
-  ditolak:       'ditolak',
-};
+
 
 // ─── Load reports ────────────────────────────────────────────
 async function loadReports(status, page = 1) {

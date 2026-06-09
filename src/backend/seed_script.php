@@ -7,21 +7,30 @@ use App\Models\ReportLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-echo "Seeding users...\n";
-$users = [];
-for ($i = 1; $i <= 10; $i++) {
-    $users[] = User::create([
-        'nama_lengkap' => "Pengguna Dummy $i",
-        'email' => "user$i@example.com",
-        'password' => Hash::make('password'),
-        'email_verified_at' => now(),
-        'no_telepon' => '0812345678' . str_pad((string)$i, 2, '0', STR_PAD_LEFT),
-        'kota' => 'Kota Dummy',
-    ]);
+echo "Cleaning up old dummy reports and feedbacks...\n";
+ReportLog::truncate();
+Photo::truncate();
+Report::query()->delete();
+Feedback::query()->delete();
+
+echo "Fetching users...\n";
+$users = User::all();
+if ($users->isEmpty()) {
+    echo "No users found, generating dummy users...\n";
+    for ($i = 1; $i <= 10; $i++) {
+        $users[] = User::create([
+            'nama_lengkap' => "Pengguna Dummy $i",
+            'email' => "user$i@example.com",
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+            'no_telepon' => '0812345678' . str_pad((string)$i, 2, '0', STR_PAD_LEFT),
+            'kota' => 'Kota Dummy',
+        ]);
+    }
 }
 
-echo "Seeding reports...\n";
-$kategoriList = ['infrastruktur', 'lingkungan', 'lalu_lintas', 'fasilitas_umum', 'lainnya'];
+echo "Seeding reports with correct categories...\n";
+$kategoriList = ['Sampah', 'Polusi', 'Banjir', 'Isu Air', 'Penebangan', 'Lainnya'];
 $statusList = ['menunggu_validasi', 'divalidasi', 'diproses', 'selesai', 'ditolak'];
 
 foreach ($users as $user) {

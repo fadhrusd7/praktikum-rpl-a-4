@@ -103,8 +103,10 @@ class AdminReportController extends Controller
             $adminId = auth('sanctum')->id();
             $isVerified = $request->status === 'terverifikasi';
 
+            $dbStatus = $isVerified ? 'divalidasi' : $request->status;
+
             $report->update([
-                'status' => $request->status,
+                'status' => $dbStatus,
                 'admin_id' => $adminId,
                 'alasan_penolakan' => $isVerified ? null : $request->alasan_penolakan,
                 'validated_at' => now(),
@@ -113,7 +115,7 @@ class AdminReportController extends Controller
             ReportLog::create([
                 'report_id' => $report->id,
                 'admin_id' => $adminId,
-                'status' => $request->status,
+                'status' => $dbStatus,
                 'aksi' => $isVerified ? 'Laporan terverifikasi' : 'Laporan ditolak',
                 'catatan' => $isVerified ? null : $request->alasan_penolakan,
                 'created_at' => now(),
@@ -165,12 +167,13 @@ class AdminReportController extends Controller
                 'selesai' => 'Laporan diselesaikan',
             ];
 
-            $report->update(['status' => $request->status]);
+            $dbStatus = $request->status === 'terverifikasi' ? 'divalidasi' : $request->status;
+            $report->update(['status' => $dbStatus]);
 
             ReportLog::create([
                 'report_id' => $report->id,
                 'admin_id' => $adminId,
-                'status' => $request->status,
+                'status' => $dbStatus,
                 'aksi' => $aksiMap[$request->status],
                 'created_at' => now(),
             ]);
