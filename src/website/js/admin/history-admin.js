@@ -30,14 +30,24 @@ const ITEMS_PER_PAGE = 10;
 
 /* ── Status badge map ─────────────────────────────────────── */
 const BADGE = {
+  divalidasi:    { cls: 'badge-terverifikasi', label: 'Terverifikasi' },
   terverifikasi: { cls: 'badge-terverifikasi', label: 'Terverifikasi' },
   selesai:       { cls: 'badge-selesai',       label: 'Selesai'       },
   ditolak:       { cls: 'badge-ditolak',       label: 'Ditolak'       },
 };
 
+function normalizeStatus(s) {
+  if (!s) return 'tertunda';
+  const ls = s.toLowerCase();
+  if (['menunggu_validasi', 'tertunda'].includes(ls)) return 'tertunda';
+  if (['terverifikasi', 'divalidasi', 'diproses'].includes(ls)) return 'terverifikasi';
+  return ls;
+}
+
 function badgeHTML(status) {
-  const b = BADGE[status];
-  if (!b) return '';
+  const norm = normalizeStatus(status);
+  const b = BADGE[norm];
+  if (!b) return `<span class="badge badge-tertunda">Tertunda</span>`;
   return `<span class="badge ${b.cls}">${b.label}</span>`;
 }
 
@@ -87,7 +97,7 @@ function renderTable(reports) {
 
   tableBody.innerHTML = visibleReports.map(r => {
     const { main: wMain, sub: wSub } = formatDate(r.created_at ?? r.tanggal);
-    const username = r.user?.username ?? r.pelapor ?? '–';
+    const username = r.user?.nama_lengkap ?? r.pelapor ?? '–';
     const reportId = r.nomor_laporan ?? r.laporan_id ?? r.id ?? '-';
     const detailId = r.id;
 
@@ -137,7 +147,7 @@ function applyFilter() {
   let filtered = allReports;
 
   if (activeStatus !== 'semua') {
-    filtered = filtered.filter(r => r.status === activeStatus);
+    filtered = filtered.filter(r => normalizeStatus(r.status) === activeStatus);
   }
 
   if (searchQuery) {
@@ -145,7 +155,7 @@ function applyFilter() {
     filtered = filtered.filter(r =>
       (r.judul ?? '').toLowerCase().includes(q) ||
       (r.kategori ?? '').toLowerCase().includes(q) ||
-      (r.user?.username ?? r.pelapor ?? '').toLowerCase().includes(q)
+      (r.user?.nama_lengkap ?? r.pelapor ?? '').toLowerCase().includes(q)
     );
   }
 
@@ -158,7 +168,7 @@ function getFilteredReports() {
   let filtered = allReports;
 
   if (activeStatus !== 'semua') {
-    filtered = filtered.filter(r => r.status === activeStatus);
+    filtered = filtered.filter(r => normalizeStatus(r.status) === activeStatus);
   }
 
   if (searchQuery) {
@@ -166,7 +176,7 @@ function getFilteredReports() {
     filtered = filtered.filter(r =>
       (r.judul ?? '').toLowerCase().includes(q) ||
       (r.kategori ?? '').toLowerCase().includes(q) ||
-      (r.user?.username ?? r.pelapor ?? '').toLowerCase().includes(q)
+      (r.user?.nama_lengkap ?? r.pelapor ?? '').toLowerCase().includes(q)
     );
   }
 

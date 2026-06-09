@@ -131,7 +131,7 @@ function filterReports(query) {
     (r.nomor_laporan || r.laporan_id || '').toLowerCase().includes(q) ||
     (r.kategori || r.category || '').toLowerCase().includes(q) ||
     String(r.id || '').toLowerCase().includes(q) ||
-    (r.pelapor || r.user?.username || r.reporter?.name || '').toLowerCase().includes(q)
+    (r.pelapor || r.user?.nama_lengkap || r.reporter?.name || '').toLowerCase().includes(q)
   );
 }
 
@@ -146,7 +146,7 @@ function renderTable(reports) {
 
   tbody.innerHTML = visibleReports.map(r => {
     const status   = normalizeStatus(r.status);
-    const nama     = r.user?.username || r.pelapor || r.reporter?.name || '?';
+    const nama     = r.user?.nama_lengkap || r.pelapor || r.reporter?.name || '?';
     const initials = getInitials(nama);
     const dateStr  = formatDate(r.created_at || r.waktu || r.createdAt);
     const timeStr  = formatTime(r.created_at || r.waktu || r.createdAt);
@@ -309,7 +309,7 @@ function renderTertunda(r) {
   const judul  = escHtml(r.judul || r.title || '-');
   const lapId  = escHtml(r.nomor_laporan || r.laporan_id || r.id || '-');
   const desc   = escHtml(r.deskripsi || r.description || 'Tidak ada deskripsi.');
-  const pelapor = escHtml(r.user?.username || r.pelapor || r.reporter?.name || '-');
+  const pelapor = escHtml(r.user?.nama_lengkap || r.pelapor || r.reporter?.name || '-');
   const foto   = getReportPhotoUrl(r);
 
   return `
@@ -407,7 +407,7 @@ function _renderVerifiedOrDone(r, status) {
   const desc       = escHtml(r.deskripsi || r.description || '-');
   const kategori   = escHtml(r.kategori || r.category || '-');
   const waktuStr   = formatDateTime(r.created_at || r.waktu || r.createdAt);
-  const pelapor    = escHtml(r.user?.username || r.pelapor || r.reporter?.name || '-');
+  const pelapor    = escHtml(r.user?.nama_lengkap || r.pelapor || r.reporter?.name || '-');
   const verifiedBy = escHtml(r.admin?.username || r.verifiedBy || r.diverifikasiOleh || '-');
   const verifiedAt = formatDateTime(r.validated_at || r.verified_at || r.verifiedAt || r.waktuVerifikasi || null);
   const foto       = getReportPhotoUrl(r);
@@ -526,7 +526,7 @@ function renderDitolak(r) {
   const desc     = escHtml(r.deskripsi || r.description || '-');
   const kategori = escHtml(r.kategori || r.category || '-');
   const waktuStr = formatDateTime(r.created_at || r.waktu || r.createdAt);
-  const pelapor  = escHtml(r.user?.username || r.pelapor || r.reporter?.name || '-');
+  const pelapor  = escHtml(r.user?.nama_lengkap || r.pelapor || r.reporter?.name || '-');
   const foto     = getReportPhotoUrl(r);
   const rejectedBy = escHtml(r.admin?.username || r.rejectedBy || r.ditolakOleh || 'Admin');
 

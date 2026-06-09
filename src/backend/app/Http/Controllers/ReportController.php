@@ -128,7 +128,7 @@ class ReportController extends Controller
                     // Syarat 1: Milik user itu sendiri
                     $query->where('user_id', $userId)
                         // Syarat 2: ATAU statusnya terverifikasi/selesai (bisa dilihat publik/user lain)
-                        ->orWhereIn('status', ['terverifikasi', 'selesai']);
+                        ->orWhereIn('status', ['terverifikasi', 'divalidasi', 'selesai']);
                 })
                 ->with(['user', 'photos', 'admin', 'logs.admin']) // Load relasi admin dari logs
                 ->first();

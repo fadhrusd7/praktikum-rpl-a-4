@@ -17,7 +17,7 @@ class AdminStatsController extends Controller
                 // Ringkasan status (untuk 4 card di dashboard)
                 'total'             => Report::count(),
                 'menunggu_validasi' => Report::where('status', 'menunggu_validasi')->count(),
-                'terverifikasi'     => Report::where('status', 'terverifikasi')->count(),
+                'terverifikasi'     => Report::whereIn('status', ['terverifikasi', 'divalidasi'])->count(),
                 'ditolak'           => Report::where('status', 'ditolak')->count(),
                 'selesai'           => Report::where('status', 'selesai')->count(),
 
@@ -68,7 +68,7 @@ class AdminStatsController extends Controller
                 'success' => true,
                 'data'    => [
                     'laporan_diverifikasi' => Report::where('admin_id', $adminId)
-                        ->whereIn('status', ['terverifikasi', 'selesai'])
+                        ->whereIn('status', ['terverifikasi', 'divalidasi', 'selesai'])
                         ->count(),
                 ],
             ]);
