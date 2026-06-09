@@ -349,7 +349,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 44px;
+  height: 52px;
   padding: 0 22px;
   border: 1.5px solid var(--gray-200);
   border-radius: var(--radius-md);

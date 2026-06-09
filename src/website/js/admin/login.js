@@ -10,8 +10,7 @@ import {
   validateEmail,
   showError,
   clearAllErrors,
-  setLoading,
-  initPasswordToggles
+  setLoading
 } from '../shared/ui.js'
 import { showToast } from '../shared/toast.js'
 
@@ -26,8 +25,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.replace(REDIRECT_ADMIN)
     return
   }
-
-  initPasswordToggles()
 
   const form = document.querySelector('#loginAdminForm')
   if (!form) return

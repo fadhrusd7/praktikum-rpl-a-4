@@ -1,5 +1,5 @@
-import { authAPI }                          from '../shared/api.js'
-import { redirectIfLoggedIn }               from '../shared/session.js'
+import { authAPI }            from '../shared/api.js'
+import { redirectIfLoggedIn } from '../shared/session.js'
 import {
   validateEmail,
   showError,
@@ -20,32 +20,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   const form = document.querySelector('#registerForm')
   if (!form) return
 
-  // ── Submit: register ──────────────────────────────────────
+  // ── Submit: register ────────────────────────────────────────────────
   form.addEventListener('submit', async (e) => {
     e.preventDefault()
     clearAllErrors()
 
-    const usernameEl        = form.querySelector('#username') || form.querySelector('#name')
+    const nameEl            = form.querySelector('#name')
     const emailEl           = form.querySelector('#email')
     const passwordEl        = form.querySelector('#password')
     const confirmPasswordEl = form.querySelector('#confirmPassword')
     const submitBtn         = form.querySelector('.btn-auth')
 
-    const username        = usernameEl.value.trim()
+    const name            = nameEl.value.trim()
     const email           = emailEl.value.trim()
     const password        = passwordEl.value
     const confirmPassword = confirmPasswordEl.value
     let valid = true
 
-    // Validasi username
-    if (!username) {
-      showError(usernameEl, 'Username tidak boleh kosong')
+    // Validasi nama
+    if (!name) {
+      showError(nameEl, 'Nama tidak boleh kosong')
       valid = false
-    } else if (username.length < 3) {
-      showError(usernameEl, 'Username minimal 3 karakter')
-      valid = false
-    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      showError(usernameEl, 'Username hanya boleh huruf, angka, dan underscore')
+    } else if (name.length < 3) {
+      showError(nameEl, 'Nama minimal 3 karakter')
       valid = false
     }
 
@@ -65,6 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (password.length < 8) {
       showError(passwordEl, 'Password minimal 8 karakter')
       valid = false
+    } else if (!/\d/.test(password)) {
+      showError(passwordEl, 'Password harus mengandung minimal satu angka')
+      valid = false
     }
 
     // Validasi konfirmasi password
@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       valid = false
     }
 
+
     if (!valid) return
 
     setLoading(submitBtn, true)
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       // POST /api/auth/register
       const res = await authAPI.register({
-        username,
+        name,
         email,
         password,
         password_confirmation: confirmPassword
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       sessionStorage.setItem('otpPurpose', 'register')
       sessionStorage.setItem('registerEmail', email)
 
-      showToast(res.message || 'Kode OTP telah dikirim ke email kamu.', 'success')
+      showToast(res.message || 'Kode OTP telah dikirim ke email Anda.', 'success')
 
       setTimeout(() => {
         window.location.href = 'verify-otp.html'
@@ -100,13 +101,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (err) {
       console.error('[auth/register]', err)
-      showToast(err.message || 'Register gagal', 'error')
+      showToast(err.message || 'Register gagal. Silakan coba lagi.', 'error')
     } finally {
       setLoading(submitBtn, false)
     }
   })
 
-  // ── Google OAuth ──────────────────────────────────────────
+  // ── Google OAuth ────────────────────────────────────────────────────
   const googleBtn = document.querySelector('.btn-google')
   if (googleBtn) {
     googleBtn.addEventListener('click', async () => {

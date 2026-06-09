@@ -529,6 +529,7 @@ function renderDitolak(r) {
   const waktuStr = formatDateTime(r.created_at || r.waktu || r.createdAt);
   const pelapor  = escHtml(r.user?.username || r.pelapor || r.reporter?.name || '-');
   const foto     = getReportPhotoUrl(r);
+  const rejectedBy = escHtml(r.admin?.username || r.rejectedBy || r.ditolakOleh || 'Admin');
 
   return `
   <div class="detail-wrap">
@@ -561,7 +562,12 @@ function renderDitolak(r) {
             </svg>
             <span class="rejection-alert-title">Alasan Penolakan</span>
           </div>
-          <p class="rejection-alert-body">${alasan}</p>
+          <p class="rejection-alert-body" style="margin-bottom: 8px;">${alasan}</p>
+          
+          <!-- TEKS TAMBAHAN DITOLAK OLEH SIAPA -->
+          <p class="rejection-alert-by" style="font-size: 12px; color: #dc2626; font-weight: 500; margin-top: 6px;">
+            Ditolak oleh ${rejectedBy}
+          </p>
         </div>
 
         <!-- Detail card -->
@@ -590,7 +596,7 @@ function renderDitolak(r) {
       <div style="display:flex;flex-direction:column;gap:14px;">
         <!-- Peta -->
         <div class="detail-card" style="padding:16px;">
-          <div class="card-section-title">${iconPin(20)} Deskripsi Laporan</div>
+          <div class="card-section-title">${iconPin(20)} Lokasi Kejadian</div>
           ${renderMapThumb(r)}
         </div>
 

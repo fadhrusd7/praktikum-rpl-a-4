@@ -9,14 +9,11 @@ import { clearSession } from '../shared/session.js'
 import {
   showError,
   clearAllErrors,
-  setLoading,
-  initPasswordToggles
+  setLoading
 } from '../shared/ui.js'
 import { showToast } from '../shared/toast.js'
 
 document.addEventListener('DOMContentLoaded', () => {
-
-  initPasswordToggles()
 
   // Pastikan ada email reset di session
   const resetEmail = sessionStorage.getItem('resetEmail')
