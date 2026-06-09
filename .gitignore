@@ -27,6 +27,17 @@ vendor/
 # Cache
 bootstrap/cache/
 
+<<<<<<< HEAD
 # Logs
 .github/
 .git/
+=======
+# VS Code
+.vscode/
+
+# Postman
+.postman/
+postman/
+
+echo "dist/"
+>>>>>>> 1a3f12cec402924c83a36e84fd53586f9e071996

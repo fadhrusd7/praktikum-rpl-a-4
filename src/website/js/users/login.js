@@ -1,38 +1,47 @@
+/**
+ * login.js — Login User
+ * Endpoint: POST /api/auth/login
+ *
+ * Response Laravel (AuthController):
+ * {
+ *   success: true,
+ *   message: "Login berhasil.",
+ *   data: { id, username, email, role: "user" },
+ *   token: "plainTextToken"
+ * }
+ */
+
 import { authAPI }                        from '../shared/api.js'
 import { redirectIfLoggedIn, saveSession } from '../shared/session.js'
 import {
   validateEmail,
   showError,
   clearAllErrors,
-  setLoading,
-  initPasswordToggles
+  setLoading
 } from '../shared/ui.js'
 import { showToast } from '../shared/toast.js'
 
-const REDIRECT_USER  = import.meta.env.VITE_REDIRECT_URL_USER  || '/users/dashboard/map-users.html'
-const REDIRECT_ADMIN = import.meta.env.VITE_REDIRECT_URL_ADMIN || '/admin/dashboard/dashboard-admin.html'
-
+const REDIRECT_USER  = import.meta.env.VITE_REDIRECT_URL_USER  || ''
+const REDIRECT_ADMIN = import.meta.env.VITE_REDIRECT_URL_ADMIN || ''
 
 document.addEventListener('DOMContentLoaded', async () => {
 
+  // Jika sudah login → redirect ke dashboard sesuai role
   await redirectIfLoggedIn()
-
-  initPasswordToggles()
 
   const form = document.querySelector('#loginForm')
   if (!form) return
 
-  // ── Submit: email + password ──────────────────────────────
   form.addEventListener('submit', async (e) => {
     e.preventDefault()
     clearAllErrors()
 
-    const emailEl    = form.querySelector('#email')
-    const passwordEl = form.querySelector('#password')
-    const submitBtn  = form.querySelector('.btn-auth')
+    const emailEl   = form.querySelector('#email')
+    const passEl    = form.querySelector('#password')
+    const submitBtn = form.querySelector('.btn-auth')
 
     const email    = emailEl.value.trim()
-    const password = passwordEl.value
+    const password = passEl.value
     let valid = true
 
     if (!email) {
@@ -44,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (!password) {
-      showError(passwordEl, 'Password tidak boleh kosong')
+      showError(passEl, 'Password tidak boleh kosong')
       valid = false
     }
 
@@ -54,28 +63,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       // POST /api/auth/login
-      const res   = await authAPI.login(email, password)
-      const token = res.token || res.access_token || res.data?.token
-      const user  = res.data?.user || res.data || {}
-      const role  = user.role || res.data?.role || res.role || 'user'
+      const res = await authAPI.login(email, password)
 
-      if (!token) {
-        throw new Error('Token login tidak diterima dari server.')
-      }
+      // Token ada di res.token (top-level) sesuai AuthController
+      const token = res.token
+      if (!token) throw new Error('Token login tidak diterima dari server.')
 
-      // Simpan token & role ke localStorage
+      // Data user ada di res.data: { id, username, email, role }
+      const user = res.data ?? {}
+      const role = user.role || 'user'
+
+      // Simpan token, role, username, email ke localStorage
+      // saveSession sudah handle: user_name dari user.username, user_email dari user.email
       saveSession(token, role, user)
-
-      try {
-        const me = await authAPI.me()
-        const u  = me.data
-        const displayName = [u.nama_depan, u.nama_belakang]
-          .filter(Boolean).join(' ').trim() || u.username || ''
-        if (displayName) localStorage.setItem('user_name',  displayName)
-        if (u.email)     localStorage.setItem('user_email', u.email)
-      } catch {
-        // token sudah tersimpan, profil bisa di-fetch ulang di dashboard
-      }
 
       showToast(res.message || 'Login berhasil!', 'success')
 
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   })
 
-  // ── Google OAuth ──────────────────────────────────────────
+  // ── Google OAuth ────────────────────────────────────────────
   const googleBtn = document.querySelector('.btn-google')
   if (googleBtn) {
     googleBtn.addEventListener('click', async () => {

@@ -95,7 +95,8 @@ const reportData = {
   lokasi:    '',
   latitude:  null,
   longitude: null,
-  foto:      null
+  foto:      null,
+  is_anonymous: false
 }
 
 // ── Init UI ───────────────────────────────────────────────────────
@@ -123,6 +124,11 @@ document.getElementById('judulInput')?.addEventListener('input', (e) => {
 // Bind deskripsi input
 document.getElementById('deskripsiInput')?.addEventListener('input', (e) => {
   reportData.deskripsi = e.target.value
+})
+
+// Bind anonymous input
+document.getElementById('isAnonymousInput')?.addEventListener('change', (e) => {
+  reportData.is_anonymous = e.target.checked
 })
 
 // ── Step 1 → Step 2 ───────────────────────────────────────────────
@@ -299,6 +305,7 @@ document.getElementById('btnKirimLaporan')?.addEventListener('click', async () =
   formData.append('lokasi',    reportData.lokasi)
   formData.append('latitude',  reportData.latitude)
   formData.append('longitude', reportData.longitude)
+  formData.append('is_anonymous', reportData.is_anonymous ? '1' : '0')
   if (reportData.foto) formData.append('foto', reportData.foto)
 
   try {
@@ -306,9 +313,21 @@ document.getElementById('btnKirimLaporan')?.addEventListener('click', async () =
     showStep(4)
     startSuccessCountdown()
   } catch (err) {
-    showToast(err.message || 'Gagal mengirim laporan. Silakan coba kembali.', 'error')
-    btn.disabled = false
-    btn.innerHTML = `Kirim Laporan`
+    if (err.status === 409) {
+      // Laporan duplikat — kembalikan ke Step 2 agar user pilih lokasi berbeda
+      // Jangan enable tombol lagi supaya tidak bisa submit ulang di lokasi yang sama
+      showToast(err.message, 'warning', 6000)
+      setTimeout(() => {
+        showStep(2, () => {
+          invalidateReportMap()
+        })
+        showToast('Silakan pilih lokasi yang berbeda.', 'info', 4000)
+      }, 800)
+    } else {
+      showToast(err.message || 'Gagal mengirim laporan. Silakan coba kembali.', 'error')
+      btn.disabled = false
+      btn.innerHTML = `Kirim Laporan`
+    }
   }
 })
 

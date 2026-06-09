@@ -16,7 +16,7 @@ function handleUnauthorized() {
 }
 
 // Helper fetch dari history-api.js
-async function apiFetch(endpoint, options = {}) {
+export async function apiFetch(endpoint, options = {}) {
     const token = getToken();
     if (!token) {
         handleUnauthorized();
@@ -45,16 +45,25 @@ async function apiFetch(endpoint, options = {}) {
     return res.json();
 }
 
+// Error class dengan status HTTP — agar caller bisa bedakan 409 dari 500
+class ApiError extends Error {
+    constructor(message, status) {
+        super(message);
+        this.status = status;
+    }
+}
+
 // Helper fetch dari report-api.js
 async function handleResponse(res) {
     let body;
     try {
         body = await res.json();
     } catch {
-        throw new Error(`Server error: ${res.status} ${res.statusText}`);
+        throw new ApiError(`Server error: ${res.status} ${res.statusText}`, res.status);
     }
-    if (!res.ok) throw new Error(body?.message || `HTTP ${res.status}`);
-    if (body.success === false) throw new Error(body.message || 'Terjadi kesalahan.');
+    // 409 = laporan duplikat — pesan dari backend langsung ke user
+    if (!res.ok) throw new ApiError(body?.message || `HTTP ${res.status}`, res.status);
+    if (body.success === false) throw new ApiError(body.message || 'Terjadi kesalahan.', res.status);
     return body;
 }
 

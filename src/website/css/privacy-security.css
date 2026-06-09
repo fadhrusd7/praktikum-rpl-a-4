@@ -3,40 +3,96 @@
    Depends on: profile-common.css
    ================================================================ */
 
-/* ── Page body modifier ──────────────────────────────────────── */
+/* ── Page body ───────────────────────────────────────────────── */
 .page-body--privacy-security {
   display: flex;
   flex-direction: column;
+  padding: 28px;
+  gap: 28px;
+}
+
+/* ── Section heading ─────────────────────────────────────────── */
+.privacy-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 14px;
 }
 
 /* ── Two-column layout ───────────────────────────────────────── */
 .privacy-security-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 0.8fr;
   gap: 24px;
   align-items: start;
-  max-width: 960px;
+  max-width: 920px;
 }
 
 .privacy-security-layout__left,
 .privacy-security-layout__right {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 /* ================================================================
    CHANGE PASSWORD CARD
    ================================================================ */
 .change-password-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
   padding: 28px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
 
 .change-password-card .card__title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--gray-900);
+  margin-bottom: 6px;
+}
+
+.change-password-card .card__subtitle {
+  font-size: 13px;
+  color: var(--gray-400);
   margin-bottom: 24px;
+}
+
+/* ── Form groups ─────────────────────────────────────────────── */
+.form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.form__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.form__input {
+  height: 44px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  font-size: 14px;
+  color: var(--gray-900);
+  background: var(--gray-50);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form__input:focus {
+  outline: none;
+  border-color: var(--green-500);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
 }
 
 /* ── Password input wrapper (input + eye toggle) ─────────────── */
@@ -82,7 +138,7 @@
   background-size: contain;
 }
 
-/* Eye-off when password visible — JS adds class .form__password-toggle--hide */
+/* Eye-off when password visible */
 .form__password-toggle--hide .form__password-toggle-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24'/%3E%3Cline x1='1' y1='1' x2='23' y2='23'/%3E%3C/svg%3E");
 }
@@ -92,141 +148,79 @@
   height: 44px;
   padding: 0 28px;
   border-radius: var(--radius-md);
-  margin-top: 4px;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--green-600);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.change-password-card .btn--primary:hover {
+  background: var(--green-700);
+}
+
+.change-password-card .btn--primary:active {
+  transform: scale(0.98);
 }
 
 /* ================================================================
-   PRIVACY PREFERENCES CARD
+   DELETE ACCOUNT CARD (right column)
    ================================================================ */
-.privacy-preferences-card {
-  padding: 24px 28px;
+.delete-account-card {
+  background: #fff5f5;
+  border: 1.5px solid #fecaca;
+  border-radius: var(--radius-lg);
+  padding: 24px;
 }
 
-.privacy-preferences-card .card__title {
-  font-size: 16px;
+.delete-account-card__title {
+  font-size: 15px;
   font-weight: 700;
-  color: var(--gray-900);
-  margin-bottom: 16px;
-}
-
-/* ── Toggle list ─────────────────────────────────────────────── */
-.toggle-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-/* Single toggle row */
-.toggle-item {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  margin-bottom: 10px;
-  transition: box-shadow var(--transition);
-}
-
-.toggle-item:last-child { margin-bottom: 0; }
-
-.toggle-item:hover {
-  box-shadow: var(--shadow-sm);
-}
-
-/* Label wraps the whole row: text + switch */
-.toggle-item__label {
+  color: #b91c1c;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  cursor: pointer;
-  gap: 16px;
-  user-select: none;
+  gap: 8px;
 }
 
-.toggle-item__text {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray-700);
-  flex: 1;
-  line-height: 1.4;
+.delete-account-card__desc {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
-/* ── iOS-style toggle switch ─────────────────────────────────── */
-.toggle-item__control {
-  flex-shrink: 0;
-  position: relative;
-}
-
-/* Hide native checkbox */
-.toggle-item__input { display: none; }
-
-/* Track */
-.toggle-item__track {
-  display: block;
-  width: 46px;
-  height: 26px;
-  border-radius: 13px;
-  background: var(--gray-200);
-  position: relative;
-  transition: background var(--transition);
-  flex-shrink: 0;
-}
-
-/* Thumb */
-.toggle-item__thumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--white);
-  box-shadow: 0 1px 4px rgba(0,0,0,.2);
-  transition: transform var(--transition);
-}
-
-/* Checked state — JS toggles aria-checked / checked attribute */
-.toggle-item__input:checked ~ .toggle-item__track,
-.toggle-item__input[aria-checked="true"] ~ .toggle-item__track {
-  background: var(--green-500);
-}
-
-.toggle-item__input:checked ~ .toggle-item__track .toggle-item__thumb,
-.toggle-item__input[aria-checked="true"] ~ .toggle-item__track .toggle-item__thumb {
-  transform: translateX(20px);
-}
-
-/* Focus ring for accessibility */
-.toggle-item__input:focus-visible ~ .toggle-item__track {
-  outline: 2px solid var(--green-500);
-  outline-offset: 2px;
-}
-
-/* ================================================================
-   DELETE ACCOUNT SECTION
-   ================================================================ */
 .delete-account-section {
   display: flex;
   justify-content: flex-start;
 }
 
-.delete-account-section .btn--danger-outline {
-  height: 44px;
-  padding: 0 28px;
+.btn--danger-outline {
+  height: 42px;
+  padding: 0 24px;
   font-size: 14px;
   font-weight: 700;
   border-radius: var(--radius-md);
-  
-  color: #dc2626 !important; 
-  border: 2px solid #dc2626 !important; 
-  background-color: transparent !important;
-  transition: all 0.2s ease;
+  color: #dc2626;
+  border: 2px solid #dc2626;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
-.delete-account-section .btn--danger-outline:hover {
-  background-color: #fef2f2 !important; 
+.btn--danger-outline:hover {
+  background-color: #fee2e2;
+}
+
+.btn--danger-outline:active {
+  transform: scale(0.98);
 }
 
 /* ================================================================
-   PASSWORD STRENGTH INDICATOR (optional, used by JS)
+   PASSWORD STRENGTH INDICATOR
    ================================================================ */
 .password-strength {
   display: flex;
@@ -246,23 +240,9 @@
 .password-strength__bar--medium { background: #f59e0b; }
 .password-strength__bar--strong { background: var(--green-500); }
 
-.password-strength__label {
-  font-size: 11px;
-  color: var(--gray-400);
-  margin-top: 4px;
-  font-weight: 500;
-}
-
 /* ================================================================
    RESPONSIVE
    ================================================================ */
-@media (max-width: 1199px) {
-  .privacy-security-layout {
-    max-width: 100%;
-    gap: 20px;
-  }
-}
-
 @media (max-width: 900px) {
   .privacy-security-layout {
     grid-template-columns: 1fr;
@@ -271,25 +251,15 @@
 }
 
 @media (max-width: 767px) {
-  .change-password-card,
-  .privacy-preferences-card {
+  .page-body--privacy-security {
+    padding: 20px 16px;
+  }
+
+  .change-password-card {
     padding: 20px 18px;
   }
 
-  .toggle-item__label { padding: 12px 14px; }
-
-  .delete-account-section .btn--danger-outline {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .change-password-card,
-  .privacy-preferences-card {
-    padding: 18px 16px;
-  }
-
+  .btn--danger-outline,
   .change-password-card .btn--primary {
     width: 100%;
     justify-content: center;

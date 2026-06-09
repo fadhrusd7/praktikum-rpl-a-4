@@ -237,6 +237,14 @@
                     <div class="field-error" id="deskripsiError"></div>
                 </div>
 
+                <!-- Checkbox Anonim -->
+                <div class="card" style="margin-top: -10px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none;">
+                        <input type="checkbox" id="isAnonymousInput" style="width: 18px; height: 18px; accent-color: var(--green-600);">
+                        <span style="font-size: 14px; font-weight: 500; color: var(--gray-700);">Kirim Laporan secara Anonim (Identitas Anda disembunyikan)</span>
+                    </label>
+                </div>
+
             </div><!-- /form-col -->
 
             <!-- Right column: foto + CTA -->
@@ -253,7 +261,7 @@
                         Bukti Foto
                     </div>
                     <div class="drop-zone" id="dropZone">
-                        <input type="file" id="fotoInput" accept=".jpg,.jpeg,.png" />
+                        <input type="file" id="fotoInput" accept=".jpg,.jpeg,.png,.webp" />
                         <img src="" alt="Preview foto" class="foto-preview" id="fotoPreview" />
                         <button type="button" class="foto-remove" id="fotoRemove" title="Hapus foto">×</button>
                         <div class="drop-content">
@@ -471,5 +479,6 @@
 
 <script type="module" src="../../js/users/report-users.js"></script>
 
+<script type="module" src="../../js/users/notifications.js"></script>
 </body>
 </html>
