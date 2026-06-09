@@ -40,7 +40,7 @@ class GoogleAuthController extends Controller
             $user = User::firstOrCreate(
                 ['email' => $googleUser->getEmail()],
                 [
-                    'username' => $googleUser->getName(),
+                    'nama_lengkap' => $googleUser->getName(),
                     'email'    => $googleUser->getEmail(),
                     'password' => Hash::make(Str::random(32)),
                 ]
@@ -55,7 +55,7 @@ class GoogleAuthController extends Controller
                 'message' => 'Login Google berhasil.',
                 'data'    => [
                     'id'       => $user->id,
-                    'username' => $user->username,
+                    'nama_lengkap' => $user->nama_lengkap,
                     'email'    => $user->email,
                 ],
                 'token' => $token,

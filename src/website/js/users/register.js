@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       // POST /api/auth/register
       const res = await authAPI.register({
-        name,
+        nama_lengkap: name,
         email,
         password,
         password_confirmation: confirmPassword

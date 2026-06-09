@@ -149,7 +149,7 @@ async function _loadSidebarProfile() {
         const response = await getProfile();
         const user = response.data || response;
         
-        const fullName = [user.nama_depan, user.nama_belakang].filter(Boolean).join(" ").trim() || user.username || "Pengguna";
+        const fullName = user.nama_lengkap || user.username || "Pengguna";
 
         setSidebarUser({ 
             name: fullName, 

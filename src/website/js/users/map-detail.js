@@ -119,8 +119,7 @@ function loadUserInfo() {
     .then(body => {
       if (!body.success) return;
       const u    = body.data;
-      const name  = [u.nama_depan, u.nama_belakang].filter(Boolean).join(' ').trim()
-                    || u.name || u.username || cachedName;
+      const name  = u.nama_lengkap || u.username || 'Anonim';
       const email = u.email || cachedEmail;
       const avatar = u.foto_profil_url || u.foto_profil || null; // Tambahan ambil dari API
 

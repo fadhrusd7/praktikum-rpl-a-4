@@ -104,7 +104,7 @@ class FeedbackController extends Controller
                     'id'         => $fb->id,
                     'user'       => [
                         'id'    => $fb->user?->id,
-                        'nama'  => trim(($fb->user?->nama_depan ?? '') . ' ' . ($fb->user?->nama_belakang ?? '')),
+                        'nama'  => $fb->user?->nama_lengkap,
                         'email' => $fb->user?->email,
                     ],
                     'rating'     => $fb->rating,
