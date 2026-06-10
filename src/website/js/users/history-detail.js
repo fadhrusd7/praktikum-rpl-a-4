@@ -169,8 +169,10 @@ function buildLeftCol(report, status) {
     ${rejectionBox}
     <div class="card">
       <div class="card-title">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="m3 9 5-5 4 4 4-4 5 5"/>
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
         </svg>
         Bukti Visual
       </div>
@@ -186,7 +188,7 @@ function buildLeftCol(report, status) {
     </div>
     <div class="card">
       <div class="card-title">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
         </svg>
         Deskripsi Laporan
@@ -197,7 +199,7 @@ function buildLeftCol(report, status) {
 }
 
 function buildRejectionBox(report) {
-  const reason = report.rejection_reason ?? report.catatan ?? report.notes ?? 'Tidak ada keterangan.';
+  const reason = report.alasan_penolakan ?? report.rejection_reason ?? report.catatan ?? report.notes ?? 'Tidak ada keterangan.';
   return `
     <div class="rejection-box">
       <div class="rejection-header">
