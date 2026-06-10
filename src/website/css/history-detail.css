@@ -471,7 +471,7 @@ body {
   color: var(--gray-900);
   margin-bottom: 12px;
 }
-.map-card-title svg { color: var(--gray-700); }
+.map-card-title svg { color: var(--green-600); }
 
 .map-wrap {
   border-radius: var(--radius-md);

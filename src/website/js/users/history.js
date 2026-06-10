@@ -192,8 +192,14 @@ function renderTable() {
   })
 
   if (filtered.length === 0) {
-    tbody.innerHTML = ''
-    if (empty) empty.style.display = 'flex'
+    const msg = searchQuery ? `Laporan "${searchQuery}" tidak ditemukan` : 'Belum ada riwayat laporan';
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; padding: 40px; color: var(--gray-400);">
+          <span>${msg}</span>
+        </td>
+      </tr>`;
+    if (empty) empty.style.display = 'none'
     return
   }
   if (empty) empty.style.display = 'none'
@@ -261,6 +267,24 @@ function initSidebar() {
 
 // ── UI helpers ────────────────────────────────────────────────────
 function showSkeleton(show) {
+  const tbody = document.getElementById('reportTableBody');
+  if (show && tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; padding: 40px; color: var(--gray-400);">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div class="spinner" style="width:24px;height:24px;border:3px solid var(--gray-200);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;"></div>
+            <span>Memuat data...</span>
+          </div>
+        </td>
+      </tr>`;
+    if (!document.getElementById('spin-style')) {
+      const style = document.createElement('style');
+      style.id = 'spin-style';
+      style.innerHTML = '@keyframes spin { to { transform: rotate(360deg); } }';
+      document.head.appendChild(style);
+    }
+  }
   const sk = document.getElementById('tableSkeleton')
   const tw = document.getElementById('tableWrapper')
   if (sk) sk.style.display = show ? 'block' : 'none'
