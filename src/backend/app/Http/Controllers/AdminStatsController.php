@@ -22,14 +22,22 @@ class AdminStatsController extends Controller
                 'selesai'           => Report::where('status', 'selesai')->count(),
 
                 // Volume laporan 7 hari terakhir (untuk chart bar)
-                'harian' => Report::select(
-                        DB::raw('DATE(created_at) as tanggal'),
-                        DB::raw('count(*) as total')
-                    )
+                'harian' => Report::select('created_at')
                     ->where('created_at', '>=', now()->subDays(6))
-                    ->groupBy('tanggal')
-                    ->orderBy('tanggal')
-                    ->get(),
+                    ->get()
+                    ->groupBy(function($item) {
+                        // Konversi setiap waktu dari UTC ke WIB sebelum dikelompokkan
+                        return $item->created_at->timezone('Asia/Jakarta')->format('Y-m-d');
+                    })
+                    ->map(function($group, $date) {
+                        return [
+                            'tanggal' => $date,
+                            'total' => $group->count()
+                        ];
+                    })
+                    ->values()
+                    ->sortBy('tanggal')
+                    ->toArray(),
 
                 // Breakdown per kategori (untuk bar chart "Laporan per kategori")
                 'per_kategori' => Report::select(

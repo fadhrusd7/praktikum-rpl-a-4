@@ -21,12 +21,11 @@ const tabGroup    = document.getElementById('tab-group');
 const searchInput = document.getElementById('search-input');
 
 /* ── State ────────────────────────────────────────────────── */
-let allReports   = [];
 let activeStatus = 'semua';
 let searchQuery  = '';
 let currentPage  = 1;
 let totalRecords = 0;
-const ITEMS_PER_PAGE = 10;
+let lastPage     = 1;
 
 /* ── Status badge map ─────────────────────────────────────── */
 const BADGE = {
@@ -76,7 +75,7 @@ function formatDate(iso) {
 
 /* ── Render table ─────────────────────────────────────────── */
 function renderTable(reports) {
-  const visibleReports = (reports || []).slice(0, 10);
+  const visibleReports = reports || [];
   if (!visibleReports.length) {
     tableBody.innerHTML = `
       <tr>
@@ -144,71 +143,19 @@ function renderTable(reports) {
 
 /* ── Filter helper ────────────────────────────────────────── */
 function applyFilter() {
-  let filtered = allReports;
-
-  if (activeStatus !== 'semua') {
-    filtered = filtered.filter(r => normalizeStatus(r.status) === activeStatus);
-  }
-
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(r =>
-      (r.judul ?? '').toLowerCase().includes(q) ||
-      (r.kategori ?? '').toLowerCase().includes(q) ||
-      (r.user?.nama_lengkap ?? r.pelapor ?? '').toLowerCase().includes(q)
-    );
-  }
-
-  // Update view with filtered results and reset to page 1
   currentPage = 1;
-  updateView(1);
+  loadReports(activeStatus, 1);
 }
 
-function getFilteredReports() {
-  let filtered = allReports;
-
-  if (activeStatus !== 'semua') {
-    filtered = filtered.filter(r => normalizeStatus(r.status) === activeStatus);
-  }
-
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(r =>
-      (r.judul ?? '').toLowerCase().includes(q) ||
-      (r.kategori ?? '').toLowerCase().includes(q) ||
-      (r.user?.nama_lengkap ?? r.pelapor ?? '').toLowerCase().includes(q)
-    );
-  }
-
-  return filtered;
-}
-
-function updateView(page = 1) {
-  const filtered = getFilteredReports();
-  const count = filtered.length;
-  currentPage = Number(page) || 1;
-
-  const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  const pageSlice = filtered.slice(start, start + ITEMS_PER_PAGE);
-
-  renderTable(pageSlice);
-  renderPagination(count);
-}
-
-function renderPagination(countOverride) {
+function renderPagination(count, maxPage) {
   const pagination = document.getElementById('pagination');
   if (!pagination) return;
 
-  const count = typeof countOverride === 'number' ? countOverride : totalRecords;
-  const maxWebPage = count > 0
-    ? Math.ceil(count / ITEMS_PER_PAGE)
-    : Math.ceil(allReports.length / ITEMS_PER_PAGE) || 1;
-
   const isPrevDisabled = currentPage <= 1;
-  const isNextDisabled = currentPage >= maxWebPage;
+  const isNextDisabled = currentPage >= maxPage;
 
   let pagesHtml = '';
-  for (let i = 1; i <= maxWebPage; i++) {
+  for (let i = 1; i <= maxPage; i++) {
     pagesHtml += `
       <button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
   }
@@ -223,7 +170,6 @@ function renderPagination(countOverride) {
   });
 
   document.getElementById('nextPage')?.addEventListener('click', () => {
-    const maxPage = Math.ceil(totalRecords / ITEMS_PER_PAGE) || 1;
     if (currentPage < maxPage) loadReports(activeStatus, currentPage + 1);
   });
 
@@ -233,20 +179,6 @@ function renderPagination(countOverride) {
       if (target !== currentPage) loadReports(activeStatus, target);
     });
   });
-}
-
-/* ── API helper: ambil laporan berdasarkan status ─────────── */
-/**
- * Menggunakan adminAPI.getReports(status) dari api.js.
- * Fungsi itu sudah melakukan .then(body => body.data ?? body),
- * jadi hasilnya sudah berupa array — TIDAK perlu unwrap lagi.
- * Pastikan hasilnya selalu array untuk spread operator.
- */
-async function fetchByStatus(status) {
-  const res = await adminAPI.getReports(status);
-  if (Array.isArray(res)) return { data: res, total: res.length };
-  if (Array.isArray(res?.data)) return { data: res.data, total: res.total ?? res.data.length };
-  return { data: [], total: 0 };
 }
 
 /* ── Fetch data ───────────────────────────────────────────── */
@@ -262,44 +194,16 @@ async function loadReports(status, page = 1) {
     </tr>`;
 
   try {
-    if (status === 'semua') {
-      // For 'semua' (history) we only want processed statuses — fetch them and combine client-side
-      if (page === 1 || allReports.length === 0) {
-        const [vRes, dRes, rRes] = await Promise.all([
-          fetchByStatus('terverifikasi'),
-          fetchByStatus('selesai'),
-          fetchByStatus('ditolak'),
-        ]);
+    const apiStatus = status === 'semua' ? 'riwayat' : status;
+    const res = await adminAPI.getReports(apiStatus, { page, search: searchQuery });
 
-        allReports = [
-          ...(vRes.data || []),
-          ...(dRes.data || []),
-          ...(rRes.data || []),
-        ];
-        totalRecords = allReports.length;
-      }
+    let reports = res.data || [];
+    totalRecords = res.total || 0;
+    lastPage = res.lastPage || 1;
 
-      // Client-side paging for combined set
-      currentPage = Number(page) || 1;
-      updateView(currentPage);
-    } else {
-      const apiStatus = status;
-      const res = await adminAPI.getReports(apiStatus, { page });
-
-      if (Array.isArray(res)) {
-        allReports = res;
-        totalRecords = res.length;
-      } else if (Array.isArray(res?.data)) {
-        allReports = res.data;
-        totalRecords = res.total ?? res.data.length;
-      } else {
-        allReports = [];
-        totalRecords = 0;
-      }
-
-      currentPage = Number(page) || 1;
-      updateView(currentPage);
-    }
+    currentPage = Number(page) || 1;
+    renderTable(reports);
+    renderPagination(totalRecords, lastPage);
   } catch (err) {
     console.error('[history-admin] loadReports error:', err);
     showToast('Gagal memuat riwayat laporan.', 'error');

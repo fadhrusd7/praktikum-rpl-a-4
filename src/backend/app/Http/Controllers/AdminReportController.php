@@ -283,6 +283,7 @@ class AdminReportController extends Controller
             'terverifikasi', 'divalidasi', 'diproses', 'verified' => ['terverifikasi', 'divalidasi', 'diproses'],
             'selesai', 'done' => ['selesai'],
             'ditolak', 'rejected' => ['ditolak'],
+            'riwayat', 'history' => ['terverifikasi', 'divalidasi', 'diproses', 'selesai', 'ditolak'],
             default => [$status],
         };
     }
