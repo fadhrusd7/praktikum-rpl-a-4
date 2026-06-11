@@ -35,8 +35,8 @@ class AdminStatsController extends Controller
                             'total' => $group->count()
                         ];
                     })
-                    ->values()
                     ->sortBy('tanggal')
+                    ->values()
                     ->toArray(),
 
                 // Breakdown per kategori (untuk bar chart "Laporan per kategori")
