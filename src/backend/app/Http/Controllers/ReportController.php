@@ -103,7 +103,7 @@ class ReportController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Laporan berhasil dibuat.',
-                'data' => $this->formatReport($report),
+                'data' => $this->formatReportData($report),
             ], 201);
 
         } catch (\Exception $e) {
