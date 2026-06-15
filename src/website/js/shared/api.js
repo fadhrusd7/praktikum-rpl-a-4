@@ -1,5 +1,12 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
+class ApiError extends Error {
+  constructor(message, status) {
+    super(message)
+    this.status = status
+  }
+}
+
 /**
  * Wrapper fetch utama.
  * Otomatis menyisipkan Bearer Token jika tersedia di localStorage.
@@ -14,6 +21,12 @@ export async function apiFetch(endpoint, opts = {}) {
     ...(opts.headers || {})
   }
 
+  // JIKA Content-Type secara eksplisit diset ke undefined (misal untuk FormData), HAPUS header ini
+  // agar browser otomatis mengaturnya menjadi multipart/form-data beserta boundary-nya.
+  if (headers['Content-Type'] === undefined) {
+    delete headers['Content-Type']
+  }
+
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...opts,
     headers
@@ -23,17 +36,17 @@ export async function apiFetch(endpoint, opts = {}) {
   try {
     body = await res.json()
   } catch {
-    throw new Error(`Server error: ${res.status} ${res.statusText}`)
+    throw new ApiError(`Server error: ${res.status} ${res.statusText}`, res.status)
   }
 
   // Tangani HTTP error (4xx, 5xx)
   if (!res.ok) {
-    throw new Error(body?.error || body?.message || `HTTP ${res.status}`)
+    throw new ApiError(body?.error || body?.message || `HTTP ${res.status}`, res.status)
   }
 
   // Tangani success:false dari Laravel (status 200 tapi gagal logis)
   if (body.success === false) {
-    throw new Error(body.error || body.message || 'Terjadi kesalahan.')
+    throw new ApiError(body.error || body.message || 'Terjadi kesalahan.', res.status)
   }
 
   return body

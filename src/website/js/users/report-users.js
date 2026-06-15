@@ -1,15 +1,15 @@
+import { reportAPI } from '../shared/api.js'
+import { geocodeSearch, reverseGeocode } from '../shared/map-core.js'
+import { initReportMap, flyToLocation, invalidateReportMap } from './report-map.js'
+import { validateStep1, validateStep2, showFieldError, clearAllErrors } from './report-validation.js'
+import { showStep, initKategoriCards, initFotoUpload, initCharCounter, renderReview, renderDateBadge, renderSidebarUser } from './report-ui.js'
+
 const REDIRECT_LOGIN   = import.meta.env.VITE_REDIRECT_LOGIN       || '/users/auth/login.html'
 const API_BASE         = import.meta.env.VITE_API_BASE_URL         || '/api'
 const REDIRECT_USER    = import.meta.env.VITE_REDIRECT_URL_USER    || '/users/dashboard/map-users.html'
 const REDIRECT_HISTORY = import.meta.env.VITE_REDIRECT_URL_HISTORY || '/users/riwayat/history-users.html'
 const REDIRECT_PROFILE = import.meta.env.VITE_REDIRECT_URL_PROFILE || '/users/profil/profile-users.html'
 const MAPTILER_KEY     = import.meta.env.VITE_MAPTILER_KEY
-
-import { reportAPI } from '../shared/api.js'
-import { geocodeSearch, reverseGeocode } from '../shared/map-core.js'
-import { initReportMap, flyToLocation, invalidateReportMap } from './report-map.js'
-import { validateStep1, validateStep2, showFieldError, clearAllErrors } from './report-validation.js'
-import { showStep, initKategoriCards, initFotoUpload, initCharCounter, renderReview, renderDateBadge, renderSidebarUser } from './report-ui.js'
 
 
 ;(async () => {
