@@ -27,3 +27,5 @@ bootstrap/cache/
 postman/
 
 echo "dist/"
+
+.vite
