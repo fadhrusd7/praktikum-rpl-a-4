@@ -59,14 +59,23 @@ class FeedbackController extends Controller
     public function stats()
     {
         try {
-            $totalFeedbacks = Feedback::count();
-            $avgRating = Feedback::avg('rating') ?? 0;
+            $stats = Feedback::selectRaw('rating, count(*) as count')
+                ->groupBy('rating')
+                ->pluck('count', 'rating');
+
+            $totalFeedbacks = $stats->sum();
+            $totalRatingScore = 0;
+            foreach ($stats as $rating => $count) {
+                $totalRatingScore += $rating * $count;
+            }
+            $avgRating = $totalFeedbacks > 0 ? $totalRatingScore / $totalFeedbacks : 0;
+
             $ratingDistribution = [
-                '5' => Feedback::where('rating', 5)->count(),
-                '4' => Feedback::where('rating', 4)->count(),
-                '3' => Feedback::where('rating', 3)->count(),
-                '2' => Feedback::where('rating', 2)->count(),
-                '1' => Feedback::where('rating', 1)->count(),
+                '5' => $stats[5] ?? 0,
+                '4' => $stats[4] ?? 0,
+                '3' => $stats[3] ?? 0,
+                '2' => $stats[2] ?? 0,
+                '1' => $stats[1] ?? 0,
             ];
 
             return response()->json([

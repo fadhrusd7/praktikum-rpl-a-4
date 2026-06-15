@@ -13,30 +13,27 @@ class AdminStatsController extends Controller
     public function index()
     {
         try {
+            $statusCounts = Report::selectRaw('status, count(*) as total')
+                ->groupBy('status')
+                ->pluck('total', 'status');
+
             $stats = [
                 // Ringkasan status (untuk 4 card di dashboard)
-                'total'             => Report::count(),
-                'menunggu_validasi' => Report::where('status', 'menunggu_validasi')->count(),
-                'terverifikasi'     => Report::whereIn('status', ['terverifikasi', 'divalidasi'])->count(),
-                'ditolak'           => Report::where('status', 'ditolak')->count(),
-                'selesai'           => Report::where('status', 'selesai')->count(),
+                'total'             => $statusCounts->sum(),
+                'menunggu_validasi' => $statusCounts['menunggu_validasi'] ?? 0,
+                'terverifikasi'     => ($statusCounts['terverifikasi'] ?? 0) + ($statusCounts['divalidasi'] ?? 0),
+                'ditolak'           => $statusCounts['ditolak'] ?? 0,
+                'selesai'           => $statusCounts['selesai'] ?? 0,
 
                 // Volume laporan 7 hari terakhir (untuk chart bar)
-                'harian' => Report::select('created_at')
+                'harian' => Report::select(
+                        DB::raw('DATE(created_at) as tanggal'),
+                        DB::raw('count(*) as total')
+                    )
                     ->where('created_at', '>=', now()->subDays(6))
+                    ->groupBy('tanggal')
+                    ->orderBy('tanggal')
                     ->get()
-                    ->groupBy(function($item) {
-                        // Konversi setiap waktu dari UTC ke WIB sebelum dikelompokkan
-                        return $item->created_at->timezone('Asia/Jakarta')->format('Y-m-d');
-                    })
-                    ->map(function($group, $date) {
-                        return [
-                            'tanggal' => $date,
-                            'total' => $group->count()
-                        ];
-                    })
-                    ->sortBy('tanggal')
-                    ->values()
                     ->toArray(),
 
                 // Breakdown per kategori (untuk bar chart "Laporan per kategori")
