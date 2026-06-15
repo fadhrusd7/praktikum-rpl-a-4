@@ -211,3 +211,26 @@ export async function geocodeSearch(query) {
   }
   return null;
 }
+
+/**
+ * Reverse Geocode dari koordinat ke alamat menggunakan Nominatim
+ * @param {number} lat 
+ * @param {number} lng 
+ * @returns {Promise<string>} Alamat dalam bentuk string
+ */
+export async function reverseGeocode(lat, lng) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'Accept-Language': 'id'
+      }
+    });
+    if (!res.ok) return `${lat.toFixed(4)}° S, ${Math.abs(lng).toFixed(4)}° E`;
+    const data = await res.json();
+    return data.display_name || `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
+  } catch (e) {
+    console.warn('[MapCore] Reverse Geocode failed', e);
+    return `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
+  }
+}

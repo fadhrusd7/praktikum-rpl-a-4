@@ -66,7 +66,7 @@ export function initReportMap(onLocationPicked) {
     placeOrMoveMarker(lat, lng)
 
     try {
-      const { reverseGeocode } = await import('./api.js')
+      const { reverseGeocode } = await import('../shared/map-core.js')
       const address = await reverseGeocode(lat, lng)
       onLocationPicked(lat, lng, address)
     } catch {
