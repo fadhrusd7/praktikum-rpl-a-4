@@ -1,5 +1,12 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
+class ApiError extends Error {
+  constructor(message, status) {
+    super(message)
+    this.status = status
+  }
+}
+
 /**
  * Wrapper fetch utama.
  * Otomatis menyisipkan Bearer Token jika tersedia di localStorage.
@@ -14,6 +21,12 @@ export async function apiFetch(endpoint, opts = {}) {
     ...(opts.headers || {})
   }
 
+  // JIKA Content-Type secara eksplisit diset ke undefined (misal untuk FormData), HAPUS header ini
+  // agar browser otomatis mengaturnya menjadi multipart/form-data beserta boundary-nya.
+  if (headers['Content-Type'] === undefined) {
+    delete headers['Content-Type']
+  }
+
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...opts,
     headers
@@ -23,17 +36,17 @@ export async function apiFetch(endpoint, opts = {}) {
   try {
     body = await res.json()
   } catch {
-    throw new Error(`Server error: ${res.status} ${res.statusText}`)
+    throw new ApiError(`Server error: ${res.status} ${res.statusText}`, res.status)
   }
 
   // Tangani HTTP error (4xx, 5xx)
   if (!res.ok) {
-    throw new Error(body?.error || body?.message || `HTTP ${res.status}`)
+    throw new ApiError(body?.error || body?.message || `HTTP ${res.status}`, res.status)
   }
 
   // Tangani success:false dari Laravel (status 200 tapi gagal logis)
   if (body.success === false) {
-    throw new Error(body.error || body.message || 'Terjadi kesalahan.')
+    throw new ApiError(body.error || body.message || 'Terjadi kesalahan.', res.status)
   }
 
   return body
@@ -210,4 +223,71 @@ export const adminAPI = {
    */
   deleteReport: (id) =>
     apiFetch(`/admin/reports/${id}`, { method: 'DELETE' }),
+}
+
+// ─── User API ───────────────────────────────────────────────
+export const userAPI = {
+  /** GET /api/user/profile */
+  getProfile: () => apiFetch('/user/profile'),
+
+  /** POST /api/user/profile (Form Data for File Upload) */
+  updateProfile: (formData) => apiFetch('/user/profile', {
+    method: 'POST',
+    headers: { 'Content-Type': undefined }, // Let browser set Content-Type for FormData
+    body: formData
+  }),
+
+  /** GET /api/user/stats */
+  getStats: () => apiFetch('/user/stats'),
+
+  /** POST /api/feedbacks */
+  submitFeedback: (formData) => apiFetch('/feedbacks', {
+    method: 'POST',
+    headers: { 'Content-Type': undefined },
+    body: formData
+  }),
+
+  /** PUT /api/user/change-password */
+  changePassword: (payload) => apiFetch('/user/change-password', {
+    method: 'PUT',
+    body: JSON.stringify({
+      password_lama: payload.current_password,
+      password_baru: payload.password,
+      password_baru_confirmation: payload.password_confirmation,
+    })
+  }),
+
+  /** DELETE /api/user/account */
+  deleteAccount: (password) => apiFetch('/user/account', {
+    method: 'DELETE',
+    body: JSON.stringify({ password })
+  })
+}
+
+// ─── Report API ───────────────────────────────────────────────
+export const reportAPI = {
+  /** GET /api/reports/map */
+  getMapReports: async () => {
+    const res = await apiFetch('/reports/map')
+    return Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+  },
+
+  /** GET /api/reports/my */
+  getMyReports: async () => {
+    const res = await apiFetch('/reports/my')
+    return Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+  },
+
+  /** GET /api/reports/{id} */
+  getReportById: async (id) => {
+    const res = await apiFetch(`/reports/${id}`)
+    return res?.data ?? res ?? null
+  },
+
+  /** POST /api/reports (Form Data) */
+  submitReport: (formData) => apiFetch('/reports', {
+    method: 'POST',
+    headers: { 'Content-Type': undefined },
+    body: formData
+  })
 }
