@@ -51,7 +51,7 @@ foreach ($users as $user) {
             'latitude' => -6.200000 + $latOffset,
             'longitude' => 106.816666 + $lngOffset,
             'status' => $status,
-            'is_anonymous' => rand(0, 1) ? 'true' : 'false',
+            'is_anonymous' => (bool) rand(0, 1),
         ]);
 
         Photo::create([

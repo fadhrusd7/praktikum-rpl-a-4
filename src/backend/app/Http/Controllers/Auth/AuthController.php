@@ -61,7 +61,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Registrasi gagal. Silakan coba lagi.',
-                'error'   => $e->getMessage(), // hapus baris ini saat production
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -217,7 +217,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Login gagal. Silakan coba lagi.',
-                'error'   => $e->getMessage(), // erorr message untuk development
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -240,7 +240,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Logout gagal. Silakan coba lagi.',
-                'error'   => $e->getMessage(), // hapus baris ini saat production
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -269,7 +269,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil data user.',
-                'error'   => $e->getMessage(), // hapus baris ini saat production
+                'error'   => app()->isLocal() ? $e->getMessage() : null,
             ], 500);
         }
     }
