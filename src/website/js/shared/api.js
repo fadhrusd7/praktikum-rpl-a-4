@@ -211,3 +211,70 @@ export const adminAPI = {
   deleteReport: (id) =>
     apiFetch(`/admin/reports/${id}`, { method: 'DELETE' }),
 }
+
+// ─── User API ───────────────────────────────────────────────
+export const userAPI = {
+  /** GET /api/user/profile */
+  getProfile: () => apiFetch('/user/profile'),
+
+  /** POST /api/user/profile (Form Data for File Upload) */
+  updateProfile: (formData) => apiFetch('/user/profile', {
+    method: 'POST',
+    headers: { 'Content-Type': undefined }, // Let browser set Content-Type for FormData
+    body: formData
+  }),
+
+  /** GET /api/user/stats */
+  getStats: () => apiFetch('/user/stats'),
+
+  /** POST /api/feedbacks */
+  submitFeedback: (formData) => apiFetch('/feedbacks', {
+    method: 'POST',
+    headers: { 'Content-Type': undefined },
+    body: formData
+  }),
+
+  /** PUT /api/user/change-password */
+  changePassword: (payload) => apiFetch('/user/change-password', {
+    method: 'PUT',
+    body: JSON.stringify({
+      password_lama: payload.current_password,
+      password_baru: payload.password,
+      password_baru_confirmation: payload.password_confirmation,
+    })
+  }),
+
+  /** DELETE /api/user/account */
+  deleteAccount: (password) => apiFetch('/user/account', {
+    method: 'DELETE',
+    body: JSON.stringify({ password })
+  })
+}
+
+// ─── Report API ───────────────────────────────────────────────
+export const reportAPI = {
+  /** GET /api/reports/map */
+  getMapReports: async () => {
+    const res = await apiFetch('/reports/map')
+    return Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+  },
+
+  /** GET /api/reports/my */
+  getMyReports: async () => {
+    const res = await apiFetch('/reports/my')
+    return Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
+  },
+
+  /** GET /api/reports/{id} */
+  getReportById: async (id) => {
+    const res = await apiFetch(`/reports/${id}`)
+    return res?.data ?? res ?? null
+  },
+
+  /** POST /api/reports (Form Data) */
+  submitReport: (formData) => apiFetch('/reports', {
+    method: 'POST',
+    headers: { 'Content-Type': undefined },
+    body: formData
+  })
+}
