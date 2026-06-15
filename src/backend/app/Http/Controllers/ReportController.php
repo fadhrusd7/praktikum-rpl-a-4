@@ -67,7 +67,7 @@ class ReportController extends Controller
                     'latitude' => $validated['latitude'],
                     'longitude' => $validated['longitude'],
                     'status' => 'menunggu_validasi',
-                    'is_anonymous' => filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'is_anonymous' => filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false',
                 ]);
 
                 if ($compressed) {
