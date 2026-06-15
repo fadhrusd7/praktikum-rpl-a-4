@@ -67,7 +67,7 @@ class ReportController extends Controller
                     'latitude' => $validated['latitude'],
                     'longitude' => $validated['longitude'],
                     'status' => 'menunggu_validasi',
-                    'is_anonymous' => filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'is_anonymous' => filter_var($validated['is_anonymous'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false',
                 ]);
 
                 if ($compressed) {
@@ -103,7 +103,7 @@ class ReportController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Laporan berhasil dibuat.',
-                'data' => $this->formatReport($report),
+                'data' => $this->formatReportData($report),
             ], 201);
 
         } catch (\Exception $e) {

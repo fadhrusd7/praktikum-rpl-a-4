@@ -1,6 +1,6 @@
-import { getMapReports }                              from './api.js'
-import { createMarkerIcon, getCategoryConfig,
-         CATEGORY_CONFIG, normalizeKey }              from './marker.js'
+import { reportAPI } from '../shared/api.js'
+import { initLeafletMap, createCategoryMarkerIcon, CATEGORY_CONFIG, getCategoryConfig } from '../shared/map-core.js'
+import { formatTanggal, generateLapNum, escapeHtml, getReporterName } from '../shared/utils.js'
 import { initFilter, registerMarker,
          clearMarkers, applyCurrentFilter }           from './map-filter.js'
 
@@ -82,34 +82,8 @@ function _setUserDOM(name, email, avatar) {
 
 // ── Init Leaflet Map ───────────────────────────────────────
 function _initMap() {
-  map = L.map('map', { zoomControl: false, scrollWheelZoom: true })
-
-  L.control.zoom({ position: 'bottomright' }).addTo(map)
-
-  L.tileLayer(
-    `https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAPTILER_KEY}`,
-    {
-      attribution: '© <a href="https://www.maptiler.com" target="_blank">MapTiler</a> © <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a>',
-      tileSize:    512,
-      zoomOffset:  -1,
-      maxZoom:     20
-    }
-  ).addTo(map)
-
-  map.setView(DEFAULT_CENTER, DEFAULT_ZOOM)
-
+  map = initLeafletMap('map', DEFAULT_CENTER, DEFAULT_ZOOM, MAPTILER_KEY, true)
   map.on('click', () => _closeDetail())
-
-  setTimeout(() => { map.invalidateSize() }, 200)
-
-  const mapContainer = map.getContainer()
-  mapContainer.setAttribute('tabindex', '0')
-  mapContainer.addEventListener('mouseenter', () => { mapContainer.focus() })
-  mapContainer.addEventListener('wheel', (e) => {
-    e.preventDefault()
-    if (e.deltaY < 0) map.zoomIn()
-    else              map.zoomOut()
-  }, { passive: false })
 }
 
 // ── Legend ─────────────────────────────────────────────────
@@ -135,7 +109,7 @@ async function _loadReports() {
   _closeDetail()
 
   try {
-    allReports = await getMapReports()
+    allReports = await reportAPI.getMapReports()
     _renderMarkers(allReports)
     if (allReports.length === 0) _showEmpty()
   } catch (err) {
@@ -166,7 +140,7 @@ function _renderMarkers(reports) {
   reports.forEach(report => {
     if (report.latitude == null || report.longitude == null) return
     const latlng = [+report.latitude, +report.longitude]
-    const icon   = createMarkerIcon(report.kategori)
+    const icon   = createCategoryMarkerIcon(report.kategori)
     const marker = L.marker(latlng, { icon, title: report.judul })
 
     marker.on('click', (e) => {
@@ -197,18 +171,22 @@ function _showDetail(report) {
   if (!panel || !body) return
 
   const cfg    = getCategoryConfig(report.kategori)
-  const lapNum = _lapNum(report.created_at, report.id)
-  const { tgl, jam } = _formatDate(report.created_at)
+  const lapNum = generateLapNum(report.created_at, report.id)
+  
+  const dateStr = formatTanggal(report.created_at, true)
+  const dateParts = dateStr.split('\n')
+  const tgl = dateParts[0] || '—'
+  const jam = dateParts[1] ? dateParts[1].replace(' WIB', '') : '—'
 
   const foto = (report.photos && report.photos.length > 0 && report.photos[0].url)
-    ? _esc(report.photos[0].url)
+    ? escapeHtml(report.photos[0].url)
     : 'https://placehold.co/340x160/e8f5e9/16a34a?text=Foto+Tidak+Tersedia'
-  if (report.user) report.user.nama = _getReporterName(report.user)
+  if (report.user) report.user.nama = getReporterName(report.user)
 
   body.innerHTML = `
     <div class="detail-header">
       <div class="detail-title-wrap">
-        <h2 class="detail-title">${_esc(report.judul)}</h2>
+        <h2 class="detail-title">${escapeHtml(report.judul)}</h2>
         <span class="detail-lapnum">${lapNum}</span>
       </div>
       <button class="detail-close" id="detailClose" aria-label="Tutup panel">
@@ -224,7 +202,7 @@ function _showDetail(report) {
       <svg viewBox="0 0 24 24" width="13" height="13" fill="#22c55e">
         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
       </svg>
-      <span>${_esc(report.lokasi || '—')}</span>
+      <span>${escapeHtml(report.lokasi || '—')}</span>
     </div>
 
     <span class="detail-badge"
@@ -232,7 +210,7 @@ function _showDetail(report) {
       ${cfg.label}
     </span>
 
-    <img class="detail-foto" src="${foto}" alt="Foto laporan ${_esc(report.judul)}"
+    <img class="detail-foto" src="${foto}" alt="Foto laporan ${escapeHtml(report.judul)}"
       onerror="this.src='https://placehold.co/340x160/e8f5e9/16a34a?text=Foto+Tidak+Tersedia'"/>
 
     <div class="detail-meta">
@@ -243,7 +221,7 @@ function _showDetail(report) {
         <div>
           <span class="detail-meta-label">Pelapor</span>
           <span class="detail-meta-value">
-            ${_esc(
+            ${escapeHtml(
               report.user?.nama ||
               '—'
             )}
@@ -262,7 +240,7 @@ function _showDetail(report) {
       </div>
     </div>
 
-    <div class="detail-desc">${_esc(report.deskripsi || '')}</div>
+    <div class="detail-desc">${escapeHtml(report.deskripsi || '')}</div>
   `
 
   if (footerBtn) {
@@ -297,46 +275,7 @@ function _closeDetail() {
 }
 
 // ── Helpers ────────────────────────────────────────────────
-function _lapNum(createdAt, id) {
-  try {
-    const d    = new Date(createdAt)
-    const dd   = String(d.getDate()).padStart(2, '0')
-    const mm   = String(d.getMonth() + 1).padStart(2, '0')
-    const yyyy = d.getFullYear()
-    return `LAP-${dd}${mm}${yyyy}-${String(id).padStart(4, '0')}`
-  } catch {
-    return `LAP-000000-${String(id).padStart(4, '0')}`
-  }
-}
-
-function _formatDate(iso) {
-  try {
-    const d   = new Date(iso)
-    const tgl = new Intl.DateTimeFormat('id-ID', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-      timeZone: 'Asia/Jakarta'
-    }).format(d)
-    const jam = new Intl.DateTimeFormat('id-ID', {
-      hour: '2-digit', minute: '2-digit', hour12: false,
-      timeZone: 'Asia/Jakarta'
-    }).format(d).replace('.', ':')
-    return { tgl, jam }
-  } catch {
-    return { tgl: '—', jam: '—' }
-  }
-}
-
-function _esc(s) {
-  return String(s ?? '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-}
-
-function _getReporterName(user) {
-  if (!user) return '—'
-  const fullName = user.nama_lengkap || user.username || 'Pengguna'
-  return String(user.nama || fullName || user.username || user.email || '—').trim() || '—'
-}
+// Helper dihapus, pakai dari shared/utils.js
 
 function _showSkeleton(show) {
   const el = document.querySelector('#mapSkeleton')
