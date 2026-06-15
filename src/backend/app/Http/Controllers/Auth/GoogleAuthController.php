@@ -50,11 +50,11 @@ class GoogleAuthController extends Controller
             $user->tokens()->delete();
             $token = $user->createToken('google_token')->plainTextToken;
 
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $frontendUrl = config('lestari.frontend.url', 'http://localhost:5173');
             return redirect()->away($frontendUrl . '/users/auth/google-callback.html?token=' . $token . '&role=user');
 
         } catch (\Exception $e) {
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost:5173');
+            $frontendUrl = config('lestari.frontend.url', 'http://localhost:5173');
             return redirect()->away($frontendUrl . '/users/auth/google-callback.html?error=1');
         }
     }

@@ -17,14 +17,21 @@ class UserController extends Controller
         try {
             $userId = auth('sanctum')->id();
 
+            $counts = Report::where('user_id', $userId)
+                ->selectRaw('status, count(*) as total')
+                ->groupBy('status')
+                ->pluck('total', 'status');
+
+            $terverifikasi = ($counts['terverifikasi'] ?? 0) + ($counts['divalidasi'] ?? 0);
+
             return response()->json([
                 'success' => true,
                 'data'    => [
-                    'total'             => Report::where('user_id', $userId)->count(),
-                    'terverifikasi'     => Report::where('user_id', $userId)->whereIn('status', ['terverifikasi', 'divalidasi'])->count(),
-                    'menunggu_validasi' => Report::where('user_id', $userId)->where('status', 'menunggu_validasi')->count(),
-                    'ditolak'           => Report::where('user_id', $userId)->where('status', 'ditolak')->count(),
-                    'selesai'           => Report::where('user_id', $userId)->where('status', 'selesai')->count(),
+                    'total'             => $counts->sum(),
+                    'terverifikasi'     => $terverifikasi,
+                    'menunggu_validasi' => $counts['menunggu_validasi'] ?? 0,
+                    'ditolak'           => $counts['ditolak'] ?? 0,
+                    'selesai'           => $counts['selesai'] ?? 0,
                 ],
             ]);
 
