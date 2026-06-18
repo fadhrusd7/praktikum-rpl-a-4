@@ -1,4 +1,4 @@
-import { CATEGORY_CONFIG, normalizeKey } from './marker.js'
+import { CATEGORY_CONFIG, normalizeKey } from '../shared/map-core.js'
 
 let _activeFilter = 'semua'
 let _allMarkers   = []   // [{ marker: L.Marker, report }]

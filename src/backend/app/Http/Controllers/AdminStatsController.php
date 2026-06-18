@@ -13,13 +13,17 @@ class AdminStatsController extends Controller
     public function index()
     {
         try {
+            $statusCounts = Report::selectRaw('status, count(*) as total')
+                ->groupBy('status')
+                ->pluck('total', 'status');
+
             $stats = [
                 // Ringkasan status (untuk 4 card di dashboard)
-                'total'             => Report::count(),
-                'menunggu_validasi' => Report::where('status', 'menunggu_validasi')->count(),
-                'terverifikasi'     => Report::whereIn('status', ['terverifikasi', 'divalidasi'])->count(),
-                'ditolak'           => Report::where('status', 'ditolak')->count(),
-                'selesai'           => Report::where('status', 'selesai')->count(),
+                'total'             => $statusCounts->sum(),
+                'menunggu_validasi' => $statusCounts['menunggu_validasi'] ?? 0,
+                'terverifikasi'     => ($statusCounts['terverifikasi'] ?? 0) + ($statusCounts['divalidasi'] ?? 0),
+                'ditolak'           => $statusCounts['ditolak'] ?? 0,
+                'selesai'           => $statusCounts['selesai'] ?? 0,
 
                 // Volume laporan 7 hari terakhir (untuk chart bar)
                 'harian' => Report::select(
@@ -29,7 +33,8 @@ class AdminStatsController extends Controller
                     ->where('created_at', '>=', now()->subDays(6))
                     ->groupBy('tanggal')
                     ->orderBy('tanggal')
-                    ->get(),
+                    ->get()
+                    ->toArray(),
 
                 // Breakdown per kategori (untuk bar chart "Laporan per kategori")
                 'per_kategori' => Report::select(

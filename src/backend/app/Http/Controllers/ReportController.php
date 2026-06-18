@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
+    use \App\Traits\FormatsReports;
+
     /**
      * POST /api/reports
      * User buat laporan baru (US-01, US-04)
@@ -101,7 +103,7 @@ class ReportController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Laporan berhasil dibuat.',
-                'data' => $this->formatReport($report),
+                'data' => $this->formatReportData($report),
             ], 201);
 
         } catch (\Exception $e) {
@@ -142,7 +144,7 @@ class ReportController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $this->formatReport($report, withLogs: true),
+                'data' => $this->formatReportData($report, true, true),
             ], 200);
 
         } catch (\Exception $e) {
@@ -168,7 +170,7 @@ class ReportController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => collect($reports->items())->map(fn($r) => $this->formatReport($r)),
+                'data' => collect($reports->items())->map(fn($r) => $this->formatReportData($r, false, true)),
                 'meta' => [
                     'total' => $reports->total(),
                     'per_page' => $reports->perPage(),
@@ -201,7 +203,7 @@ class ReportController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $reports->map(fn($report) => $this->formatReport($report)),
+                'data' => $reports->map(fn($report) => $this->formatReportData($report, false, true)),
             ], 200);
 
         } catch (\Exception $e) {
@@ -227,8 +229,8 @@ class ReportController extends Controller
      */
     private function findNearestDuplicate(float $latitude, float $longitude, string $kategori): ?array
     {
-        $radiusMeters = (float) env('REPORT_DUPLICATE_RADIUS_METER', 20);
-        $dayWindow = (int) env('REPORT_DUPLICATE_DAYS', 14);
+        $radiusMeters = (float) config('lestari.report.duplicate_radius_meter', 20);
+        $dayWindow = (int) config('lestari.report.duplicate_days', 14);
 
         // Bounding box kasar untuk efisiensi SQL (1° ≈ 111.000 m)
         $degreeOffset = $radiusMeters / 111000;
@@ -295,7 +297,7 @@ class ReportController extends Controller
      */
     private function compressImage(UploadedFile $file): array
     {
-        $maxKB = (int) env('REPORT_MAX_PHOTO_SIZE_KB', 512);
+        $maxKB = (int) config('lestari.report.max_photo_size_kb', 512);
         $maxBytes = $maxKB * 1024;
         $mimeType = $file->getMimeType();
         $origPath = $file->getRealPath();
@@ -384,57 +386,4 @@ class ReportController extends Controller
         ];
     }
 
-    /**
-     * Helper: format report untuk response
-     */
-    private function formatReport(Report $report, bool $withLogs = false): array
-    {
-        $data = [
-            'id' => $report->id,
-            'nomor_laporan' => $report->nomor_laporan,
-            'judul' => $report->judul,
-            'kategori' => $report->kategori,
-            'deskripsi' => $report->deskripsi,
-            'lokasi' => $report->lokasi,
-            'latitude' => $report->latitude,
-            'longitude' => $report->longitude,
-            'status' => $report->status,
-            'created_at' => $report->created_at,
-            'validated_at' => $report->validated_at,
-            'alasan_penolakan' => $report->alasan_penolakan,
-            'user' => $report->user ? [
-                'id' => $report->is_anonymous ? null : $report->user->id,
-                'nama' => $report->is_anonymous ? 'Anonim' : $report->user->nama_lengkap,
-                'nama_lengkap' => $report->is_anonymous ? 'Anonim' : $report->user->nama_lengkap,
-                'email' => $report->is_anonymous ? 'anonim@lestari.com' : $report->user->email,
-            ] : null,
-            'admin' => $report->admin ? [
-                'id' => $report->admin->id,
-                'username' => $report->admin->username,
-            ] : null,
-            'photos' => $report->photos->map(fn($photo) => [
-                'id' => $photo->id,
-                'file_path' => $photo->file_path,
-                'url' => $photo->file_url,
-                'file_type' => $photo->file_type,
-                'file_size' => $photo->file_size,
-                'uploaded_at' => $photo->uploaded_at,
-            ]),
-        ];
-
-        if ($withLogs) {
-            $data['logs'] = $report->logs->map(fn($log) => [
-                'aksi' => $log->aksi,
-                'status' => $log->status,
-                'catatan' => $log->catatan,
-                'created_at' => $log->created_at,
-                'admin' => $log->admin ? [
-                    'id' => $log->admin->id,
-                    'username' => $log->admin->username,
-                ] : null,
-            ]);
-        }
-
-        return $data;
-    }
 }

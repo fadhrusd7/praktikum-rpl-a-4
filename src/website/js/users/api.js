@@ -230,28 +230,3 @@ export async function fetchMapReports() {
     });
     return handleResponse(res);
 }
-
-export async function geocodeSearch(query) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
-    const res = await fetch(url, {
-        headers: {
-            'Accept-Language': 'id',
-            'User-Agent': NOMINATIM_AGENT
-        }
-    });
-    if (!res.ok) throw new Error('Gagal mencari lokasi.');
-    return res.json();
-}
-
-export async function reverseGeocode(lat, lng) {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`;
-    const res = await fetch(url, {
-        headers: {
-            'Accept-Language': 'id',
-            'User-Agent': NOMINATIM_AGENT
-        }
-    });
-    if (!res.ok) return `${lat.toFixed(4)}° S, ${Math.abs(lng).toFixed(4)}° E`;
-    const data = await res.json();
-    return data.display_name || `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
-}

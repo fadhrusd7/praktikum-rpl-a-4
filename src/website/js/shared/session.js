@@ -138,11 +138,11 @@ export async function logoutUser() {
 /** Logout admin → POST /api/admin/logout → redirect login admin */
 export async function logoutAdmin() {
   try {
-    await authAPI.logout()
+    await adminAPI.logout()
   } catch {
     // Tetap bersihkan lokal meski server error
   } finally {
     clearSession()
-    window.location.replace(REDIRECT_LOGIN)
+    window.location.replace(REDIRECT_ADMIN_LOGIN)
   }
 }
