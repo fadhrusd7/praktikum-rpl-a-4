@@ -189,27 +189,19 @@ export function createSimpleMarkerIcon(color) {
   });
 }
 
-/**
- * Geocode Search menggunakan Nominatim OpenStreetMap
- * @param {string} query 
- * @returns {Promise<Object|null>} Berisi {lat, lon} atau null jika tidak ketemu
- */
 export async function geocodeSearch(query) {
-  if (!query) return null;
+  if (!query) return [];
   try {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+    // Batas koordinat area Surakarta (kiri, atas, kanan, bawah)
+    const viewbox = '110.73,-7.50,110.88,-7.62';
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&viewbox=${viewbox}&bounded=1&limit=5`;
     const res = await fetch(url, { headers: { 'Accept-Language': 'id' } });
     const data = await res.json();
-    if (data && data.length > 0) {
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon)
-      };
-    }
+    return data || [];
   } catch (e) {
     console.warn('[MapCore] Geocode failed', e);
+    throw e;
   }
-  return null;
 }
 
 /**

@@ -112,6 +112,8 @@ initFotoUpload((file) => {
   reportData.foto = file
   const err = document.getElementById('fotoError')
   if (err) { err.textContent = ''; err.classList.remove('visible') }
+}, (errorMessage) => {
+  showToast(errorMessage, 'warning')
 })
 
 initCharCounter('deskripsiInput', 'deskripsiCount', 1000)
