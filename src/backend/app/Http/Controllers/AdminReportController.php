@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class AdminReportController extends Controller
 {
+    use \App\Traits\FormatsReports;
     /**
      * GET /api/admin/reports
      */
@@ -44,7 +45,7 @@ class AdminReportController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => collect($reports->items())->map(fn($r) => $this->formatReport($r)),
+                'data' => collect($reports->items())->map(fn($r) => $this->formatReportData($r)),
                 'meta' => [
                     'total' => $reports->total(),
                     'per_page' => $reports->perPage(),
@@ -69,7 +70,7 @@ class AdminReportController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $this->formatReport($report, withLogs: true),
+                'data' => $this->formatReportData($report, true),
             ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -105,38 +106,40 @@ class AdminReportController extends Controller
 
             $dbStatus = $isVerified ? 'divalidasi' : $request->status;
 
-            $report->update([
-                'status' => $dbStatus,
-                'admin_id' => $adminId,
-                'alasan_penolakan' => $isVerified ? null : $request->alasan_penolakan,
-                'validated_at' => now(),
-            ]);
+            DB::transaction(function () use ($report, $adminId, $isVerified, $request, $dbStatus) {
+                $report->update([
+                    'status' => $dbStatus,
+                    'admin_id' => $adminId,
+                    'alasan_penolakan' => $isVerified ? null : $request->alasan_penolakan,
+                    'validated_at' => now(),
+                ]);
 
-            ReportLog::create([
-                'report_id' => $report->id,
-                'admin_id' => $adminId,
-                'status' => $dbStatus,
-                'aksi' => $isVerified ? 'Laporan terverifikasi' : 'Laporan ditolak',
-                'catatan' => $isVerified ? null : $request->alasan_penolakan,
-                'created_at' => now(),
-            ]);
+                ReportLog::create([
+                    'report_id' => $report->id,
+                    'admin_id' => $adminId,
+                    'status' => $dbStatus,
+                    'aksi' => $isVerified ? 'Laporan terverifikasi' : 'Laporan ditolak',
+                    'catatan' => $isVerified ? null : $request->alasan_penolakan,
+                    'created_at' => now(),
+                ]);
 
-            $pesanNotif = $isVerified
-                ? "Laporan '{$report->judul}' berhasil diverifikasi"
-                : "Laporan '{$report->judul}' ditolak. Alasan: {$request->alasan_penolakan}";
+                $pesanNotif = $isVerified
+                    ? "Laporan '{$report->judul}' berhasil diverifikasi"
+                    : "Laporan '{$report->judul}' ditolak. Alasan: {$request->alasan_penolakan}";
 
-            Notification::create([
-                'user_id' => $report->user_id,
-                'report_id' => $report->id,
-                'pesan' => $pesanNotif,
-                'status_baru' => $request->status,
-                'is_read' => 'false',
-            ]);
+                Notification::create([
+                    'user_id' => $report->user_id,
+                    'report_id' => $report->id,
+                    'pesan' => $pesanNotif,
+                    'status_baru' => $request->status,
+                    'is_read' => 'false',
+                ]);
+            });
 
             return response()->json([
                 'success' => true,
                 'message' => $isVerified ? 'Laporan berhasil diverifikasi.' : 'Laporan berhasil ditolak.',
-                'data' => $this->formatReport($report->fresh(['photos', 'user', 'admin', 'logs.admin']), withLogs: true),
+                'data' => $this->formatReportData($report->fresh(['photos', 'user', 'admin', 'logs.admin']), true),
             ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -168,33 +171,41 @@ class AdminReportController extends Controller
             ];
 
             $dbStatus = $request->status === 'terverifikasi' ? 'divalidasi' : $request->status;
-            $report->update(['status' => $dbStatus]);
+            DB::transaction(function () use ($report, $adminId, $dbStatus, $request, $aksiMap) {
+                $report->update(['status' => $dbStatus]);
 
-            ReportLog::create([
-                'report_id' => $report->id,
-                'admin_id' => $adminId,
-                'status' => $dbStatus,
-                'aksi' => $aksiMap[$request->status],
-                'created_at' => now(),
-            ]);
+                ReportLog::create([
+                    'report_id' => $report->id,
+                    'admin_id' => $adminId,
+                    'status' => $dbStatus,
+                    'aksi' => $aksiMap[$request->status],
+                    'created_at' => now(),
+                ]);
 
-            $pesanNotif = "Status laporan '{$report->judul}' berubah menjadi " . ucfirst(str_replace('_', ' ', $request->status));
-            if ($request->status === 'selesai') {
-                $pesanNotif = "Laporan '{$report->judul}' telah diselesaikan, terima kasih atas laporannya";
-            }
-
-            Notification::create([
-                'user_id' => $report->user_id,
-                'report_id' => $report->id,
-                'pesan' => $pesanNotif,
-                'status_baru' => $request->status,
-                'is_read' => 'false',
-            ]);
+                if ($request->status === 'selesai') {
+                    Notification::create([
+                        'user_id' => $report->user_id,
+                        'report_id' => $report->id,
+                        'pesan' => "Laporan '{$report->judul}' telah selesai ditindaklanjuti.",
+                        'status_baru' => 'selesai',
+                        'is_read' => 'false',
+                    ]);
+                } else {
+                    $pesanNotif = "Status laporan '{$report->judul}' berubah menjadi " . ucfirst(str_replace('_', ' ', $request->status));
+                    Notification::create([
+                        'user_id' => $report->user_id,
+                        'report_id' => $report->id,
+                        'pesan' => $pesanNotif,
+                        'status_baru' => $request->status,
+                        'is_read' => 'false',
+                    ]);
+                }
+            });
 
             return response()->json([
                 'success' => true,
                 'message' => 'Status laporan berhasil diupdate.',
-                'data' => $this->formatReport($report->fresh(['photos', 'user', 'admin', 'logs.admin']), withLogs: true),
+                'data' => $this->formatReportData($report->fresh(['photos', 'user', 'admin', 'logs.admin']), true),
             ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -226,55 +237,6 @@ class AdminReportController extends Controller
     }
 
     // HELPER
-    private function formatReport(Report $report, bool $withLogs = false): array
-    {
-        $data = [
-            'id' => $report->id,
-            'nomor_laporan' => $report->nomor_laporan,
-            'judul' => $report->judul,
-            'kategori' => $report->kategori,
-            'deskripsi' => $report->deskripsi,
-            'lokasi' => $report->lokasi,
-            'latitude' => $report->latitude,
-            'longitude' => $report->longitude,
-            'status' => $report->status,
-            'alasan_penolakan' => $report->alasan_penolakan,
-            'validated_at' => $report->validated_at,
-            'created_at' => $report->created_at,
-            'user' => $report->user ? [
-                'id' => $report->user->id,
-                'nama_lengkap' => $report->user->nama_lengkap,
-                'email' => $report->user->email,
-            ] : null,
-            'admin' => $report->admin ? [
-                'id' => $report->admin->id,
-                'username' => $report->admin->username,
-            ] : null,
-            'photos' => $report->photos->map(fn($p) => [
-                'id' => $p->id,
-                'file_path' => $p->file_path,
-                'url' => $p->file_url,
-                'file_type' => $p->file_type,
-                'file_size' => $p->file_size,
-                'uploaded_at' => $p->uploaded_at,
-            ]),
-        ];
-
-        if ($withLogs) {
-            $data['logs'] = $report->logs->map(fn($log) => [
-                'aksi' => $log->aksi,
-                'status' => $log->status,
-                'catatan' => $log->catatan,
-                'created_at' => $log->created_at,
-                'admin' => $log->admin ? [
-                    'id' => $log->admin->id,
-                    'username' => $log->admin->username,
-                ] : null,
-            ]);
-        }
-
-        return $data;
-    }
 
     private function statusAliases(string $status): array
     {
@@ -283,6 +245,7 @@ class AdminReportController extends Controller
             'terverifikasi', 'divalidasi', 'diproses', 'verified' => ['terverifikasi', 'divalidasi', 'diproses'],
             'selesai', 'done' => ['selesai'],
             'ditolak', 'rejected' => ['ditolak'],
+            'riwayat', 'history' => ['terverifikasi', 'divalidasi', 'diproses', 'selesai', 'ditolak'],
             default => [$status],
         };
     }

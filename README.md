@@ -31,15 +31,12 @@ Berikut adalah daftar fitur yang sudah ada pada sistem saat ini, merujuk pada `d
 - **Melihat seluruh laporan**: Admin dapat mengelola semua laporan di dashboard.
 - **Melihat statistik dashboard admin**: Dashboard admin menampilkan jumlah dan grafik ringkasan laporan.
 
-#### Could-have (Selesai Sebagian)
+#### Could-have (Selesai 100%)
 
 - **Melihat riwayat laporan**: User dapat melihat riwayat laporannya melalui menu "My Reports".
 - **Memfilter laporan berdasarkan kategori**: Sistem telah mendukung penyimpanan dan penyortiran kategori pada laporan.
-
-#### Belum
-
-- **Menerima notifikasi perubahan status laporan**: (Belum diimplementasikan).
-- **Membuat laporan secara anonim**: (Belum diimplementasikan).
+- **Menerima notifikasi perubahan status laporan**: User akan mendapatkan notifikasi saat status laporannya berubah
+- **Membuat laporan secara anonim**: User dapat mengirim laporan tanpa menampilkan identitas pribadi.
 
 ### Nice-to-have (Ekstra / Di luar Backlog Awal)
 

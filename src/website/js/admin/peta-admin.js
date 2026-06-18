@@ -32,80 +32,8 @@ async function apiGet(path) {
   return res.json();
 }
 
-/** Format tanggal → "Senin, 8 Mei 2026\n8.47 WWIB" */
-function formatTanggal(isoString) {
-  if (!isoString) return '—';
-  const d    = new Date(isoString);
-  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-  const mons = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-  const day  = days[d.getDay()];
-  const date = d.getDate();
-  const mon  = mons[d.getMonth()];
-  const year = d.getFullYear();
-  const hh   = String(d.getHours()).padStart(2,'0');
-  const mm   = String(d.getMinutes()).padStart(2,'0');
-  return `${day}, ${date} ${mon} ${year}\n${hh}.${mm} WWIB`;
-}
-
-/** Format bulan header → "Mei 2026" */
-function formatBulan(d = new Date()) {
-  const mons = ['Januari','Februari','Maret','April','Mei','Juni',
-                'Juli','Agustus','September','Oktober','November','Desember'];
-  return `${mons[d.getMonth()]} ${d.getFullYear()}`;
-}
-
-/** URL foto laporan */
-function fotoUrl(path) {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  const base = BASE_URL.replace('/api', '');
-  return `${base}/storage/${path}`;
-  // fallback — banyak Laravel project pakai /storage/
-}
-
-function buildFotoUrl(path) {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  const base = BASE_URL.replace('/api', '');
-  return `${base}/storage/${path}`;
-}
-
-function buildSupabaseFotoUrl(path) {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  if (!SUPABASE_URL || !SUPABASE_BUCKET) return null;
-
-  const cleanPath = String(path).replace(/^\/+/, '');
-  const bucketPrefix = `${SUPABASE_BUCKET}/`;
-  const objectPath = cleanPath.startsWith(bucketPrefix)
-    ? cleanPath.slice(bucketPrefix.length)
-    : cleanPath;
-
-  return `${SUPABASE_URL.replace(/\/$/, '')}/storage/v1/object/public/${SUPABASE_BUCKET}/${objectPath}`;
-}
-
-/** Mapping username DB → label display admin */
-function mapAdminUsername(username) {
-  if (!username) return 'Administrator';
-  const match = String(username).match(/^admin(\d*)$/i);
-  if (match) {
-    const num = match[1] ? parseInt(match[1], 10) : 1;
-    return `Administrator - ${num}`;
-  }
-  return username.charAt(0).toUpperCase() + username.slice(1);
-}
-
-/** Buat SVG marker HTML (kuning / hijau) */
-function markerSvg(color) {
-  const fill   = color === 'green' ? '#22c55e' : '#f59e0b';
-  const stroke = color === 'green' ? '#15803d' : '#b45309';
-  return `
-    <svg width="32" height="40" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16 2C9.37 2 4 7.37 4 14c0 9.33 12 24 12 24s12-14.67 12-24C28 7.37 22.63 2 16 2z"
-        fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
-      <circle cx="16" cy="14" r="5" fill="white" opacity="0.9"/>
-    </svg>`;
-}
+import { formatTanggal, formatBulan, buildSupabaseFotoUrl, mapAdminUsername, normalizeStatus } from '../shared/utils.js';
+import { initLeafletMap, createSimpleMarkerIcon, geocodeSearch } from '../shared/map-core.js';
 
 /* ── DOM refs ───────────────────────────────────────────────── */
 const elHeaderDate   = document.getElementById('headerDate');
@@ -171,19 +99,7 @@ async function initAdminProfile() {
 
 /* ── Map init ────────────────────────────────────────────────── */
 function initMap() {
-  map = L.map('map', { zoomControl: false }).setView([-7.5613, 110.8574], 17);
-
-  L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-  L.tileLayer(
-    `https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAPTILER_KEY}`,
-    {
-      attribution: '© MapTiler © OpenStreetMap',
-      tileSize: 512,
-      zoomOffset: -1,
-    }
-  ).addTo(map);
-
+  map = initLeafletMap('map', [-7.5613, 110.8574], 17, MAPTILER_KEY, true);
   markerLayer = L.layerGroup().addTo(map);
 }
 
@@ -207,23 +123,14 @@ function initSearchInput() {
   elSearchInput?.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     clearTimeout(debounce);
-    debounce = setTimeout(() => geocodeSearch(elSearchInput.value.trim()), 0);
+    debounce = setTimeout(async () => {
+      const results = await geocodeSearch(elSearchInput.value.trim());
+      if (results && results.length > 0) {
+        const result = results[0];
+        map.flyTo([result.lat, result.lon], 16, { duration: 1.2 });
+      }
+    }, 0);
   });
-}
-
-async function geocodeSearch(query) {
-  if (!query) return;
-  try {
-    const url  = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
-    const res  = await fetch(url, { headers: { 'Accept-Language': 'id' } });
-    const data = await res.json();
-    if (data.length > 0) {
-      const { lat, lon } = data[0];
-      map.flyTo([parseFloat(lat), parseFloat(lon)], 16, { duration: 1.2 });
-    }
-  } catch (_) {
-    // Gagal geocode — abaikan
-  }
 }
 
 /* ── Load markers ────────────────────────────────────────────── */
@@ -269,13 +176,7 @@ function renderMarkers(reports, filter) {
     const isVerified = status === 'terverifikasi' || status === 'selesai';
     const color      = isVerified ? 'green' : 'yellow';
 
-    const icon = L.divIcon({
-      html:      markerSvg(color),
-      className: 'custom-marker',
-      iconSize:  [32, 40],
-      iconAnchor:[16, 40],
-      popupAnchor:[0,-42],
-    });
+    const icon = createSimpleMarkerIcon(color);
 
     const marker = L.marker([lat, lng], { icon });
     marker.on('click', () => openInspectCard(report, color));
@@ -338,7 +239,7 @@ function openInspectCard(report, color) {
   const photoHolder    = document.getElementById('inspectPhotoPlaceholder');
   const firstPhoto     = Array.isArray(report.photos) ? report.photos[0] : null;
   const fotoPath       = report.foto || report.foto_url || firstPhoto?.url || firstPhoto?.public_url || firstPhoto?.file_url || firstPhoto?.file_path || null;
-  const fotoSrc        = buildSupabaseFotoUrl(fotoPath);
+  const fotoSrc        = buildSupabaseFotoUrl(fotoPath, SUPABASE_URL, SUPABASE_BUCKET);
 
   if (fotoSrc) {
     photoEl.src     = fotoSrc;
@@ -377,12 +278,3 @@ function closeInspectCard() {
 }
 
 elInspectClose?.addEventListener('click', closeInspectCard);
-
-function normalizeStatus(status) {
-  const s = String(status || '').toLowerCase().trim();
-  if (s === 'menunggu_validasi' || s === 'tertunda' || s === 'pending') return 'menunggu_validasi';
-  if (s === 'terverifikasi' || s === 'divalidasi' || s === 'diproses' || s === 'verified') return 'terverifikasi';
-  if (s === 'selesai' || s === 'done') return 'selesai';
-  if (s === 'ditolak' || s === 'rejected') return 'ditolak';
-  return s;
-}

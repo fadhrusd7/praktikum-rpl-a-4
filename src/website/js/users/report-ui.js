@@ -69,11 +69,25 @@ export function initKategoriCards(onChange) {
   })
 }
 
-export function initFotoUpload(onChange) {
+export function initFotoUpload(onChange, onError) {
   const input = document.getElementById('fotoInput')
   const preview = document.getElementById('fotoPreview')
   const remove = document.getElementById('fotoRemove')
   const dropZone = document.getElementById('dropZone')
+
+  const validateAndSetFile = (file) => {
+    if (!file) return
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg']
+    if (!validTypes.includes(file.type)) {
+      if (onError) {
+        onError('Format file tidak didukung. Harap unggah file JPG, JPEG, atau PNG.')
+      }
+      // Reset input jika tidak valid
+      if (input) input.value = ''
+      return
+    }
+    setFile(file)
+  }
 
   const setFile = (file) => {
     if (!file) return
@@ -90,7 +104,25 @@ export function initFotoUpload(onChange) {
 
   input?.addEventListener('change', (e) => {
     const file = e.target.files?.[0]
-    if (file) setFile(file)
+    if (file) validateAndSetFile(file)
+  })
+
+  // Drag and Drop
+  dropZone?.addEventListener('dragover', (e) => {
+    e.preventDefault()
+    dropZone.classList.add('drag-over')
+  })
+
+  dropZone?.addEventListener('dragleave', (e) => {
+    e.preventDefault()
+    dropZone.classList.remove('drag-over')
+  })
+
+  dropZone?.addEventListener('drop', (e) => {
+    e.preventDefault()
+    dropZone.classList.remove('drag-over')
+    const file = e.dataTransfer.files?.[0]
+    if (file) validateAndSetFile(file)
   })
   remove?.addEventListener('click', (event) => {
     event.stopPropagation()
