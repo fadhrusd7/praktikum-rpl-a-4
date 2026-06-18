@@ -124,8 +124,9 @@ function initSearchInput() {
     if (e.key !== 'Enter') return;
     clearTimeout(debounce);
     debounce = setTimeout(async () => {
-      const result = await geocodeSearch(elSearchInput.value.trim());
-      if (result) {
+      const results = await geocodeSearch(elSearchInput.value.trim());
+      if (results && results.length > 0) {
+        const result = results[0];
         map.flyTo([result.lat, result.lon], 16, { duration: 1.2 });
       }
     }, 0);
