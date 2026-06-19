@@ -6,6 +6,9 @@
 
 /* ── Page base ───────────────────────────────────────────────── */
 html, body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -20,16 +23,17 @@ html, body {
   flex: 1;
   overflow-y: auto;
   padding: 28px 28px;
-  display: flex;
-  gap: 28px;
-  align-items: flex-start;
-  height: calc(100vh - var(--header-h));
+  height: calc(100% - var(--header-h));
   box-sizing: border-box;
 }
 
 /* ── Step visibility ─────────────────────────────────────────── */
 .step-view { display: none; width: 100%; }
-.step-view.active { display: contents; }
+.step-view.active {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+}
 
 /* ── Step 1: Form + Foto columns ─────────────────────────────── */
 .form-col {
@@ -388,7 +392,7 @@ html, body {
 
 .map-container-report {
   width: 100%;
-  height: calc(100vh - var(--header-h) - 56px);
+  height: calc(100dvh - var(--header-h) - 56px);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -405,7 +409,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  height: calc(100vh - var(--header-h) - 56px);
+  height: calc(100dvh - var(--header-h) - 56px);
 }
 
 /* Search box */
@@ -544,6 +548,16 @@ html, body {
   gap: 10px;
   align-items: center;
   flex-shrink: 0;
+}
+
+.review-actions .btn-secondary,
+.review-actions .btn-action {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+  width: auto;
+  margin: 0;
+  border-radius: var(--radius-md);
 }
 
 /* Bukti foto */
@@ -865,10 +879,27 @@ html, body {
 
 @media (max-width: 900px) {
   .page-body {
-    flex-direction: column;
+    display: block;
     overflow-y: auto;
-    height: auto;
-    min-height: calc(100vh - var(--header-h));
+    height: calc(100% - var(--header-h));
+  }
+
+  .step-view.active {
+    display: block;
+  }
+
+  .form-col {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .btn-action {
+    margin-bottom: 32px;
+  }
+
+  .review-actions .btn-action,
+  .success-actions .btn-action {
+    margin-bottom: 0;
   }
 
   .foto-col,
@@ -887,6 +918,10 @@ html, body {
 
 @media (max-width: 767px) {
   .page-body { padding: 14px; gap: 14px; }
+  .date-badge {
+    font-size: 10px !important;
+    padding: 3px 10px !important;
+  }
   .kategori-grid { grid-template-columns: repeat(3, 1fr); }
   .map-container-report { height: 300px; }
   .success-circles { width: 240px; height: 240px; }
