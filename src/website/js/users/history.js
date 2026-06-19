@@ -303,7 +303,7 @@ function clearError() {
 
 function renderDateBadge() {
   const now = new Date()
-  const el  = document.getElementById('dateBadge')
+  const el  = document.getElementById('dateBadge') || document.getElementById('dateBadgeEl')
   if (el) el.textContent = `${MONTHS_ID[now.getMonth()]} ${now.getFullYear()}`
 }
 

@@ -48,10 +48,13 @@
 }
 
 html, body {
+  position: fixed;
+  width: 100%;
   height: 100%;
   font-family: var(--font);
   color: var(--gray-900);
   background: var(--gray-100);
+  overflow: hidden;
 }
 
 .hidden { display: none !important; }
@@ -59,7 +62,7 @@ html, body {
 /* ── Layout Shell ─────────────────────────────────────────── */
 .app-shell {
   display: flex;
-  height: 100vh;
+  height: 100dvh;
   width: 100vw;
   overflow: hidden;
 }
@@ -68,7 +71,7 @@ html, body {
 .sidebar {
   width: var(--sidebar-w);
   min-width: var(--sidebar-w);
-  height: 100vh;
+  height: 100dvh;
   background: var(--white);
   border-right: 1px solid var(--gray-200);
   display: flex;
@@ -156,7 +159,7 @@ html, body {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -471,9 +474,15 @@ html, body {
     transition: transform .25s ease;
     z-index: 200;
     box-shadow: var(--shadow-lg);
+    min-width: 0 !important;
+    width: 0 !important;
   }
 
-  .sidebar.open { transform: translateX(0); }
+  .sidebar.open {
+    transform: translateX(0);
+    min-width: var(--sidebar-w) !important;
+    width: var(--sidebar-w) !important;
+  }
   .main-content { width: 100%; }
   .hamburger-btn { display: flex !important; }
   .sidebar-overlay { display: block !important; }
@@ -488,6 +497,11 @@ html, body {
   .page-title  { font-size: 17px; }
   .page-body   { padding: 16px 14px 48px; }
 
+  .header-date {
+    font-size: 11px !important;
+    padding: 4px 12px !important;
+  }
+
   .summary-row {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -496,6 +510,58 @@ html, body {
   .summary-card { padding: 18px 20px; }
   .summary-value { font-size: 26px; }
 
-  .feedback-table th,
-  .feedback-table td { padding: 12px 14px; }
+  /* Table to Card List transformation */
+  .feedback-table thead {
+    display: none;
+  }
+
+  .feedback-table, 
+  .feedback-table tbody, 
+  .feedback-table tr, 
+  .feedback-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .feedback-table tr {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    margin-bottom: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .feedback-table tbody tr:hover {
+    background: var(--white);
+  }
+
+  .feedback-table td {
+    padding: 6px 0 !important;
+    border: none !important;
+    text-align: left !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+
+  /* Prepend labels for table fields on mobile cards */
+  .feedback-table td:nth-child(1) {
+    border-bottom: 1.5px solid var(--gray-100) !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 4px;
+    justify-content: flex-start;
+  }
+  .feedback-table td:nth-child(2)::before { content: 'Penilaian'; font-weight: 700; color: var(--gray-400); font-size: 11px; text-transform: uppercase; }
+  .feedback-table td:nth-child(3)::before { content: 'Komentar'; font-weight: 700; color: var(--gray-400); font-size: 11px; text-transform: uppercase; }
+  .feedback-table td:nth-child(3) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .feedback-table td:nth-child(4)::before { content: 'Tanggal'; font-weight: 700; color: var(--gray-400); font-size: 11px; text-transform: uppercase; }
 }

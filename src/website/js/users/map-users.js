@@ -16,9 +16,9 @@ let allReports   = []
 // ── Bootstrap ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   _loadUserInfo()
+  _bindSidebar()
   _initMap()
   _buildLegend()
-  _bindSidebar()
   await _loadReports()
 })
 
@@ -99,7 +99,19 @@ function _buildLegend() {
 
 // ── Sidebar Binding (Stub) ──────────────────────────────────
 function _bindSidebar() {
-  console.log('[Sidebar] Binding dikonfigurasi.')
+  const sidebar  = document.getElementById('sidebar')
+  const overlay  = document.getElementById('sidebarOverlay')
+  const hamburger= document.getElementById('hamburgerBtn')
+
+  hamburger?.addEventListener('click', () => {
+    sidebar?.classList.toggle('open')
+    overlay?.classList.toggle('visible')
+  })
+
+  overlay?.addEventListener('click', () => {
+    sidebar?.classList.remove('open')
+    overlay?.classList.remove('visible')
+  })
 }
 
 // ── Load Reports ───────────────────────────────────────────
@@ -294,3 +306,4 @@ function _hideEmpty() {
   const el = document.querySelector('#mapEmptyState')
   if (el) el.classList.add('hidden')
 }
+
