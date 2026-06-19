@@ -51,7 +51,7 @@ export function showStep(stepNumber, afterShow) {
   const step = document.getElementById(`step${stepNumber}`) || document.getElementById(`step ${stepNumber}`)
   if (step) {
     step.classList.add('active')
-    step.style.display = stepNumber === 1 ? 'contents' : ''
+    step.style.display = ''
   }
 
   if (typeof afterShow === 'function') {

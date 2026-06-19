@@ -50,10 +50,13 @@
 }
 
 html, body {
+  position: fixed;
+  width: 100%;
   height: 100%;
   font-family: var(--font);
   color: var(--gray-900);
   background: var(--gray-100);
+  overflow: hidden;
 }
 
 /* ── Utility ──────────────────────────────────────────────── */
@@ -62,7 +65,7 @@ html, body {
 /* ── Layout Shell ─────────────────────────────────────────── */
 .app-shell {
   display: flex;
-  height: 100vh;
+  height: 100dvh;
   width: 100vw;
   overflow: hidden;
 }
@@ -71,7 +74,7 @@ html, body {
 .sidebar {
   width: var(--sidebar-w);
   min-width: var(--sidebar-w);
-  height: 100vh;
+  height: 100dvh;
   background: var(--white);
   border-right: 1px solid var(--gray-200);
   display: flex;
@@ -191,10 +194,11 @@ html, body {
 /* ── Main Content ─────────────────────────────────────────── */
 .main-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr;
+  grid-template-columns: 1fr;
   min-width: 0;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -208,7 +212,8 @@ html, body {
   gap: 12px;
   padding: 0 28px;
   flex-shrink: 0;
-  z-index: 90;
+  position: relative;
+  z-index: 600;
 }
 
 .page-title {
@@ -286,7 +291,7 @@ html, body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,.35);
-  z-index: 150;
+  z-index: 650;          /* above header (600) so header gets dimmed */
   opacity: 0;
   pointer-events: none;
   transition: opacity .25s ease;
@@ -296,9 +301,12 @@ html, body {
    MAP WRAPPER — fills remaining space
    ============================================================ */
 .map-wrapper {
-  flex: 1;
+  grid-row: 2;
   position: relative;
   overflow: hidden;
+  /* Isolate Leaflet's internal z-index stack so it cannot bleed
+     above the page-header (Leaflet popupPane reaches z-index 700) */
+  isolation: isolate;
 }
 
 #map {
@@ -676,17 +684,25 @@ html, body {
   justify-content: center;
 }
 
-/* ── Responsive — Tablet ──────────────────────────────────── */
+/* ── Responsive — Tablet ─────────────────────────────────── */
 @media (max-width: 1199px) {
   .sidebar {
     position: fixed;
+    top: 0;
+    left: 0;
     transform: translateX(calc(-1 * var(--sidebar-w)));
     transition: transform .25s ease;
-    z-index: 200;
+    z-index: 700;          /* above overlay (650) and header (600) */
     box-shadow: var(--shadow-lg);
+    min-width: 0 !important;
+    width: 0 !important;
   }
 
-  .sidebar.open { transform: translateX(0); }
+  .sidebar.open {
+    transform: translateX(0);
+    min-width: var(--sidebar-w) !important;
+    width: var(--sidebar-w) !important;
+  }
 
   .main-content { width: 100%; }
 
@@ -712,9 +728,10 @@ html, body {
 
   .page-header { padding: 0 14px; gap: 8px; }
   .page-title  { font-size: 17px; }
+  .header-date { display: none !important; }
 
-  .map-search-input { width: 160px; font-size: 12px; }
-  .map-search-input:focus { width: 200px; }
+  .map-search-input { width: 130px; font-size: 12px; max-width: calc(100vw - 180px); }
+  .map-search-input:focus { width: 160px; }
 
   .map-filter-bar {
     top: 10px;
