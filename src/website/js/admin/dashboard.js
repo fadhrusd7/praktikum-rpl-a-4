@@ -297,7 +297,6 @@ function _renderPagination() {
   const pagination = document.getElementById('pagination')
   if (!pagination) return
 
-  // Jumlah halaman UI dihitung dari total record backend
   const maxWebPage = totalRecords > 0
     ? Math.ceil(totalRecords / ITEMS_PER_PAGE)
     : Math.ceil(allReports.length / ITEMS_PER_PAGE) || 1
@@ -305,13 +304,28 @@ function _renderPagination() {
   const isPrevDisabled = currentPage <= 1
   const isNextDisabled = currentPage >= maxWebPage
 
-  let pagesHtml = ''
-  for (let i = 1; i <= maxWebPage; i++) {
-    pagesHtml += `
-      <button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
-        ${i}
-      </button>`
+  // Smart windowed page buttons — max 7 visible
+  function buildPages(cur, max) {
+    if (max <= 7) return Array.from({ length: max }, (_, i) => i + 1)
+    const pages = new Set([1, max])
+    for (let i = Math.max(2, cur - 2); i <= Math.min(max - 1, cur + 2); i++) pages.add(i)
+    const sorted = [...pages].sort((a, b) => a - b)
+    const result = []
+    sorted.forEach((p, i) => {
+      if (i > 0 && sorted[i - 1] < p - 1) result.push('...')
+      result.push(p)
+    })
+    return result
   }
+
+  let pagesHtml = ''
+  buildPages(currentPage, maxWebPage).forEach(item => {
+    if (item === '...') {
+      pagesHtml += `<span class="page-ellipsis">&hellip;</span>`
+    } else {
+      pagesHtml += `<button class="page-btn ${item === currentPage ? 'active' : ''}" data-page="${item}">${item}</button>`
+    }
+  })
 
   pagination.innerHTML = `
     <button class="page-btn" id="prevPage" ${isPrevDisabled ? 'disabled' : ''}>←</button>
@@ -352,7 +366,7 @@ function _renderTable(reports) {
 
   if (reports.length === 0) {
     reportsTbody.innerHTML = `
-      <tr><td colspan="6" class="table-empty">
+      <tr><td colspan="5" class="table-empty">
         <svg viewBox="0 0 24 24" width="36" height="36" fill="#d1d5db">
           <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
           <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
@@ -367,13 +381,16 @@ function _renderTable(reports) {
     const { tgl, jam } = _formatDate(r.created_at)
     const lapNum   = _lapNum(r.created_at, r.id)
     const nama     = r.user?.nama_lengkap || r.user?.nama || '?';
-    const initials = nama.slice(0, 2).toUpperCase()
+    const initials = nama.split(' ').slice(0,2).map(w => w[0] || '').join('').toUpperCase()
 
     return `
       <tr class="report-row">
         <td class="td-judul">
           <div class="judul-main">${_esc(r.judul)}</div>
-          <div class="judul-sub">${lapNum}</div>
+          <div class="judul-meta">
+            <span class="judul-sub">${lapNum}</span>
+            <span class="status-badge ${st.cls}">${st.label}</span>
+          </div>
         </td>
         <td><span class="badge-kategori">${_esc(r.kategori || '—')}</span></td>
         <td>
@@ -382,11 +399,12 @@ function _renderTable(reports) {
             <span>${_esc(nama)}</span>
           </div>
         </td>
-        <td class="td-waktu">
-          <div class="waktu-tgl">${tgl}</div>
-          <div class="waktu-jam">${jam} WIB</div>
+        <td>
+          <div class="waktu-cell">
+            <span class="waktu-tgl">${tgl}</span>
+            <span class="waktu-jam">${jam} WIB</span>
+          </div>
         </td>
-        <td><span class="status-badge ${st.cls}">${st.label}</span></td>
         <td>
           <button class="btn-detail"
             onclick="window.location.href='../laporan/report-admin.html?id=${r.id}'">
@@ -400,14 +418,14 @@ function _renderTable(reports) {
 function _showTableSkeleton() {
   if (!reportsTbody) return
   reportsTbody.innerHTML = Array(3).fill(`
-    <tr>${Array(6).fill('<td><div class="skeleton-row-cell"></div></td>').join('')}</tr>`
+    <tr>${Array(5).fill('<td><div class="skeleton-row-cell"></div></td>').join('')}</tr>`
   ).join('')
 }
 
 function _renderTableError() {
   if (!reportsTbody) return
   reportsTbody.innerHTML = `
-    <tr><td colspan="6" class="table-empty table-error">
+    <tr><td colspan="5" class="table-empty table-error">
       <p>Gagal memuat data. Periksa koneksi Anda.</p>
     </td></tr>`
 }

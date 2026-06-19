@@ -192,4 +192,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     initChangePhoto();
+
+    // ── Sidebar & hamburger (mobile) ────────────────────────────────────
+    const sidebar = document.getElementById('sidebar')
+    const overlay = document.getElementById('sidebarOverlay')
+    const hamburger = document.getElementById('hamburgerBtn')
+
+    hamburger?.addEventListener('click', () => {
+        sidebar?.classList.toggle('open')
+        overlay?.classList.toggle('visible')
+    })
+
+    overlay?.addEventListener('click', () => {
+        sidebar?.classList.remove('open')
+        overlay?.classList.remove('visible')
+    })
 });
