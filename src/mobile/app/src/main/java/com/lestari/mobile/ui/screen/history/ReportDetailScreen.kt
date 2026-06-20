@@ -1,61 +1,62 @@
 package com.lestari.mobile.ui.screen.history
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lestari.mobile.model.ReportItem
-import com.lestari.mobile.model.statusDescription
-import com.lestari.mobile.ui.component.AppHeader
-import com.lestari.mobile.ui.component.DetailRow
-import com.lestari.mobile.ui.component.FakeReportPhoto
-import com.lestari.mobile.ui.component.SectionCard
-import com.lestari.mobile.ui.component.StatusPill
 import com.lestari.mobile.ui.theme.AppColors
+import com.lestari.mobile.ui.screen.map.ReportDetailContent
 
+/**
+ * Layar Detail Laporan full-screen, dipakai dari menu History.
+ *
+ * Hanya bertanggung jawab atas "chrome" layar (top bar + breadcrumb + background
+ * penuh layar). Isi kontennya di-reuse dari [ReportDetailContent] agar tidak
+ * duplikasi dengan tampilan detail laporan di MapScreen.
+ */
 @Composable
 fun ReportDetailScreen(report: ReportItem, onBack: () -> Unit) {
-    Column(Modifier.fillMaxSize()) {
-        AppHeader("Detail Laporan") {
-            OutlinedButton(onClick = onBack, modifier = Modifier.height(36.dp)) {
-                Text("Kembali", fontSize = 12.sp)
-            }
-        }
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppColors.Page)
+    ) {
+        // ── Top bar ───────────────────────────────────────────────────────────
+        Row(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .fillMaxWidth()
+                .background(AppColors.Page)
+                .padding(start = 16.dp, end = 16.dp, top = 38.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            SectionCard(report.title) {
-                StatusPill(report.status)
-                Text(report.number, color = AppColors.Muted, fontSize = 12.sp)
-                if (report.hasPhoto) {
-                    FakeReportPhoto()
-                } else {
-                    Text("Laporan ini belum memiliki foto.", color = AppColors.Muted, fontSize = 13.sp)
-                }
-                Spacer(Modifier.height(4.dp))
-                Text(report.description, fontSize = 13.sp)
+            IconButton(onClick = onBack, modifier = Modifier.size(32.dp)) {
+                Icon(
+                    imageVector        = Icons.Outlined.ArrowBackIosNew,
+                    contentDescription = "Kembali",
+                    tint               = AppColors.Forest,
+                    modifier           = Modifier.size(18.dp)
+                )
             }
-            SectionCard("Informasi") {
-                DetailRow("Kategori", report.category)
-                DetailRow("Lokasi", report.location)
-                DetailRow("Waktu", report.date)
-            }
-            SectionCard("Status") {
-                Text(statusDescription(report.status), fontSize = 13.sp)
-            }
+            Spacer(Modifier.width(8.dp))
+            // Breadcrumb: Laporan > LAP-xxx
+            Text("Laporan", color = AppColors.Forest, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+            Text("  ›  ", color = AppColors.Muted, fontSize = 13.sp)
+            Text(report.number, color = AppColors.Muted, fontSize = 13.sp)
         }
+
+        ReportDetailContent(
+            report   = report,
+            modifier = Modifier.weight(1f).fillMaxWidth()
+        )
     }
 }
