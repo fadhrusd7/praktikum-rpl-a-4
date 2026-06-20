@@ -1,5 +1,6 @@
 package com.lestari.mobile.ui.screen.report
 
+import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,68 +21,112 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.rememberAsyncImagePainter
-import com.lestari.mobile.BuildConfig
-import com.lestari.mobile.map.MapTilerView
+import coil.compose.rememberAsyncImagePainter
+import com.lestari.mobile.map.MapLocationPicker
 import com.lestari.mobile.model.ReportCategories
 import com.lestari.mobile.model.ReportItem
-import com.lestari.mobile.model.ReportStatus
 import com.lestari.mobile.ui.component.AppHeader
 import com.lestari.mobile.ui.component.SectionCard
 import com.lestari.mobile.ui.theme.AppColors
-
-// ── State holder untuk wizard ─────────────────────────────────────────────────
-private data class WizardState(
-    val step: Int = 0,
-    val judul: String = "",
-    val category: String = "Sampah",
-    val description: String = "",
-    val location: String = "Jl. Klebet 7, Surakarta",
-    val photoUri: Uri? = null
-)
+import com.lestari.mobile.ui.viewmodel.ReportViewModel
+import com.lestari.mobile.util.Resource
+import com.lestari.mobile.map.ReportLocationMap
+import com.lestari.mobile.util.LocationHelper
+import com.lestari.mobile.data.geocode
+import com.lestari.mobile.data.reverseGeocode
+import com.maptiler.maptilersdk.map.LngLat
+import com.maptiler.maptilersdk.map.MTMapViewController
+import com.maptiler.maptilersdk.map.options.MTCameraOptions
+import kotlinx.coroutines.launch
 
 @Composable
-fun ReportWizardScreen(onSubmit: (ReportItem) -> Unit) {
+fun ReportWizardScreen(
+    viewModel: ReportViewModel,
+    onNotificationClick: () -> Unit,
+    unreadCount: Int,
+    onSubmitSuccess: (ReportItem) -> Unit
+) {
+    val context     = LocalContext.current
+    val submitState by viewModel.submitState.collectAsState()
+    val isLoading   = submitState is Resource.Loading
+
+    var latitude    by rememberSaveable { mutableDoubleStateOf(-7.5666) }
+    var longitude   by rememberSaveable { mutableDoubleStateOf(110.8243) }
     var step        by rememberSaveable { mutableIntStateOf(0) }
     var judul       by rememberSaveable { mutableStateOf("") }
     var category    by rememberSaveable { mutableStateOf("Sampah") }
     var description by rememberSaveable { mutableStateOf("") }
-    var location    by rememberSaveable { mutableStateOf("Jl. Klebet 7, Surakarta") }
+    var location    by rememberSaveable { mutableStateOf("") }
     var photoUri    by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var address     by rememberSaveable { mutableStateOf("") }
+    var isAnonymous by rememberSaveable { mutableStateOf(false) }
 
-    // Gallery picker launcher
     val photoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? -> if (uri != null) photoUri = uri }
 
-    Column(Modifier.fillMaxSize()) {
-        AppHeader("Buat Laporan")
+    LaunchedEffect(submitState) {
+        when (val state = submitState) {
+            is Resource.Success -> {
+                onSubmitSuccess(state.data)
+                viewModel.resetSubmitState()
+                step = 0; judul = ""; description = ""; photoUri = null; isAnonymous = false
+            }
+            is Resource.Error -> {
+                android.util.Log.d("ReportWizardScreen", "onSubmitError: ${state.message}")
+            }
+            else -> Unit
+        }
+    }
+
+    Column(Modifier.fillMaxSize().background(AppColors.Page)) {
+        AppHeader(
+            title = "Buat Laporan",
+            backgroundColor = AppColors.Page,
+            onNotificationClick = onNotificationClick,
+            unreadCount = unreadCount
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,40 +142,60 @@ fun ReportWizardScreen(onSubmit: (ReportItem) -> Unit) {
                     selectedCategory = category,
                     description      = description,
                     photoUri         = photoUri,
+                    isAnonymous      = isAnonymous,
                     onJudulChange    = { judul = it },
                     onCategoryChange = { category = it },
                     onDescChange     = { description = it },
+                    onAnonymousChange = { isAnonymous = it },
                     onPickPhoto      = { photoPicker.launch("image/*") },
                     onRemovePhoto    = { photoUri = null }
                 )
-                1 -> ReportLocationStep(location, onLocationChange = { location = it })
-                2 -> ReportSummaryStep(judul, category, description, location, photoUri)
+                1 -> ReportLocationStep(
+                    location            = location,
+                    latitude            = latitude,
+                    longitude           = longitude,
+                    onLocationChange    = { location = it },
+                    onCoordinatesChange = { lat, lng ->
+                        latitude  = lat
+                        longitude = lng
+                    },
+                    onAddressChange = { address = it }
+                )
+                2 -> ReportSummaryStep(
+                    judul       = judul,
+                    category    = category,
+                    description = description,
+                    location    = location,
+                    photoUri    = photoUri,
+                    latitude    = latitude,
+                    longitude   = longitude,
+                    address     = address,
+                    isAnonymous = isAnonymous
+                )
                 else -> ReportFinishStep()
             }
 
             WizardActions(
-                step   = step,
-                onBack = { if (step > 0) step-- },
-                onNext = {
-                    if (step < 3) {
-                        step++
-                    } else {
-                        onSubmit(
-                            ReportItem(
-                                title       = judul.ifBlank { category },
-                                number      = "LAP-03062026-0008",
-                                category    = category,
-                                description = description.ifBlank { "Detail laporan belum diisi." },
-                                location    = location,
-                                date        = "Rabu, 3 Juni 2026 - 21.41 WIB",
-                                status      = ReportStatus.Pending,
-                                hasPhoto    = photoUri != null
-                            )
+                step        = step,
+                isLoading   = isLoading,
+                judul       = judul,
+                description = description,
+                onBack      = { if (step > 0) step-- },
+                onNext      = {
+                    when {
+                        step == 0 && (judul.isBlank() || description.isBlank()) -> { /* diblokir oleh isNextEnabled */ }
+                        step < 3  -> step++
+                        !isLoading -> viewModel.createReport(
+                            context   = context,
+                            judul     = judul,
+                            kategori  = category,
+                            deskripsi = description,
+                            lokasi    = address.ifBlank { location },
+                            latitude  = latitude,
+                            longitude = longitude,
+                            isAnonymous = isAnonymous,
+                            photoUri  = photoUri
                         )
-                        step        = 0
-                        judul       = ""
-                        description = ""
-                        photoUri    = null
                     }
                 }
             )
@@ -138,7 +203,6 @@ fun ReportWizardScreen(onSubmit: (ReportItem) -> Unit) {
     }
 }
 
-// ── Step progress bar ─────────────────────────────────────────────────────────
 @Composable
 private fun StepProgress(step: Int) {
     val labels = listOf("Detail", "Lokasi", "Ringkasan", "Konfirmasi")
@@ -156,38 +220,44 @@ private fun StepProgress(step: Int) {
             }
         }
         Text(
-            text = "Langkah ${step + 1} dari 4 — ${labels[step]}",
+            text     = "Langkah ${step + 1} dari 4 — ${labels[step]}",
             fontSize = 12.sp,
-            color = AppColors.Muted
+            color    = AppColors.Muted
         )
     }
 }
 
-// ── Step 1: Detail laporan ────────────────────────────────────────────────────
 @Composable
 private fun ReportStepOne(
     judul: String,
     selectedCategory: String,
     description: String,
     photoUri: Uri?,
+    isAnonymous: Boolean,
     onJudulChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
     onDescChange: (String) -> Unit,
+    onAnonymousChange: (Boolean) -> Unit,
     onPickPhoto: () -> Unit,
     onRemovePhoto: () -> Unit
 ) {
-    // Judul laporan
     SectionCard(title = "Judul Laporan") {
         OutlinedTextField(
-            value = judul,
+            value         = judul,
             onValueChange = onJudulChange,
-            singleLine = true,
-            placeholder = { Text("Contoh: Tumpukan sampah di pinggir jalan", fontSize = 12.sp) },
-            modifier = Modifier.fillMaxWidth()
+            singleLine    = true,
+            placeholder   = { Text("Contoh: Tumpukan sampah di pinggir jalan", fontSize = 12.sp) },
+            modifier      = Modifier.fillMaxWidth(),
+            colors        = OutlinedTextFieldDefaults.colors(
+                focusedTextColor     = AppColors.TextPrimary,
+                unfocusedTextColor   = AppColors.TextPrimary,
+                focusedBorderColor   = AppColors.Forest,
+                unfocusedBorderColor = AppColors.Border,
+                cursorColor          = AppColors.Forest
+            )
         )
     }
 
-    // Kategori
     SectionCard(title = "Kategori Isu") {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             ReportCategories.chunked(3).forEach { row ->
@@ -203,14 +273,12 @@ private fun ReportStepOne(
                             onClick  = { onCategoryChange(item) }
                         )
                     }
-                    // Isi sisa slot kalau row tidak penuh
                     repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
         }
     }
 
-    // Deskripsi
     SectionCard(title = "Deskripsi Laporan") {
         OutlinedTextField(
             value         = description,
@@ -222,14 +290,53 @@ private fun ReportStepOne(
                     fontSize = 12.sp
                 )
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors   = OutlinedTextFieldDefaults.colors(
+                focusedTextColor     = AppColors.TextPrimary,
+                unfocusedTextColor   = AppColors.TextPrimary,
+                focusedBorderColor   = AppColors.Forest,
+                unfocusedBorderColor = AppColors.Border,
+                cursorColor          = AppColors.Forest
+            )
         )
     }
 
-    // Foto
+    SectionCard(title = "Privasi Pelapor") {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { onAnonymousChange(!isAnonymous) }
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = isAnonymous,
+                onCheckedChange = onAnonymousChange,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = AppColors.Forest,
+                    uncheckedColor = AppColors.Muted,
+                    checkmarkColor = Color.White
+                )
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Kirim laporan secara anonim",
+                    color = AppColors.TextPrimary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "Identitas Anda disembunyikan dari tampilan publik laporan.",
+                    color = AppColors.Muted,
+                    fontSize = 11.sp
+                )
+            }
+        }
+    }
+
     SectionCard(title = "Bukti Foto") {
         if (photoUri != null) {
-            // Preview foto yang sudah dipilih
             Box(modifier = Modifier.fillMaxWidth()) {
                 Image(
                     painter            = rememberAsyncImagePainter(photoUri),
@@ -240,7 +347,6 @@ private fun ReportStepOne(
                         .height(180.dp)
                         .clip(RoundedCornerShape(8.dp))
                 )
-                // Tombol hapus di pojok kanan atas
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -265,17 +371,11 @@ private fun ReportStepOne(
                 fontSize = 11.sp
             )
         }
-
-        // Tombol pick foto (selalu tampil agar bisa ganti)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(if (photoUri != null) 52.dp else 116.dp)
-                .border(
-                    width = 1.dp,
-                    color = if (photoUri != null) AppColors.Forest else AppColors.Muted,
-                    shape = RoundedCornerShape(8.dp)
-                )
+                .border(1.dp, if (photoUri != null) AppColors.Forest else AppColors.Muted, RoundedCornerShape(8.dp))
                 .clip(RoundedCornerShape(8.dp))
                 .clickable { onPickPhoto() },
             contentAlignment = Alignment.Center
@@ -306,45 +406,200 @@ private fun ReportStepOne(
     }
 }
 
-// ── Step 2: Lokasi ────────────────────────────────────────────────────────────
 @Composable
-private fun ReportLocationStep(location: String, onLocationChange: (String) -> Unit) {
+private fun ReportLocationStep(
+    location: String,
+    latitude: Double,
+    longitude: Double,
+    onLocationChange: (String) -> Unit,
+    onCoordinatesChange: (Double, Double) -> Unit,
+    onAddressChange: (String) -> Unit
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val controller = remember { MTMapViewController(context) }
+    var isSearching by remember { mutableStateOf(false) }
+    var isLocating by remember { mutableStateOf(false) }
+
+    // Minta permission launcher untuk GPS
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        if (fineGranted || coarseGranted) {
+            isLocating = true
+            LocationHelper.getCurrentLocation(
+                context = context,
+                onSuccess = { lat, lng ->
+                    scope.launch {
+                        val addr = reverseGeocode(lat, lng)
+                        onCoordinatesChange(lat, lng)
+                        onAddressChange(addr)
+                        onLocationChange(addr)
+                        controller.easeTo(MTCameraOptions(center = LngLat(lng, lat), zoom = 15.0))
+                        isLocating = false
+                    }
+                },
+                onFailure = { msg ->
+                    isLocating = false
+                    android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_LONG).show()
+                }
+            )
+        } else {
+            android.widget.Toast.makeText(context, "Izin lokasi ditolak.", android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
+
+    val performSearch = {
+        if (location.isNotBlank()) {
+            scope.launch {
+                isSearching = true
+                val result = geocode(context, location)
+                isSearching = false
+                if (result != null) {
+                    val (lat, lng) = result
+                    onCoordinatesChange(lat, lng)
+                    // Lakukan reverse geocode untuk dapat alamat resmi terformat
+                    val addr = reverseGeocode(lat, lng)
+                    onAddressChange(addr)
+                    onLocationChange(addr.ifBlank { location })
+                    controller.easeTo(MTCameraOptions(center = LngLat(lng, lat), zoom = 15.0))
+                } else {
+                    android.widget.Toast.makeText(context, "Lokasi tidak ditemukan.", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            android.widget.Toast.makeText(context, "Masukkan kata kunci pencarian.", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
+
     SectionCard("Pilih Lokasi") {
         OutlinedTextField(
             value         = location,
             onValueChange = onLocationChange,
             label         = { Text("Alamat lokasi") },
-            modifier      = Modifier.fillMaxWidth()
+            placeholder   = { Text("Contoh: Jl. Klebet 7, Surakarta", color = AppColors.Muted) },
+            modifier      = Modifier.fillMaxWidth(),
+            singleLine    = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { performSearch() }),
+            trailingIcon = {
+                if (isSearching) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp,
+                        color = AppColors.Forest
+                    )
+                } else {
+                    IconButton(onClick = { performSearch() }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Cari Lokasi",
+                            tint = AppColors.Forest
+                        )
+                    }
+                }
+            },
+            colors        = OutlinedTextFieldDefaults.colors(
+                focusedTextColor     = AppColors.TextPrimary,
+                unfocusedTextColor   = AppColors.TextPrimary,
+                focusedBorderColor   = AppColors.Forest,
+                unfocusedBorderColor = AppColors.Border,
+                cursorColor          = AppColors.Forest
+            )
         )
-        Button(
-            onClick = { onLocationChange("Jl. Klebet 7, Surakarta") },
-            colors  = ButtonDefaults.buttonColors(containerColor = AppColors.Forest),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Gunakan lokasi saat ini (contoh)")
-        }
-        MapTilerView(
-            apiKey             = BuildConfig.MAPTILER_API_KEY,
-            selectedCategories = ReportCategories.filterNot { it == "Lain-Lain" }.toSet(),
-            modifier           = Modifier
+
+        Text(
+            "Ketuk peta untuk menandai lokasi laporan",
+            fontSize = 12.sp,
+            color    = AppColors.Muted
+        )
+
+        MapLocationPicker(
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(260.dp)
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(8.dp)),
+            controller = controller,
+            pickedLocation = LngLat(longitude, latitude),
+            onLocationPicked = { lat, lng, addr ->
+                onCoordinatesChange(lat, lng)
+                onAddressChange(addr)
+                onLocationChange(addr)
+                // Tidak perlu easeTo di sini karena MapLocationPicker sudah punya logika internal untuk update
+            }
         )
+
+        Button(
+            onClick = {
+                if (LocationHelper.hasLocationPermission(context)) {
+                    isLocating = true
+                    LocationHelper.getCurrentLocation(
+                        context = context,
+                        onSuccess = { lat, lng ->
+                            scope.launch {
+                                val addr = reverseGeocode(lat, lng)
+                                onCoordinatesChange(lat, lng)
+                                onAddressChange(addr)
+                                onLocationChange(addr)
+                                controller.easeTo(MTCameraOptions(center = LngLat(lng, lat), zoom = 15.0))
+                                isLocating = false
+                            }
+                        },
+                        onFailure = { msg ->
+                            isLocating = false
+                            android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_LONG).show()
+                        }
+                    )
+                } else {
+                    permissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                }
+            },
+            colors   = ButtonDefaults.buttonColors(containerColor = AppColors.Forest),
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLocating
+        ) {
+            if (isLocating) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Mencari Lokasi GPS...")
+            } else {
+                Icon(
+                    imageVector = Icons.Default.MyLocation,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Gunakan Lokasi Saat Ini")
+            }
+        }
     }
 }
 
-// ── Step 3: Ringkasan ─────────────────────────────────────────────────────────
 @Composable
 private fun ReportSummaryStep(
     judul: String,
     category: String,
     description: String,
     location: String,
-    photoUri: Uri?
+    photoUri: Uri?,
+    latitude: Double,
+    longitude: Double,
+    address: String,
+    isAnonymous: Boolean
 ) {
     SectionCard("Ringkasan Laporan") {
-        // Foto preview (beneran kalau ada, placeholder kalau tidak)
         if (photoUri != null) {
             Image(
                 painter            = rememberAsyncImagePainter(photoUri),
@@ -367,54 +622,111 @@ private fun ReportSummaryStep(
                 Text("Tidak ada foto", color = AppColors.Muted, fontSize = 13.sp)
             }
         }
-
         Spacer(Modifier.height(4.dp))
         Text("Judul", color = AppColors.Muted, fontSize = 12.sp)
         Text(judul.ifBlank { "(tidak diisi — akan menggunakan nama kategori)" }, fontWeight = FontWeight.SemiBold)
-
         Spacer(Modifier.height(2.dp))
         Text("Deskripsi", color = AppColors.Muted, fontSize = 12.sp)
         Text(description.ifBlank { "Belum ada deskripsi." }, fontSize = 13.sp)
     }
 
     SectionCard("Kategori & Waktu") {
-        AssistChip(onClick = {}, label = { Text(category, fontWeight = FontWeight.Bold) })
-        Text("Rabu, 3 Juni 2026  •  20:00 WIB", fontSize = 12.sp, color = AppColors.Muted)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .border(1.5.dp, AppColors.Forest, RoundedCornerShape(12.dp))
+                    .background(Color(0xFFEAF7ED), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    text = category,
+                    color = AppColors.TextPrimary, // Menggunakan Hitam agar kontras maksimal
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 14.sp
+                )
+            }
+        }
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = "Rabu, 3 Juni 2026  •  20:00 WIB", 
+            fontSize = 12.sp, 
+            color = AppColors.Muted,
+            fontWeight = FontWeight.Medium
+        )
     }
 
     SectionCard("Lokasi") {
-        Text(location, fontSize = 13.sp)
+        if (address.isNotBlank()) {
+            Text(address, fontSize = 13.sp)
+        } else if (location.isNotBlank()) {
+            Text(location, fontSize = 13.sp)
+        } else {
+            Text("Lokasi belum dipilih", fontSize = 13.sp, color = AppColors.Muted)
+        }
         Spacer(Modifier.height(8.dp))
-        MapTilerView(
-            apiKey             = BuildConfig.MAPTILER_API_KEY,
-            selectedCategories = setOf(category),
-            modifier           = Modifier
+        ReportLocationMap(
+            latitude  = latitude,
+            longitude = longitude,
+            modifier  = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
                 .clip(RoundedCornerShape(8.dp))
         )
     }
+
+    SectionCard("Identitas Pelapor") {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    if (isAnonymous) Color(0xFFEAF7ED) else Color(0xFFF5F5F5)
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text     = if (isAnonymous) "\uD83D\uDD75\uFE0F" else "\uD83D\uDC64",
+                fontSize = 20.sp
+            )
+            Column {
+                Text(
+                    text       = if (isAnonymous) "Dikirim sebagai: Anonim" else "Dikirim dengan identitas akun",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize   = 13.sp,
+                    color      = if (isAnonymous) AppColors.ForestDark else AppColors.TextPrimary
+                )
+                Text(
+                    text     = if (isAnonymous)
+                        "Nama dan profil Anda disembunyikan dari laporan ini."
+                    else
+                        "Nama Anda akan terlihat pada laporan ini.",
+                    fontSize = 11.sp,
+                    color    = AppColors.Muted
+                )
+            }
+        }
+    }
 }
 
-// ── Step 4: Konfirmasi ────────────────────────────────────────────────────────
 @Composable
 private fun ReportFinishStep() {
     SectionCard("Konfirmasi Pengiriman") {
         Text(
-            text  = "Pastikan judul, kategori, deskripsi, bukti foto, dan lokasi sudah benar sebelum laporan dikirim.",
+            text     = "Pastikan judul, kategori, deskripsi, bukti foto, dan lokasi sudah benar sebelum laporan dikirim.",
             fontSize = 14.sp,
-            color = Color(0xFF3D423D)
+            color    = Color(0xFF3D423D)
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text  = "Laporan yang sudah dikirim tidak dapat diubah. Admin akan memvalidasi laporan kamu dalam 1×24 jam.",
+            text     = "Laporan yang sudah dikirim tidak dapat diubah. Admin akan memvalidasi laporan kamu dalam 1×24 jam.",
             fontSize = 12.sp,
-            color = AppColors.Muted
+            color    = AppColors.Muted
         )
     }
 }
 
-// ── Category chip button ──────────────────────────────────────────────────────
 @Composable
 private fun CategoryButton(
     label: String,
@@ -426,31 +738,42 @@ private fun CategoryButton(
         modifier = modifier
             .height(56.dp)
             .clip(RoundedCornerShape(8.dp))
-            .border(
-                width = 1.dp,
-                color = if (selected) AppColors.Forest else AppColors.Border,
-                shape = RoundedCornerShape(8.dp)
-            )
+            .border(1.dp, if (selected) AppColors.Forest else AppColors.Border, RoundedCornerShape(8.dp))
             .background(if (selected) Color(0xFFEAF7ED) else Color.White)
             .clickable(onClick = onClick)
             .padding(6.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(label, fontSize = 12.sp, textAlign = TextAlign.Center)
+        Text(
+            text       = label,
+            fontSize   = 13.sp,
+            textAlign  = TextAlign.Center,
+            color      = if (selected) AppColors.ForestDark else AppColors.TextPrimary,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
+        )
     }
 }
 
-// ── Wizard navigation buttons ─────────────────────────────────────────────────
 @Composable
 private fun WizardActions(
     step: Int,
+    isLoading: Boolean,
+    judul: String,
+    description: String,
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
+    val isNextEnabled = when {
+        isLoading -> false
+        step == 0 -> judul.isNotBlank() && description.isNotBlank()
+        else      -> true
+    }
+
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         if (step > 0) {
             OutlinedButton(
                 onClick  = onBack,
+                enabled  = !isLoading,
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp)
@@ -460,12 +783,21 @@ private fun WizardActions(
         }
         Button(
             onClick  = onNext,
+            enabled  = isNextEnabled,
             colors   = ButtonDefaults.buttonColors(containerColor = AppColors.Forest),
             modifier = Modifier
                 .weight(1f)
                 .height(48.dp)
         ) {
-            Text(if (step == 3) "Kirim Laporan" else "Lanjut")
+            if (isLoading && step == 3) {
+                CircularProgressIndicator(
+                    color       = Color.White,
+                    modifier    = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(if (step == 3) "Kirim Laporan" else "Selanjutnya")
+            }
         }
     }
 }

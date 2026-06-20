@@ -12,36 +12,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Green80,
-    secondary = Leaf80,
-    tertiary = Mint80
-)
-
 private val LightColorScheme = lightColorScheme(
-    primary = Green40,
-    secondary = Leaf40,
-    tertiary = Mint40,
-    background = Mint40,
+    primary = GreenPrimary,
+    secondary = GreenSecondary,
+    tertiary = GreenTertiary,
+    background = BackgroundLight,
     surface = Color.White,
     onPrimary = Color.White,
-    onSurface = Color(0xFF1B1D1A)
+    onSurface = Color(0xFF191C19),
+    onSurfaceVariant = MutedTextLight, // Text yang butuh warna 'muted' tapi tetap terbaca
+    outline = Color(0xFF727971)
+)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkColorScheme = darkColorScheme(
+    primary = GreenPrimaryDark,
+    secondary = GreenSecondaryDark,
+    tertiary = GreenSecondaryDark,
+    background = BackgroundDark,
+    surface = SurfaceDark,
+    onPrimary = Color.Black,
+    onSurface = Color.White,
+    onSurfaceVariant = MutedTextDark
 )
 
 @Composable
 fun MobileTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -50,7 +46,6 @@ fun MobileTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
