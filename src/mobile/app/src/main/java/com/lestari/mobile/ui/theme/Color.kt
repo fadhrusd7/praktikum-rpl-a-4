@@ -2,10 +2,18 @@ package com.lestari.mobile.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// -- LEAFY THEME (Natural, Not Neon) --
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Light Mode
+val GreenPrimary = Color(0xFF2D6A4F)   // Natural Forest Green
+val GreenSecondary = Color(0xFF40916C) // Classic Leaf Green
+val GreenTertiary = Color(0xFF74C69D)  // Soft Pastel Green
+val BackgroundLight = Color(0xFFFBFDFB) // Off-white with a hint of green
+val MutedTextLight = Color(0xFF495057)  // Deep Grey (High contrast for muted text)
+
+// Dark Mode
+val GreenPrimaryDark = Color(0xFF95D5B2)
+val GreenSecondaryDark = Color(0xFFB7CCBA)
+val MutedTextDark = Color(0xFFADB5BD)
+val BackgroundDark = Color(0xFF191C19)
+val SurfaceDark = Color(0xFF222622)
