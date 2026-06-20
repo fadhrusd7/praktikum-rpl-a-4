@@ -11,6 +11,14 @@ postman/
 # Environment
 .env
 .env.local
+**/.env
+
+# Android / Mobile
+src/mobile/local.properties
+src/mobile/.gradle/
+src/mobile/build/
+src/mobile/.idea/
+**/.DS_Store
 
 # Dependencies
 node_modules/
@@ -19,6 +27,11 @@ vendor/
 # Cache
 bootstrap/cache/
 
+<<<<<<< HEAD
+# Logs
+.github/
+.git/
+=======
 # VS Code
 .vscode/
 
@@ -27,5 +40,4 @@ bootstrap/cache/
 postman/
 
 echo "dist/"
-
-.vite
+>>>>>>> 1a3f12cec402924c83a36e84fd53586f9e071996

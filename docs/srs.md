@@ -239,7 +239,11 @@ Metode: monitoring server (Grafana / logging system)
 
 ## 5.4 Batasan Teknis
 
+<<<<<<< HEAD
+- Foto maksimal 5 MB
+=======
 - Foto maksimal 500 Kb
+>>>>>>> aa0382c70d92f50451fab90b52e09caf015213c2
 - Sistem berbasis online (tidak offline mode)
 - Mobile hanya mendukung Android (Kotlin)
 - Web mendukung browser modern
