@@ -2,7 +2,7 @@
 
 ## Slide 1: Judul + Nama Tim
 
-# 🌿 EnviroGuard
+# 🌿 Lestari
 ### Sistem Pelaporan Permasalahan Lingkungan Berbasis GIS
 
 **Kelompok 4 - Rekayasa Perangkat Lunak**

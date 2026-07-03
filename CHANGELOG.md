@@ -1,4 +1,4 @@
-# Changelog
+# Changelog - Lestari
 
 Semua perubahan penting pada proyek ini akan didokumentasikan di dalam file ini.
 
