@@ -134,9 +134,9 @@ cd src/mobile
 
 | Nama | NIM | Kontribusi |
 |------|-----|------------|
-| Fadhil Rusadi | L0124013 | Fullstack (Website) |
-| Besty Mega Fauziah | L0124007 | Backend Developer |
-| Deoshi Anessah Zheren Areja | L0124009 | Mobile Developer |
+| Fadhil Rusadi | L0124013 | Backend Developer |
+| Deoshi Anessah Zheren Areja | L0124009 | Frontend User |
+| Besty Mega Fauziah | L0124007 | Frontend Admin |
 | Dina Hamala Nur Rosyidah | L0124010 | Mobile Developer |
 
 ---
