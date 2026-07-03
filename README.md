@@ -1,16 +1,18 @@
-# 🌿 Lestari
+# Lestari
 
-**Sistem Pelaporan Permasalahan Lingkungan Berbasis GIS**
+Sistem Pelaporan Permasalahan Lingkungan Berbasis GIS
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## 📋 Deskripsi Proyek
+## Deskripsi Proyek
 
 Lestari adalah platform berbasis web dan mobile yang memungkinkan masyarakat untuk melaporkan permasalahan lingkungan seperti pencemaran air, sampah liar, dan kerusakan lingkungan lainnya. Laporan dilengkapi dengan lokasi geografis dan foto bukti, kemudian dapat dipantau melalui peta interaktif.
 
 ---
 
-## ✨ Fitur
+## Fitur
 
 | Kategori | Fitur |
 |----------|-------|
@@ -21,7 +23,7 @@ Lestari adalah platform berbasis web dan mobile yang memungkinkan masyarakat unt
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 | Halaman | Preview |
 |---------|---------|
@@ -32,7 +34,7 @@ Lestari adalah platform berbasis web dan mobile yang memungkinkan masyarakat unt
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Teknologi |
 |-------|-----------|
@@ -46,7 +48,7 @@ Lestari adalah platform berbasis web dan mobile yang memungkinkan masyarakat unt
 
 ---
 
-## 📂 Struktur Folder
+## Struktur Folder
 
 ```
 lestari/
@@ -87,7 +89,7 @@ lestari/
 
 ---
 
-## 🚀 Instalasi
+## Instalasi
 
 ### Prasyarat
 
@@ -128,7 +130,7 @@ cd src/mobile
 
 ---
 
-## 👥 Tim
+## Tim
 
 | Nama | NIM | Kontribusi |
 |------|-----|------------|
@@ -139,7 +141,7 @@ cd src/mobile
 
 ---
 
-## 📚 Dokumentasi
+## Dokumentasi
 
 | Dokumen | Lokasi |
 |---------|--------|
@@ -157,10 +159,10 @@ cd src/mobile
 
 ---
 
-## 📄 Lisensi
+## Lisensi
 
 MIT License - lihat file [LICENSE](LICENSE)
 
 ---
 
-*Lestari v1.0.0 - Juli 2026*
+Lestari v1.0.0 - Juli 2026
