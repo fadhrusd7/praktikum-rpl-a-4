@@ -1,6 +1,6 @@
 # AI-Usage Log
 
-Dokumentasi penggunaan AI dalam proyek EnviroGuard.
+Dokumentasi penggunaan AI dalam proyek **Lestari**.
 
 Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
