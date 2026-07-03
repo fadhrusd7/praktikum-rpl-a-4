@@ -1,40 +1,78 @@
-# IDE
+# ===========================================
+# LESTARI - Git Ignore
+# ===========================================
+
+# ===================
+# Environment / Secrets
+# ===================
+.env
+.env.*
+.env.local
+**/.env
+**/.env.*
+
+# ===================
+# IDE / Editor
+# ===================
 .idea/
 .vscode/
 *.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
 
-# Postman Extension & Config
-.postman/
-postman/
-.postman_*.json
+# ===================
+# Backend - Laravel
+# ===================
+src/backend/vendor/
+src/backend/node_modules/
+src/backend/bootstrap/cache/
+src/backend/storage/logs/
+src/backend/storage/framework/cache/
+src/backend/storage/framework/sessions/
+src/backend/storage/framework/views/
+src/backend/.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
 
-# Environment
-.env
-.env.local
-**/.env
+# ===================
+# Frontend - Website
+# ===================
+src/website/node_modules/
+src/website/dist/
+src/website/.vite/
 
-# Android / Mobile
+# ===================
+# Mobile - Android
+# ===================
 src/mobile/local.properties
 src/mobile/.gradle/
 src/mobile/build/
 src/mobile/.idea/
-**/.DS_Store
+src/mobile/app/build/
+src/mobile/app/release/
+src/mobile/app/debug/
+*.apk
+*.aab
 
-# Dependencies
-node_modules/
-vendor/
-
-# Cache
-bootstrap/cache/
-
+# ===================
 # Logs
-.github/
-.git/
-# VS Code
-.vscode/
+# ===================
+*.log
+logs/
 
-# Postman
-.postman/
-postman/
+# ===================
+# Build Output
+# ===================
+dist/
+build/
+out/
 
-echo "dist/"
+# ===================
+# Testing
+# ===================
+.phpunit.result.cache
+coverage/
