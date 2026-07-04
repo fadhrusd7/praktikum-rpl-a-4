@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Detail laporan – Lestari User"/>
+  <title>Detail Laporan – Lestari</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <!-- Page CSS -->
+  <link rel="stylesheet" href="../../css/detail-maps.css?v=3"/>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════ -->
+<div class="app-shell">
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Brand -->
+    <a href="#" class="sidebar-brand">
+      <img src="../../assets/Logo.png" alt="Lestari Logo" class="brand-logo"/>
+      <div class="brand-text-wrap">
+        <span class="brand-name">Lestari</span>
+        <span class="brand-tagline">Lapor Isu Lingkungan</span>
+      </div>
+    </a>
+
+    <!-- Nav — USER menu only: Peta, Laporan, Riwayat, Profil -->
+    <nav class="sidebar-nav" aria-label="Menu utama">
+
+      <a href="../dashboard/map-users.html" class="nav-item active" data-page="peta" aria-current="page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+          <circle cx="12" cy="9" r="2.5"/>
+        </svg>
+        Peta
+      </a>
+
+      <a href="../laporan/report-users.html" class="nav-item" data-page="laporan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+        </svg>
+        Laporan
+      </a>
+
+      <a href="../riwayat/history-users.html" class="nav-item" data-page="riwayat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="12 8 12 12 14 14"/>
+          <path d="M3.05 11a9 9 0 1 1 .5 4M3 21v-6h6"/>
+        </svg>
+        Riwayat
+      </a>
+
+      <a href="../profil/profile-users.html" class="nav-item" data-page="profil">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profil
+      </a>
+
+    </nav>
+
+    <!-- Sidebar user profile (static placeholder) -->
+    <div class="sidebar-user">
+      <div class="user-avatar">
+        <img 
+            src="https://ui-avatars.com/api/?name=User&background=E0FBD2&color=00AA13" 
+            alt="Foto Profil Sidebar" 
+            id="sidebar-avatar-img" 
+            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #E0FBD2;"
+        >
+        <span class="user-status-dot"></span>
+      </div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarUserName">Nama Pengguna</div>
+        <div class="user-email" id="sidebarUserEmail">Email@email.com</div>
+      </div>
+    </div>
+
+  </aside><!-- /sidebar -->
+
+
+    <!-- ── MAIN CONTENT ── -->
+  <div class="main-content">
+ 
+    <!-- Header / Breadcrumb -->
+    <header class="page-header">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Buka menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+          stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+ 
+      <!-- Breadcrumb: Peta > ID Laporan -->
+      <nav class="breadcrumb" aria-label="Navigasi halaman">
+        <a class="breadcrumb-link" href="../dashboard/map-users.html">Peta</a>
+        <svg class="breadcrumb-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+        <span class="breadcrumb-current" id="breadcrumbId">—</span>
+      </nav>
+ 
+      <!-- Month badge -->
+      <span class="date-badge" id="dateBadgeEl">—</span>
+    </header>
+ 
+    <!-- Page body -->
+    <main class="page-body">
+ 
+      <!-- ── STATUS BAR: nomor + judul bold (kiri) | badge status (kanan) ── -->
+      <div class="detail-statusbar">
+        <div class="detail-title-meta">
+          <h1 class="detail-title" id="detailTitle">—</h1>
+          <span class="detail-report-id" id="detailId">—</span>
+        </div>
+        <span class="status-badge" id="statusBadge"></span>
+      </div>
+ 
+      <!-- ── TWO-COLUMN GRID ── -->
+      <div class="detail-columns">
+ 
+        <!-- LEFT COLUMN: Detail card + bottom boxes -->
+        <div class="detail-left" id="leftCol">
+          <!-- Filled by JS -->
+        </div>
+ 
+        <!-- RIGHT COLUMN: Map + Log Aktivitas -->
+        <div class="detail-right">
+ 
+          <!-- Map card -->
+          <div class="card">
+            <div class="card-title">
+              <svg width="20" height="20" fill="none" stroke="currentColor"
+                stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+              </svg>
+              Lokasi Laporan
+            </div>
+            <div class="map-wrap">
+              <div id="detail-map"></div>
+              <div class="map-coords" id="mapCoords"></div>
+            </div>
+          </div>
+ 
+          <!-- Log Aktivitas card -->
+          <div class="card">
+            <div class="log-card-title">LOG AKTIVITAS</div>
+            <div class="timeline" id="logTimeline">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+ 
+        </div><!-- /detail-right -->
+      </div><!-- /detail-columns -->
+ 
+    </main>
+  </div><!-- /main-content -->
+ 
+</div><!-- /app-shell -->
+ 
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Page JS (module) -->
+<script type="module" src="../../js/users/map-detail.js"></script>
+ 
+<!-- Date badge: set immediately (no module wait) -->
+<script>
+  (function () {
+    const now   = new Date();
+    const label = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+    const el    = document.getElementById('dateBadgeEl');
+    if (el) el.textContent = label;
+  })();
+</script>
+
+</body>
+</html>

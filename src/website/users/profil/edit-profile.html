@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profil - Lestari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="../../css/edit-profile.css?v=3" />
+    <link rel="stylesheet" href="../../css/profile-common.css?v=3" />
+
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="../../assets/Logo.png" alt="Logo Lestari" class="logo-img">
+                </div>
+                <div>
+                    <div class="logo-text">Lestari</div>
+                    <div class="logo-tagline">Lapor Isu Lingkungan</div>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li>
+                        <a href="../dashboard/map-users.html" class="nav-item" data-page="peta">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                    <circle cx="12" cy="9" r="2.5"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Peta</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../laporan/report-users.html" class="nav-item" data-page="laporan">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Laporan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../riwayat/history-users.html" class="nav-item" data-page="riwayat">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="12 8 12 12 14 14"/>
+                                    <path d="M3.05 11a9 9 0 1 1 .5 4M3 21v-6h6"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Riwayat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../profil/profile-users.html" class="nav-item active" data-page="profil">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Profil</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-divider"></div>
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img 
+                        src="https://ui-avatars.com/api/?name=User&background=E0FBD2&color=00AA13" 
+                        alt="Foto Profil Sidebar" 
+                        id="sidebar-avatar-img" 
+                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background-color: #E0FBD2;"
+                    >
+                    <span class="user-status"></span>
+                </div>
+                <div class="user-info">
+                    <p class="user-name" id="sidebarUserName">Nama Pengguna</p>
+                    <p class="user-email" id="sidebarUserEmail">email@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="topbar__left">
+                <a href="profile-users.html" class="topbar__back-btn" aria-label="Kembali ke halaman profil">
+                    <span class="topbar__back-icon" aria-hidden="true">&lt;</span>
+                </a>
+                <h1 class="topbar__title">Edit Profil</h1>
+            </div>
+            <div class="topbar__right">
+                <span class="topbar__date" id="topbar-date">Juni 2026</span>
+            </div>
+        </header>
+        <section class="page-body page-body--edit-profile">
+
+            <div class="edit-profile-card card">
+
+                <div class="photo-upload" id="photo-upload-section">
+
+                    <div class="photo-upload__preview-wrapper">
+                        <div class="photo-upload__preview" id="photo-preview-container">
+                            <img
+                                src="https://ui-avatars.com/api/?name=User&background=E0FBD2&color=00AA13"
+                                alt="Preview foto profil"
+                                class="photo-upload__preview-img"
+                                id="photo-preview-img"
+                            >
+                        </div>
+                        <button
+                            type="button"
+                            class="photo-upload__edit-badge"
+                            id="btn-photo-edit-badge"
+                            aria-label="Ubah foto profil"
+                        >
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="photo-upload__actions">
+                        <p class="photo-upload__label">Ubah Foto Profil</p>
+                        <p class="photo-upload__hint">JPG atau PNG. Maks 1 MB</p>
+                        <label for="input-photo-upload" class="photo-upload__choose-btn btn btn--secondary">
+                            Pilih Foto
+                        </label>
+                        <input
+                            type="file"
+                            id="input-photo-upload"
+                            class="photo-upload__input visually-hidden"
+                            name="photo"
+                            accept="image/jpeg, image/png"
+                            aria-label="Pilih foto profil baru"
+                        >
+                    </div>
+
+                </div>
+                <div class="edit-profile-form" id="edit-profile-form-wrapper">
+                    <form
+                        id="edit-profile-form"
+                        class="form"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        novalidate
+                    >
+
+                        <div class="form__row form__row--two-col">
+                            <div class="form__group" id="group-nama-lengkap">
+                                <label for="input-nama-lengkap" class="form__label">Nama Lengkap</label>
+                                <input
+                                    type="text"
+                                    id="input-nama-lengkap"
+                                    name="nama_lengkap"
+                                    class="form__input"
+                                    placeholder="Nama Lengkap"
+                                    value=""
+                                    autocomplete="name"
+                                    required
+                                >
+                                <span class="form__error" id="error-nama-lengkap" role="alert" aria-live="polite"></span>
+                            </div>
+                        </div>
+
+                        <div class="form__row form__row--two-col">
+                            <div class="form__group" id="group-phone">
+                                <label for="input-phone" class="form__label">Nomor Telepon</label>
+                                <input
+                                    type="tel"
+                                    id="input-phone"
+                                    name="phone"
+                                    class="form__input"
+                                    placeholder="+62 81234567890"
+                                    value="+62 81234567890"
+                                    autocomplete="tel"
+                                >
+                                <span class="form__error" id="error-phone" role="alert" aria-live="polite"></span>
+                            </div>
+
+                            <div class="form__group" id="group-email">
+                                <label for="input-email" class="form__label">Email</label>
+                                <input
+                                    type="email"
+                                    id="input-email"
+                                    name="email"
+                                    class="form__input"
+                                    placeholder="email@email.com"
+                                    value="email@email.com"
+                                    autocomplete="email"
+                                    required
+                                >
+                                <span class="form__error" id="error-email" role="alert" aria-live="polite"></span>
+                            </div>
+                        </div>
+
+                        <div class="form__row form__row--full">
+                            <div class="form__group form__group--location" id="group-city">
+                                <label for="input-city" class="form__label">Kota/Kecamatan</label>
+                                <div class="form__input-wrapper form__input-wrapper--icon">
+                                    <span class="form__input-icon form__input-icon--location" aria-hidden="true"></span>
+                                    <input
+                                        type="text"
+                                        id="input-city"
+                                        name="city"
+                                        class="form__input form__input--with-icon"
+                                        placeholder="Surakarta"
+                                        value="Surakarta"
+                                        autocomplete="address-level2"
+                                    >
+                                </div>
+                                <span class="form__error" id="error-city" role="alert" aria-live="polite"></span>
+                            </div>
+                        </div>
+
+                        <div class="form__actions">
+                            <button
+                                type="submit"
+                                class="btn btn--primary"
+                                id="btn-save-profile"
+                            >
+                                Simpan Perubahan
+                            </button>
+                            <a
+                                href="profile-users.html"
+                                class="btn btn--text"
+                                id="btn-cancel-edit"
+                            >
+                                Batalkan
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+                </div>
+            </section>
+        </main>
+    <script type="module" src="../../js/users/edit-profile.js"></script>
+</body>
+</html>

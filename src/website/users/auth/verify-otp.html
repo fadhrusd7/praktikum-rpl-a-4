@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Verifikasi kode OTP untuk reset password akun Lestari">
+    <title>Verifikasi OTP - Lestari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <link rel="stylesheet" href="../../css/responsive.css">
+</head>
+<body>
+
+<div class="auth-page">
+
+    <!-- LEFT: Visual Column -->
+    <aside class="auth-visual">
+        <div class="auth-badge">
+            <img src="../../assets/logo.png" alt="Lestari Logo" class="auth-badge-logo">
+            <span>Lestari</span>
+        </div>
+
+        <div class="auth-visual-caption">
+            <h2>Membangun masa depan yang lebih sehat</h2>
+            <p>Satu laporan Anda adalah langkah awal menuju lingkungan yang lebih bersih. Mari pantau, laporkan, dan jaga bumi kita bersama Lestari.</p>
+        </div>
+    </aside>
+
+    <!-- RIGHT: Form Column -->
+    <main class="auth-panel">
+        <div class="auth-content">
+            <h1 class="auth-title">Verifikasi Kode OTP</h1>
+            <p class="auth-subtitle">
+                Kami telah mengirim kode OTP ke <strong id="emailDisplay">email Anda</strong>
+            </p>
+
+            <form id="otpForm" novalidate>
+                <div class="form-group">
+                    <div class="otp-container" id="otpContainer" role="group" aria-label="Masukkan 6 digit kode OTP">
+                        <input
+                            type="text"
+                            class="form-input otp-input no-toggle"
+                            maxlength="1"
+                            inputmode="numeric"
+                            pattern="[0-9]"
+                            aria-label="Digit OTP ke-1"
+                            autocomplete="one-time-code"
+                        >
+                        <input
+                            type="text"
+                            class="form-input otp-input no-toggle"
+                            maxlength="1"
+                            inputmode="numeric"
+                            pattern="[0-9]"
+                            aria-label="Digit OTP ke-2"
+                        >
+                        <input
+                            type="text"
+                            class="form-input otp-input no-toggle"
+                            maxlength="1"
+                            inputmode="numeric"
+                            pattern="[0-9]"
+                            aria-label="Digit OTP ke-3"
+                        >
+                        <input
+                            type="text"
+                            class="form-input otp-input no-toggle"
+                            maxlength="1"
+                            inputmode="numeric"
+                            pattern="[0-9]"
+                            aria-label="Digit OTP ke-4"
+                        >
+                        <input
+                            type="text"
+                            class="form-input otp-input no-toggle"
+                            maxlength="1"
+                            inputmode="numeric"
+                            pattern="[0-9]"
+                            aria-label="Digit OTP ke-5"
+                        >
+                        <input
+                            type="text"
+                            class="form-input otp-input no-toggle"
+                            maxlength="1"
+                            inputmode="numeric"
+                            pattern="[0-9]"
+                            aria-label="Digit OTP ke-6"
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth" aria-label="Verifikasi kode OTP">
+                    Verifikasi
+                </button>
+            </form>
+
+            <p class="auth-footer-text">
+                Tidak menerima kode OTP?
+                <button type="button" id="resendbtn" class="resend-btn" disabled aria-live="polite">
+                    Kirim Ulang <span class="countdown">(60s)</span>
+                </button>
+            </p>
+        </div>
+    </main>
+
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay hidden" id="loadingOverlay" role="status" aria-live="polite">
+    <div class="spinner">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--green-main, #16a34a)" stroke-width="2.5">
+            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0" stroke-opacity="0.2"/>
+            <path d="M21 12a9 9 0 00-9-9"/>
+        </svg>
+    </div>
+</div>
+
+<div class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<script type="module" src="../../js/shared/toast.js"></script>
+<script type="module" src="../../js/shared/ui.js"></script>
+<script type="module" src="../../js/users/verify-otp.js"></script>
+</body>
+</html>

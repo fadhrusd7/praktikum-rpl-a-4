@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Memproses login Google untuk akun Lestari">
+    <title>Memproses Login - Lestari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+    <link rel="stylesheet" href="../../css/responsive.css">
+</head>
+<body>
+
+<div class="auth-page">
+
+    <!-- LEFT: Visual Column -->
+    <aside class="auth-visual">
+        <!-- Lestari badge — top-left -->
+        <div class="auth-badge">
+            <img src="../../assets/Logo.png" alt="Lestari Logo" class="auth-badge-logo">
+            <span>Lestari</span>
+        </div>
+
+        <!-- Caption overlay -->
+        <div class="auth-visual-caption">
+            <h2>Membangun masa depan yang lebih sehat</h2>
+            <p>Satu laporan Anda adalah langkah awal menuju lingkungan yang lebih bersih. Mari pantau, laporkan, dan jaga bumi kita bersama Lestari.</p>
+        </div>
+    </aside>
+
+    <!-- RIGHT: Loading Panel -->
+    <main class="auth-panel">
+        <div class="callback-card" id="loadingOverlay" role="status" aria-live="polite" aria-label="Memproses login Google">
+            <!-- Brand mark -->
+            <div class="callback-logo">
+                <img src="../../assets/Logo.png" alt="Lestari Logo">
+                <span>Lestari</span>
+            </div>
+
+            <!-- Animated spinner -->
+            <svg class="callback-spinner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="#E5E7EB" stroke-width="2.5"/>
+                <path d="M12 2a10 10 0 0 1 10 10" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+
+            <p class="callback-title">Memproses login Google…</p>
+            <p class="callback-subtitle">Harap tunggu, kami sedang memverifikasi akun Anda.</p>
+        </div>
+    </main>
+
+</div>
+
+<div class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<script type="module" src="../../js/shared/toast.js"></script>
+<script type="module" src="../../js/users/google-callback.js"></script>
+</body>
+</html>

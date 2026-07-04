@@ -1,0 +1,822 @@
+/* ================================================
+   AUTH.CSS — Lestari Authentication Pages
+   Supports two layouts:
+     • Login/Register : auth-form-col (left) | auth-visual-col (right)
+     • Forgot/OTP/NewPw : auth-visual  (left) | auth-panel     (right)
+   ================================================ */
+
+/* ================================================
+   ANIMATIONS
+   ================================================ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes badgeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes captionIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================
+   LAYOUT UTAMA: 2 KOLOM
+   ================================================ */
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #fff;
+}
+
+/* ================================================
+   KOLOM KIRI — FORM AREA (Login / Register)
+   ================================================ */
+.auth-form-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 72px;
+  position: relative;
+  background: #ffffff;
+  overflow-y: auto;
+}
+
+/* Subtle radial blob dekorasi di sudut kiri atas */
+.auth-form-col::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  left: -80px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(0, 170, 19, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ================================================
+   KOLOM KANAN — VISUAL / GAMBAR ALAM (Login / Register)
+   ================================================ */
+.auth-visual-col {
+  position: relative;
+  background-image: url('../assets/Banner2.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+/* Overlay gelap tipis agar teks & badge terbaca */
+.auth-visual-col::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.08) 0%,
+    rgba(0, 0, 0, 0.0) 50%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  z-index: 1;
+}
+
+/* ================================================
+   KOLOM KIRI — VISUAL (Forgot / OTP / NewPassword)
+   Banner di kiri dengan teks overlay
+   ================================================ */
+.auth-visual {
+  position: relative;
+  background-image: url('../assets/Banner2.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+/* Overlay gradient untuk readability */
+.auth-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.10) 0%,
+    rgba(0, 0, 0, 0.02) 40%,
+    rgba(0, 0, 0, 0.40) 100%
+  );
+  z-index: 1;
+}
+
+/* ================================================
+   KOLOM KANAN — FORM PANEL (Forgot / OTP / NewPassword)
+   ================================================ */
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 64px 72px;
+  position: relative;
+  background: #ffffff;
+  overflow-y: auto;
+}
+
+.auth-panel .auth-content {
+  width: 100%;
+  max-width: 420px;
+  animation: fadeInUp 0.6s ease both;
+  animation-delay: 0.1s;
+}
+
+/* ================================================
+   BADGE LOGO — Pojok kiri atas (di atas Banner)
+   ================================================ */
+.auth-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  padding: 12px 24px 12px 16px;
+  box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.08);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  border-radius: 0px 0px 16px 0px;
+  animation: badgeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 0.2s;
+}
+
+/* Login layout: badge pojok kanan atas */
+.auth-visual-col .auth-badge {
+  left: auto;
+  right: 0;
+  border-radius: 0px 0px 0px 16px;
+}
+
+.auth-badge-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: var(--green-pale);
+}
+
+/* ================================================
+   TEKS KUTIPAN — Overlay di bawah Banner
+   ================================================ */
+.auth-visual-caption {
+  position: relative;
+  z-index: 10;
+  padding: 0 36px 48px 36px;
+  text-align: left;
+  animation: captionIn 0.7s ease both;
+  animation-delay: 0.35s;
+}
+
+.auth-visual-caption h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.auth-visual-caption p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.65;
+  font-weight: 400;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+  max-width: 450px;
+}
+
+/* Login/Register layout: teks di kanan */
+.auth-visual-col .auth-visual-caption {
+  text-align: right;
+}
+
+.auth-visual-col .auth-visual-caption p {
+  margin-left: auto;
+}
+
+/* ================================================
+   HEADINGS FORM
+   ================================================ */
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 680;
+  color: #111827;
+  margin-bottom: 10px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.auth-subtitle {
+  font-size: 0.88rem;
+  color: #4B5563;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* Center text for pages using auth-panel */
+.auth-panel .auth-title {
+  text-align: center;
+}
+
+.auth-panel .auth-subtitle {
+  text-align: center;
+}
+
+/* ================================================
+   FORM ELEMENTS
+   ================================================ */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+/* === INPUT WRAPPER dengan icon kiri === */
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Icon kiri di dalam input */
+.input-icon-left {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.input-icon-left svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* === INPUT === */
+.form-input {
+  width: 100%;
+  padding: 13px 48px 13px 44px; /* kiri: ruang icon | kanan: ruang password-toggle */
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  background: #F3F4F6;
+  font-size: 0.88rem;
+  color: #111827;
+  font-family: var(--font-body);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  outline: none;
+  line-height: 1.5;
+}
+
+/* Input tanpa toggle (email) — tidak perlu padding kanan besar */
+.form-input.no-toggle {
+  padding-right: 16px;
+}
+
+.form-input::placeholder {
+  color: #B0BAC5;
+  font-weight: 400;
+}
+
+.form-input:focus {
+  border-color: var(--green-main);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 170, 19, 0.08);
+}
+
+.form-input.error {
+  border-color: #EF4444;
+  background: #FFF7F7;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+}
+
+/* === PASSWORD TOGGLE === */
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9CA3AF;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: var(--green-main);
+}
+
+.password-toggle svg {
+  pointer-events: none;
+  width: 17px;
+  height: 17px;
+}
+
+/* === ERROR MESSAGE === */
+.form-error {
+  font-size: 0.76rem;
+  color: #EF4444;
+  margin-top: 5px;
+  display: none;
+  line-height: 1.4;
+}
+
+.form-error.show {
+  display: block;
+}
+
+/* ================================================
+   ROW BAWAH PASSWORD: link kiri + link kanan
+   ================================================ */
+.password-row-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.link-green {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--green-main);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-green:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+.link-muted {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6B7280;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-muted:hover {
+  color: #374151;
+}
+
+/* ================================================
+   TOMBOL MASUK / CTA
+   ================================================ */
+.btn-auth {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 48px;
+  min-width: 180px;
+  background: var(--green-deep);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  margin-top: 32px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-auth::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.btn-auth:hover {
+  background: #006b0b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 107, 11, 0.35);
+}
+
+.btn-auth:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn-auth:disabled,
+.btn-auth.loading {
+  pointer-events: none;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ================================================
+   DIVIDER "atau"
+   ================================================ */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #E5E7EB;
+}
+
+.auth-divider span {
+  font-size: 0.78rem;
+  color: #9CA3AF;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ================================================
+   TOMBOL GOOGLE
+   ================================================ */
+.btn-google {
+  width: 100%;
+  padding: 12px;
+  background: #fff;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-body);
+}
+
+.btn-google:hover {
+  border-color: var(--green-main);
+  box-shadow: 0 2px 10px rgba(0, 170, 19, 0.1);
+  transform: translateY(-1px);
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ================================================
+   FOOTER TEKS — Belum punya akun / link switch
+   ================================================ */
+.auth-footer-text {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #6B7280;
+}
+
+.auth-footer-text a {
+  color: var(--green-main);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-footer-text a:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+/* ================================================
+   OTP INPUT FIELDS
+   ================================================ */
+.otp-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.otp-input {
+  width: 52px;
+  height: 64px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 0 !important;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  background: #F3F4F6;
+  color: #111827;
+  font-family: var(--font-body);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  outline: none;
+  caret-color: var(--green-main);
+}
+
+.otp-input:focus {
+  border-color: var(--green-main);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 170, 19, 0.1);
+}
+
+.otp-input.error {
+  border-color: #EF4444;
+  background: #FFF7F7;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+}
+
+.otp-input.filled {
+  border-color: var(--green-main);
+  background: #fff;
+}
+
+/* ================================================
+   RESEND BUTTON (Kirim Ulang OTP)
+   ================================================ */
+.resend-btn {
+  background: none;
+  border: none;
+  color: var(--green-main);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-body);
+  transition: color 0.2s ease;
+}
+
+.resend-btn:hover:not(:disabled) {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+.resend-btn:disabled {
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.resend-btn .countdown {
+  font-weight: 500;
+}
+
+/* ================================================
+   BACK LINK
+   ================================================ */
+.auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6B7280;
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: color 0.2s ease;
+}
+
+.auth-back:hover {
+  color: var(--green-main);
+}
+
+/* ================================================
+   GOOGLE CALLBACK — Loading Screen
+   Same 2-column layout as other auth pages
+   ================================================ */
+.callback-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  animation: fadeInUp 0.6s ease both;
+  animation-delay: 0.1s;
+}
+
+.callback-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.callback-logo img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.callback-logo span {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.callback-spinner {
+  width: 52px;
+  height: 52px;
+  animation: spin 0.85s linear infinite;
+}
+
+.callback-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.callback-subtitle {
+  font-size: 0.85rem;
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ================================================
+   SUCCESS STATE (New Password berhasil)
+   ================================================ */
+.btn-auth-link {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 32px;
+  padding: 13px 48px;
+  min-width: 180px;
+  background: var(--green-deep);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-auth-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.btn-auth-link:hover {
+  background: #006b0b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 107, 11, 0.35);
+}
+
+/* ================================================
+   SPINNER (diinjek oleh ui.js)
+   ================================================ */
+.spinner {
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+/* ================================================
+   LOADING OVERLAY
+   ================================================ */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  backdrop-filter: blur(2px);
+}
+
+.loading-overlay.hidden {
+  display: none;
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+
+/* Tablet (≤992px): sembunyikan kolom visual */
+@media (max-width: 992px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-visual-col,
+  .auth-visual {
+    display: none;
+  }
+
+  .auth-form-col {
+    padding: 56px 48px;
+  }
+
+  .auth-badge {
+    display: none;
+  }
+}
+
+/* Mobile (≤640px) */
+@media (max-width: 640px) {
+  .auth-form-col {
+    padding: 40px 24px;
+    justify-content: flex-start;
+    padding-top: 60px;
+  }
+
+  .auth-title {
+    font-size: 1.7rem;
+  }
+
+  .btn-auth {
+    width: 100%;
+    padding: 14px;
+  }
+}
+
+/* Small mobile (≤380px) */
+@media (max-width: 380px) {
+  .auth-form-col {
+    padding: 32px 20px;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+}

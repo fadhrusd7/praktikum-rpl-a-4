@@ -1,0 +1,250 @@
+/* ================================================================
+   edit-profile.css — Lestari | Edit Profil
+   Depends on: profile-common.css
+   ================================================================ */
+
+/* ── Page body modifier ──────────────────────────────────────── */
+.page-body--edit-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Card container ──────────────────────────────────────────── */
+.edit-profile-card {
+  width: 100%;
+  max-width: 780px;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ================================================================
+   PHOTO UPLOAD SECTION
+   ================================================================ */
+.photo-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Preview circle wrapper */
+.photo-upload__preview-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.photo-upload__preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--green-100);
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-upload__preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Pencil badge — bottom-right of circle */
+.photo-upload__edit-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-600);
+  border: 2px solid var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  padding: 0;
+}
+
+.photo-upload__edit-badge:hover {
+  background: var(--green-700, #15803d);
+  transform: scale(1.08);
+}
+
+/* Styling untuk SVG icon pensil */
+.photo-upload__edit-badge svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+/* Text block under circle */
+.photo-upload__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.photo-upload__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.photo-upload__hint {
+  font-size: 12px;
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+/* Hidden file input trigger */
+.photo-upload__input { 
+  display: none; 
+}
+
+/* Pastikan class visually-hidden berfungsi untuk menyembunyikan input file */
+.visually-hidden {
+  display: none !important;
+}
+
+.photo-upload__choose-btn {
+  margin-top: 8px;
+  height: 36px;
+  padding: 0 18px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ================================================================
+   EDIT PROFILE FORM
+   ================================================================ */
+.edit-profile-form .form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Two-column row */
+.form__row--two-col {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.form__row--two-col > .form__group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Full-width row */
+.form__row--full > .form__group {
+  width: 100%;
+}
+
+/* ── Location input with pin icon ────────────────────────────── */
+.form__input-wrapper--icon {
+  position: relative;
+}
+
+.form__input-icon--location {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3Cpath d='M12 2a8 8 0 00-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 00-8-8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.form__input--with-icon {
+  padding-left: 38px !important;
+}
+
+/* ── Action buttons row ──────────────────────────────────────── */
+.form__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+/* Override btn sizes for this page */
+.edit-profile-card .btn--primary {
+  height: 46px;
+  padding: 0 32px;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+}
+
+.edit-profile-card .btn--text {
+  font-size: 14px;
+  color: var(--gray-500);
+}
+
+.edit-profile-card .btn--text:hover {
+  color: var(--gray-900);
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 1199px) {
+  .edit-profile-card {
+    max-width: 680px;
+    padding: 28px 28px;
+  }
+}
+
+@media (max-width: 767px) {
+  .edit-profile-card {
+    padding: 24px 20px;
+    gap: 24px;
+  }
+
+  .form__row--two-col {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .photo-upload__preview-wrapper {
+    width: 88px;
+    height: 88px;
+  }
+
+  .photo-upload__preview {
+    width: 88px;
+    height: 88px;
+  }
+
+  .form__actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .edit-profile-card .btn--primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-profile-card {
+    padding: 20px 16px;
+  }
+}

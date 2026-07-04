@@ -1,0 +1,78 @@
+# ===========================================
+# LESTARI - Git Ignore
+# ===========================================
+
+# ===================
+# Environment / Secrets
+# ===================
+.env
+.env.*
+.env.local
+**/.env
+**/.env.*
+
+# ===================
+# IDE / Editor
+# ===================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===================
+# Backend - Laravel
+# ===================
+src/backend/vendor/
+src/backend/node_modules/
+src/backend/bootstrap/cache/
+src/backend/storage/logs/
+src/backend/storage/framework/cache/
+src/backend/storage/framework/sessions/
+src/backend/storage/framework/views/
+src/backend/.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# ===================
+# Frontend - Website
+# ===================
+src/website/node_modules/
+src/website/dist/
+src/website/.vite/
+
+# ===================
+# Mobile - Android
+# ===================
+src/mobile/local.properties
+src/mobile/.gradle/
+src/mobile/build/
+src/mobile/.idea/
+src/mobile/app/build/
+src/mobile/app/release/
+src/mobile/app/debug/
+*.apk
+*.aab
+
+# ===================
+# Logs
+# ===================
+*.log
+logs/
+
+# ===================
+# Build Output
+# ===================
+dist/
+build/
+out/
+
+# ===================
+# Testing
+# ===================
+.phpunit.result.cache
+coverage/
