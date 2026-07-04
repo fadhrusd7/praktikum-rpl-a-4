@@ -15,12 +15,13 @@ Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
 ## Ringkasan Penggunaan AI
 
-| Kategori |工具/Platform | Frekuensi | Status |
+| Kategori | Platform | Frekuensi | Status |
 |----------|--------------|-----------|--------|
-| Code Generation | ChatGPT, Copilot | Sedang | ✅ Diverifikasi |
-| Debugging | ChatGPT, Copilot | Tinggi | ✅ Diverifikasi |
-| Documentation | ChatGPT | Rendah | ✅ Diverifikasi |
-| Mobile Dev | ChatGPT | Sedang | ✅ Diverifikasi |
+| Code Generation | Claude AI, ChatGPT, Copilot | Sedang | Diverifikasi |
+| Debugging | Claude AI, ChatGPT, Copilot | Tinggi | Diverifikasi |
+| Documentation | Claude AI, ChatGPT | Rendah | Diverifikasi |
+| Mobile Dev | Claude AI, ChatGPT | Sedang | Diverifikasi |
+| Backend Dev | Claude AI | Tinggi | Diverifikasi |
 
 ---
 
@@ -28,7 +29,7 @@ Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
 ### 1. Code Generation
 
-**Tools**: ChatGPT, GitHub Copilot
+**Tools**: Claude AI, ChatGPT, GitHub Copilot
 
 **Prompt Examples**:
 - "Generate Laravel controller for report management"
@@ -40,7 +41,7 @@ Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
 ### 2. Debugging & Error Solving
 
-**Tools**: ChatGPT
+**Tools**: Claude AI, ChatGPT
 
 **Contoh Penggunaan**:
 - Troubleshooting error CORS pada API
@@ -53,7 +54,7 @@ Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
 ### 3. Documentation
 
-**Tools**: ChatGPT
+**Tools**: Claude AI, ChatGPT
 
 **Penggunaan**:
 - Membuat template dokumentasi
@@ -65,7 +66,7 @@ Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
 ### 4. Mobile Development (Kotlin/Android)
 
-**Tools**: ChatGPT, Copilot
+**Tools**: Claude AI, ChatGPT, Copilot
 
 **Penggunaan**:
 - Generate layout XML
@@ -76,17 +77,36 @@ Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
 ---
 
-## Refleksi Efektivitas Penggunaan AI
+### 5. Backend Development (Laravel)
+
+**Tools**: Claude AI
+
+**Penggunaan**:
+- Setup project Laravel
+- Setup Migrasi database
+- Membuat Controller dan Model
+- Membuat routing API
+
+**Evidence/Bukti**:
+- Konsep & Persiapan setup project: 
+    - https://claude.ai/share/9c0f3309-f613-4e6d-ace7-221f59de18a4
+- Setup Laravel: 
+    - https://claude.ai/share/6339b6e5-4352-4b30-9a59-71ffbab202ad
+- Setup Backend (Migrasi, Controller, Model, dll):
+  - https://claude.ai/share/90c23922-385a-402d-a0f4-84165d8c1ba0
+  - https://claude.ai/share/de9b2361-3581-48fe-861d-224996e16c6b
+
+**Verifikasi**: Semua endpoint diuji dengan Postman dan fitur dicek di frontend
 
 ### Yang Berhasil
-- ✅ Accelerating boilerplate code generation
-- ✅ Faster debugging dengan search kemampuan AI
-- ✅ Improving documentation quality
+- Accelerating boilerplate code generation
+- Faster debugging dengan search kemampuan AI
+- Improving documentation quality
 
 ### Yang Kurang Berhasil
-- ⚠️ AI sometimes generates outdated API code (Laravel changes)
-- ⚠️ Mobile code suggestions need adjustment for project structure
-- ⚠️ Complex SQL queries need manual optimization
+- AI sometimes generates outdated API code (Laravel changes)
+- Mobile code suggestions need adjustment for project structure
+- Complex SQL queries need manual optimization
 
 ### Lesson Learned
 1. AI is a powerful tool, but understanding the codebase is essential
@@ -97,11 +117,11 @@ Format dokumentasi ini mengikuti prinsip transparansi dalam Responsible AI Use.
 
 ## Checklist Responsible AI Use
 
-- [x] Penggunaan AI didokumentasikan
-- [x] Output AI diverifikasi sebelum digunakan
-- [x] Tidak ada data sensitif di prompt
-- [x] Tim memahami kode yang dihasilkan AI
+- Penggunaan AI didokumentasikan
+- Output AI diverifikasi sebelum digunakan
+- Tidak ada data sensitif di prompt
+- Tim memahami kode yang dihasilkan AI
 
 ---
 
-*Last Updated: 2026-07-03*
+*Last Updated: 2026-07-04*
